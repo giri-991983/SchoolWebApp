@@ -1,0 +1,79 @@
+@model dynamic
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="editInstitutionOffcanvas_@Model.Institution.InstitutionID" aria-labelledby="editInstitutionOffcanvasLabel_@Model.Institution.InstitutionID">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="editInstitutionOffcanvasLabel_@Model.Institution.InstitutionID">Edit Institution Details</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body mx-0 flex-grow-0">
+        <form id="editInstitutionForm" method="post" enctype="multipart/form-data" data-id="@Model.Institution.InstitutionID">
+            @*@Html.AntiForgeryToken() *@
+            <input type="hidden" name="Institution.InstitutionID" value="@Model.Institution.InstitutionID" />
+
+            <div class="form-floating form-floating-outline mb-5">
+                <input type="text" name="Institution.InstitutionName" id="EditInstitutionName_@Model.Institution.InstitutionID" class="form-control" placeholder="Institution Name" value="@Model.Institution.InstitutionName" />
+                <label for="EditInstitutionName_@Model.Institution.InstitutionID">Institution Name</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-5">
+                <textarea name="Institution.Description" id="EditDescription_@Model.Institution.InstitutionID" class="form-control" placeholder="Description" style="height: 100px;">@Model.Institution.Description</textarea>
+                <label for="EditDescription_@Model.Institution.InstitutionID">Description</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-5">
+                <input type="text" name="Institution.ShortCode" id="EditShortCode_@Model.Institution.InstitutionID" class="form-control" placeholder="Short Code" value="@Model.Institution.ShortCode" />
+                <label for="EditShortCode_@Model.Institution.InstitutionID">Short Code</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-5">
+                <select name="Institution.PackageType" id="EditPackageType_@Model.Institution.InstitutionID" class="form-select">
+                    <option value="">Select Package</option>
+                    @foreach (var item in Model.PackageTypes)
+                    {
+                        <option value="@item.Value" selected="@(item.Value == Model.Institution.PackageType.ToString() ? "selected" : null)">@item.Text</option>
+                    }
+                </select>
+                <label for="EditPackageType_@Model.Institution.InstitutionID">Package Type</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-5">
+                <select name="Institution.Status" id="EditStatus_@Model.Institution.InstitutionID" class="form-select">
+                    <option value="">Select Status</option>
+                    @foreach (var item in Model.Statuses)
+                    {
+                        <option value="@item.Value" selected="@(item.Value == Model.Institution.Status.ToString() ? "selected" : null)">@item.Text</option>
+                    }
+                </select>
+                <label for="EditStatus_@Model.Institution.InstitutionID">Status</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-5">
+                <input type="file" name="LogoFile" id="EditLogoFile_@Model.Institution.InstitutionID" class="form-control" accept=".jpg,.jpeg,.png" />
+                <label for="EditLogoFile_@Model.Institution.InstitutionID">Upload New Logo</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <!-- Display the existing logo if it exists -->
+                @if (!string.IsNullOrEmpty(Model.Institution.LogoUrl))
+                {
+                    <div class="mb-3">
+                        <label>Current Logo:</label><br />
+                        <img src="@Model.Institution.LogoUrl" alt="Current Logo" style="max-width: 150px; height: auto;" />
+                    </div>
+                }
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <input type="url" name="Institution.WebsiteUrl" id="EditWebsiteUrl_@Model.Institution.InstitutionID" class="form-control" placeholder="Website URL" value="@Model.Institution.WebsiteUrl" />
+                <label for="EditWebsiteUrl_@Model.Institution.InstitutionID">Website URL</label>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-3 edit-submit-btn" data-id="@Model.Institution.InstitutionID">Update</button>
+                    <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                </div>
+            </div>
+
+
+        </form>
+    </div>
+</div>

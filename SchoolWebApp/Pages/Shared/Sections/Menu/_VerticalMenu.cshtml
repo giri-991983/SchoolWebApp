@@ -1,0 +1,166 @@
+@{
+    TempData.Keep();
+    string? currentPage = Convert.ToString(ViewContext.RouteData.Values["Page"])!;
+}
+
+<!-- Menu -->
+@* ! Do this simple *@
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+
+    @* ! Hide app brand if navbar-full *@
+    <div class='app-brand demo @((@ViewData["navbarFull"] != null && Convert.ToBoolean(@ViewData["navbarFull"])) ? "d-xl-none" : "")'>
+        <a asp-page="/Index" class="app-brand-link">
+            @*  <span class="app-brand-logo demo me-1">@await Html.PartialAsync("../_Partials/_Macros")</span> *@
+            <span class="app-brand-text demo menu-text fw-semibold ms-2">@TempData.Peek("appName")</span>
+        </a>
+
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+            <i class="menu-toggle-icon d-xl-block align-middle"></i>
+        </a>
+    </div>
+
+    <div class="menu-inner-shadow"></div>
+
+    @* ! Full version menu-items *@
+    <ul class="menu-inner py-1">
+
+
+        <!-- Institution List -->
+        <li class='menu-item@(currentPage == "/Admin/InstitutionIndex" ? " active" : "")'>
+            <a asp-page="/Admin/InstitutionIndex" class="menu-link">
+                <i class="menu-icon tf-icons ri-database-2-line"></i>
+                <div data-i18n="Manage Institution"> Manage Institution </div>
+            </a>
+        </li>
+
+        <!-- Dashboards -->
+        <li class='menu-item@(currentPage.StartsWith("/Dashboards/") ? " active open" : "")'>
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ri-home-smile-line"></i>
+                <div data-i18n="Dashboards">Dashboards</div>
+                <div class="badge bg-danger rounded-pill ms-auto">5</div>
+            </a>
+            <ul class="menu-sub">
+                <li class='menu-item@(currentPage == "/Admin/AllBranchesData" ? " active" : "")'>
+                    <a asp-page="/Admin/AllBranchesData" class="menu-link">
+                        <div data-i18n="View Branches"> View Branches </div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/Dashboards/Analytics" ? " active" : "")'>
+                    <a asp-page="/Dashboards/Analytics" class="menu-link">
+                        <div data-i18n="Analytics">Analytics</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/Apps/Ecommerce/Dashboard" ? " active" : "")'>
+                    <a asp-page="/Apps/Ecommerce/Dashboard" class="menu-link">
+                        <div data-i18n="eCommerce">eCommerce</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/Apps/Logistics/Dashboard" ? " active" : "")'>
+                    <a asp-page="/Apps/Logistics/Dashboard" class="menu-link">
+                        <div data-i18n="Logistics">Logistics</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/Apps/Academy/Dashboard" ? " active" : "")'>
+                    <a asp-page="/Apps/Academy/Dashboard" class="menu-link">
+                        <div data-i18n="Academy">Academy</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- Layouts -->
+        <li class='menu-item@(currentPage.StartsWith("/LayoutExamples/") ? " active open" : "")'>
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ri-layout-2-line"></i>
+                <div data-i18n="Layouts">Layouts</div>
+            </a>
+
+            <ul class="menu-sub">
+                <li class='menu-item@(currentPage == "/LayoutExamples/CollapsedMenu" ? " active" : "")'>
+                    <a asp-page="/LayoutExamples/CollapsedMenu" class="menu-link">
+                        <div data-i18n="Collapsed menu">Collapsed menu</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/LayoutExamples/ContentNavbar" ? " active" : "")'>
+                    <a asp-page="/LayoutExamples/ContentNavbar" class="menu-link">
+                        <div data-i18n="Content navbar">Content navbar</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/LayoutExamples/ContentNavbarWithSidebar" ? " active" : "")'>
+                    <a asp-page="/LayoutExamples/ContentNavbarWithSidebar" class="menu-link">
+                        <div data-i18n="Content nav + Sidebar">Content nav + Sidebar</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/LayoutExamples/HorizontalMenu" ? " active" : "")'>
+                    <a asp-page="/LayoutExamples/HorizontalMenu" class="menu-link" target="_blank">
+                        <div data-i18n="Horizontal">Horizontal</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/LayoutExamples/WithoutMenu" ? " active" : "")'>
+                    <a asp-page="/LayoutExamples/WithoutMenu" class="menu-link">
+                        <div data-i18n="Without menu">Without menu</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/LayoutExamples/WithoutNavbar" ? " active" : "")'>
+                    <a asp-page="/LayoutExamples/WithoutNavbar" class="menu-link">
+                        <div data-i18n="Without navbar">Without navbar</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/LayoutExamples/Fluid" ? " active" : "")'>
+                    <a asp-page="/LayoutExamples/Fluid" class="menu-link">
+                        <div data-i18n="Fluid">Fluid</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/LayoutExamples/Container" ? " active" : "")'>
+                    <a asp-page="/LayoutExamples/Container" class="menu-link">
+                        <div data-i18n="Container">Container</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/LayoutExamples/Blank" ? " active" : "")'>
+                    <a asp-page="/LayoutExamples/Blank" class="menu-link">
+                        <div data-i18n="Blank">Blank</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- Front Pages -->
+        <li class='menu-item@(currentPage.StartsWith("/FrontPages/") ? " active open" : "")'>
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class='menu-icon tf-icons ri-file-copy-line'></i>
+                <div data-i18n="Front Pages">Front Pages</div>
+            </a>
+            <ul class="menu-sub">
+                <li class='menu-item@(currentPage == "/FrontPages/LandingPage" ? " active" : "")'>
+                    <a asp-page="/FrontPages/LandingPage" class="menu-link" target="_blank">
+                        <div data-i18n="Landing">Landing</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/FrontPages/PricingPage" ? " active" : "")'>
+                    <a asp-page="/FrontPages/PricingPage" class="menu-link" target="_blank">
+                        <div data-i18n="Pricing">Pricing</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/FrontPages/PaymentPage" ? " active" : "")'>
+                    <a asp-page="/FrontPages/PaymentPage" class="menu-link" target="_blank">
+                        <div data-i18n="Payment">Payment</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/FrontPages/CheckoutPage" ? " active" : "")'>
+                    <a asp-page="/FrontPages/CheckoutPage" class="menu-link" target="_blank">
+                        <div data-i18n="Checkout">Checkout</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/FrontPages/HelpCenterLanding" ? " active" : "")'>
+                    <a asp-page="/FrontPages/HelpCenterLanding" class="menu-link" target="_blank">
+                        <div data-i18n="Help Center">Help Center</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+    </ul>
+
+</aside>
+<!-- / Menu -->

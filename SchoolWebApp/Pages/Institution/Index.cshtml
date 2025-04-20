@@ -1,0 +1,142 @@
+﻿@page
+@model SchoolSoft.Pages.Institution.IndexModel
+
+@{
+    ViewData["Title"] = "List of Institutions";
+}
+
+@section VendorStyles
+{
+    <link rel="stylesheet" href="~/vendor/libs/datatables-bs5/datatables.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.dist.css" />
+    <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
+}
+
+@section VendorScripts {
+    <script src="~/vendor/libs/moment/moment.dist.js"></script>
+    <script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
+    <script src="~/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/popular.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/bootstrap5.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/auto-focus.dist.js"></script>
+    <script src="~/vendor/libs/cleavejs/cleave.dist.js"></script>
+    <script src="~/vendor/libs/cleavejs/cleave-phone.dist.js"></script>
+}
+@section PageScripts
+{
+@* <script src="~/js/institution-crud.dist.js"></script> *@
+    <script src="~/js/manageinstitution.js"></script>
+}
+
+@if (Model?.Institutions != null && Model.Institutions.Any())
+{
+    var kk = 0;
+    <div class="card">
+        <div class="card-header pb-0">
+            <h5 class="card-title mb-0">Manage Institution</h5>
+        </div>
+        <div class="card-datatable table-responsive">
+            <table id="InstitutionTable" class="table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Institution Name</th>
+                        <th>Description</th>
+                        <th>Short Code</th>
+                        <th>Package Type</th>
+                        <th>Status</th>
+                        <th>Logo</th>
+                        <th>Website</th>
+                        <th>Created Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Institutions)
+                    {
+                        kk = kk + 1; var tcc = "inst-name-full-" + item.InstitutionID;
+
+                        <tr data-id="@item.InstitutionID">
+                            <td>@kk</td>
+                            <td class="@tcc">@item.InstitutionName</td>
+                            <td>@item.Description</td>
+                            <td>@item.ShortCode</td>
+                            <td>@Html.Raw(PageHelpers.GetPackageBadge(item.PackageType))</td>
+                            <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>
+                            <td>@Html.Raw(PageHelpers.GetLogoHtml(item.LogoUrl))</td>
+                            <td>@Html.Raw(PageHelpers.GetWebsiteLink(item.WebsiteUrl))</td>
+                            <td>@item.CreatedDate.ToString("dd MMM yyyy")</td>
+                            <td class="text-nowrap">
+                                <div class="col-md-12 text-center">
+                                    <!-- Edit Button -->
+                                    <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editInstitutionOffcanvas_@item.InstitutionID">
+                                        <i class="ri-edit-box-line ri-20px"></i>
+                                    </button>
+                                    <!-- Render Partial with Simplified View Model -->
+                                    @await Html.PartialAsync("~/Pages/Institution/Edit.cshtml", new
+                                        {
+                                            Institution = item                                           
+                                        })
+
+                                    <!-- Delete Button -->
+                                    <form method="post" id="deleteInstitutionForm-@item.InstitutionID" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.InstitutionID" />
+                                        <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteConfirmation('@item.InstitutionID')">
+                                            <i class="ri-delete-bin-7-line ri-20px"></i>
+                                        </button>
+                                    </form>
+
+                                    <!-- Dropdown for Additional Actions -->
+                                    @*     <div class="btn-group d-inline">
+                                        <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="ri-more-2-line ri-20px"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="/Admin/ViewInstitution?id=@item.InstitutionID">View</a></li>
+                                            <li><a class="dropdown-item" href="/Admin/SuspendInstitution?id=@item.InstitutionID">Suspend</a></li>
+                                        </ul>
+                                    </div> *@
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Manage Institution</h5>
+        </div>
+        <div class="card-datatable table-responsive">
+            <table id="InstitutionTable" class="table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Institution Name</th>
+                        <th>Description</th>
+                        <th>Short Code</th>
+                        <th>Package Type</th>
+                        <th>Status</th>
+                        <th>Logo</th>
+                        <th>Website</th>
+                        <th>Created Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @* <tr><td colspan="10"></td></tr> *@
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<!-- Include CreateInstitution Offcanvas with Correct Model -->
+@await Html.PartialAsync("~/Pages/Institution/Create.cshtml")
+

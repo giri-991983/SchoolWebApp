@@ -1,0 +1,60 @@
+@model SchoolSoft.Pages.Institution.CreateModel
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="createInstitutionOffcanvas" aria-labelledby="createInstitutionOffcanvasLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="createInstitutionOffcanvasLabel"> Add Institution Details </h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body mx-0 flex-grow-0">
+        <form id="createInstitutionForm" method="post" enctype="multipart/form-data">
+
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Institution.InstitutionName" autocomplete="off" class="form-control" id="InstitutionName" placeholder="Institution Name" />
+                <label for="InstitutionName">Institution Name</label>
+            </div>
+
+
+            <div class="form-floating form-floating-outline mb-5">
+                <textarea asp-for="Institution.Description" class="form-control" style="height: 100px;" id="Description" placeholder="Description"
+                          aria-label="john.doe@example.com"></textarea>
+                <label for="Description">Description</label>
+            </div>
+
+
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Institution.ShortCode" id="ShortCode" autocomplete="off" class="form-control" placeholder="Short Code" />
+                <label for="ShortCode">Short Code</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-5">
+                <select asp-for="Institution.PackageType" id="PackageType" class="form-select">
+                    <option value="">Select Package</option>
+                    @foreach (var item in Model.PackageTypes)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+                <label for="PackageType">Package Type</label>
+            </div>          
+
+            <div class="form-floating form-floating-outline mb-5">
+                <input type="file" asp-for="LogoFile" id="LogoFile" class="form-control" accept=".jpg,.jpeg,.png" />
+                <label for="LogoFile">Upload Logo</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-5">
+                <input type="url" asp-for="Institution.WebsiteUrl" autocomplete="off" id="WebsiteUrl" class="form-control" placeholder="Website URL" />
+                <label for="WebsiteUrl">Website URL</label>
+            </div>
+
+
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-3">Submit</button>
+                    <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
