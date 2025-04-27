@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SchoolSoft.Models
+namespace SchoolWebApp.Models
 {
     public class CampusType
     {

@@ -1,4 +1,4 @@
-@model SchoolSoft.Pages.Institution.CreateModel
+@model SchoolWebApp.Pages.Institution.IndexModel
 
 <div class="offcanvas offcanvas-end" tabindex="-1" id="createInstitutionOffcanvas" aria-labelledby="createInstitutionOffcanvasLabel">
     <div class="offcanvas-header border-bottom">
@@ -7,6 +7,9 @@
     </div>
     <div class="offcanvas-body mx-0 flex-grow-0">
         <form id="createInstitutionForm" method="post" enctype="multipart/form-data">
+
+            <input type="hidden" asp-for="Institution.IGUID" />
+            <input type="hidden" asp-for="Institution.CreatedDate" />
 
             <div class="form-floating form-floating-outline mb-5">
                 <input asp-for="Institution.InstitutionName" autocomplete="off" class="form-control" id="InstitutionName" placeholder="Institution Name" />
@@ -35,7 +38,18 @@
                     }
                 </select>
                 <label for="PackageType">Package Type</label>
-            </div>          
+            </div>
+
+            @*  <div class="form-floating form-floating-outline mb-5">
+                <select asp-for="Institution.Status" id="Status" class="form-select">
+                    <option value="">Select Status</option>
+                    @foreach (var item in Model.Statuses)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+                <label for="Status">Status</label>
+            </div> *@
 
             <div class="form-floating form-floating-outline mb-5">
                 <input type="file" asp-for="LogoFile" id="LogoFile" class="form-control" accept=".jpg,.jpeg,.png" />

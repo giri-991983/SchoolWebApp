@@ -7,8 +7,10 @@
     </div>
     <div class="offcanvas-body mx-0 flex-grow-0">
         <form id="editInstitutionForm" method="post" enctype="multipart/form-data" data-id="@Model.Institution.InstitutionID">
-            @*@Html.AntiForgeryToken() *@
+
             <input type="hidden" name="Institution.InstitutionID" value="@Model.Institution.InstitutionID" />
+            <input type="hidden" name="Institution.IGUID" value="@Model.Institution.IGUID" />
+            <input type="hidden" name="Institution.CreatedDate" value="@Model.Institution.CreatedDate" />
 
             <div class="form-floating form-floating-outline mb-5">
                 <input type="text" name="Institution.InstitutionName" id="EditInstitutionName_@Model.Institution.InstitutionID" class="form-control" placeholder="Institution Name" value="@Model.Institution.InstitutionName" />
@@ -52,7 +54,6 @@
                 <label for="EditLogoFile_@Model.Institution.InstitutionID">Upload New Logo</label>
             </div>
             <div class="form-floating form-floating-outline mb-5">
-                <!-- Display the existing logo if it exists -->
                 @if (!string.IsNullOrEmpty(Model.Institution.LogoUrl))
                 {
                     <div class="mb-3">
@@ -62,9 +63,10 @@
                 }
             </div>
             <div class="form-floating form-floating-outline mb-5">
-                <input type="url" name="Institution.WebsiteUrl" id="EditWebsiteUrl_@Model.Institution.InstitutionID" class="form-control" placeholder="Website URL" value="@Model.Institution.WebsiteUrl" />
+                <input type="url" name="Institution.WebsiteUrl" id="EditWebsiteUrl_@Model.Institution.InstitutionID" class="form-control" autocomplete="off" placeholder="Website URL" value="@Model.Institution.WebsiteUrl" />
                 <label for="EditWebsiteUrl_@Model.Institution.InstitutionID">Website URL</label>
             </div>
+                      
 
             <div class="row">
                 <div class="col-12">

@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
-using SchoolSoft.Data;
-using SchoolSoft.Models;
+using SchoolWebApp.Data;
+using SchoolWebApp.Models;
 using System;
-namespace SchoolSoft.Pages.Zone
+namespace SchoolWebApp.Pages.Zone
 {
     public class EditModel : PageModel
     {
@@ -19,8 +19,8 @@ namespace SchoolSoft.Pages.Zone
         }
 
         [BindProperty]
-        public SchoolSoft.Models.Zone? Zone { get; set; }
-        public IList<SchoolSoft.Models.Institution>? Institutions { get; set; }
+        public SchoolWebApp.Models.Zone? Zone { get; set; }
+        public IList<SchoolWebApp.Models.Institution>? Institutions { get; set; }
 
         public IList<SelectListItem> Statuses { get; set; } = new List<SelectListItem>
         {

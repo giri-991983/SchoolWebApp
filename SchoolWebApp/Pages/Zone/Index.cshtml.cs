@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using SchoolSoft.Data;
-using SchoolSoft.Models;
+using SchoolWebApp.Data;
+using SchoolWebApp.Models;
 using System;
-namespace SchoolSoft.Pages.Zone
+namespace SchoolWebApp.Pages.Zone
 {
     public class IndexModel : PageModel
     {
@@ -16,7 +16,7 @@ namespace SchoolSoft.Pages.Zone
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }       
-        public IList<SchoolSoft.Models.Zone>? Zones { get; set; }       
+        public IList<SchoolWebApp.Models.Zone>? Zones { get; set; }       
       
 
         public async Task OnGetAsync()

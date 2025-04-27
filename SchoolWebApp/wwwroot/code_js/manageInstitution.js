@@ -16,7 +16,7 @@ $(document).ready(function () {
 
     // User List DataTable Initialization (For User CRUD Page)
     $('#InstitutionTable').DataTable({
-        order: [[9, 'desc']],
+        order: [[1, 'asc']],
         displayLength: 20,
         dom:
             // Datatable DOM positioning
@@ -371,7 +371,7 @@ function CreateNewInstituionDtaa(form) {
     console.log('Create form data:', Array.from(formData.entries()));
 
     $.ajax({
-        url: '/Admin/InstitutionIndex?handler=CreateInstitution',
+        url: '/Institution/Index?handler=CreateInstitution',
         type: 'POST',
         data: formData,
         processData: false,
@@ -476,7 +476,7 @@ function showDeleteConfirmation(institutionId) {
 function DeleteInstitutionData(institutionId) {
     debugger;
     $.ajax({
-        url: '/Admin/InstitutionIndex?handler=DeleteInstitution',
+        url: '/Institution/Index?handler=DeleteInstitution',
         type: 'POST',
         data: { id: institutionId },
         headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
@@ -579,10 +579,10 @@ const fv122 = FormValidation.formValidation(EdiNewrForm, {
     }
 })
     .on('core.form.valid', function () {
-        
+
         UpdateNewInstituionDtaa(EdiNewrForm)
     })
-    .on('core.form.invalid', function () {       
+    .on('core.form.invalid', function () {
         return;
     });
 
@@ -593,7 +593,7 @@ function UpdateNewInstituionDtaa(form) {
     console.log('Create form data:', Array.from(formData.entries()));
 
     $.ajax({
-        url: '/Admin/InstitutionIndex?handler=EditInstitution',
+        url: '/Institution/Index?handler=EditInstitution',
         type: 'POST',
         data: formData,
         processData: false,
