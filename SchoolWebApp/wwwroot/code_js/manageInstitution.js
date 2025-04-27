@@ -530,8 +530,6 @@ function DeleteInstitutionData(institutionId) {
     });
 }
 
-
-
 const EdiNewrForm = document.getElementById('editInstitutionForm');
 
 const fv122 = FormValidation.formValidation(EdiNewrForm, {
