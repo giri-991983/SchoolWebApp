@@ -1,12 +1,15 @@
-﻿@model SchoolWebApp.Pages.Zone.CreateModel
+﻿@model SchoolWebApp.Pages.Zone.IndexModel
 <div class="offcanvas offcanvas-end" tabindex="-1" id="createZoneOffcanvas" aria-labelledby="createZoneOffcanvasLabel">
     <div class="offcanvas-header border-bottom">
         <h5 class="offcanvas-title" id="createZoneOffcanvasLabel">Add Zone</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body mx-0 flex-grow-0">
-        <form id="createZoneForm" method="post" enctype="multipart/form-data" asp-page-handler="CreateZone">
-            @Html.AntiForgeryToken()
+        <form id="createZoneForm" method="post" enctype="multipart/form-data" >
+           @*  @Html.AntiForgeryToken() *@
+            <input type="hidden" asp-for="Zone.ZGUID" />
+            <input type="hidden" asp-for="Zone.CreatedDate" />
+            <input type="hidden" asp-for="Zone.Status" value="1" />
             <div class="form-floating form-floating-outline mb-4">
                 <select name="Zone.InstitutionID" id="InstitutionID" class="form-control">
                     <option value="">Select Institution</option>
@@ -17,12 +20,7 @@
                 </select>
                 <label for="InstitutionID">Institution</label>
                 <span class="text-danger"></span>
-            </div>
-            <div class="form-floating form-floating-outline mb-4">
-                <input type="text" name="Zone.ZGUID" id="ZGUID" class="form-control" />
-                <label for="ZGUID">ZGUID</label>
-                <span class="text-danger"></span>
-            </div>
+            </div>           
             <div class="form-floating form-floating-outline mb-4">
                 <input type="text" name="Zone.ZoneName" id="ZoneName" class="form-control" />
                 <label for="ZoneName">Zone Name</label>

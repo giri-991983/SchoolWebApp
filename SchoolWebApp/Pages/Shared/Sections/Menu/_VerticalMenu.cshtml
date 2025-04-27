@@ -32,6 +32,12 @@
                 <div data-i18n="Manage Institution"> Manage Institution </div>
             </a>
         </li>
+        <li class='menu-item@(currentPage == "/Zone/Index" ? " active" : "")'>
+            <a asp-page="/Zone/Index" class="menu-link">
+                <i class="menu-icon tf-icons ri-database-2-line"></i>
+                <div data-i18n="Manage Zones"> Manage Zones </div>
+            </a>
+        </li>
 
         <!-- Dashboards -->
         <li class='menu-item@(currentPage.StartsWith("/Dashboards/") ? " active open" : "")'>

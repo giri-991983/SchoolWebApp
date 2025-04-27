@@ -1,12 +1,13 @@
 ﻿'use strict';
 
 $(document).ready(function () {
-    console.log('jQuery initialized for Zone management');
+    
+   // console.log('jQuery initialized for Zone management');
 
     // Dependency Checks
-    if (typeof $.fn.dataTable === 'undefined') console.error('DataTables not loaded');
-    if (typeof $.fn.validate === 'undefined') console.error('jQuery Validate not loaded');
-    if (typeof Swal === 'undefined') console.error('SweetAlert2 not loaded');
+    //if (typeof $.fn.dataTable === 'undefined') console.error('DataTables not loaded');
+    //if (typeof $.fn.validate === 'undefined') console.error('jQuery Validate not loaded');
+    //if (typeof Swal === 'undefined') console.error('SweetAlert2 not loaded');
 
     // DataTable Initialization
     const $dataTable = $('#ZoneTable');
@@ -16,7 +17,7 @@ $(document).ready(function () {
         if (typeof $.fn.DataTable === 'function') {
             dataTable = $dataTable.DataTable({
                 order: [[0, 'asc']],
-                pageLength: 7,
+                pageLength: 20,
                 dom:
                     '<"row pb-2 pb-md-0"' +
                     '<"col-md-2"<l>>' +
@@ -26,7 +27,7 @@ $(document).ready(function () {
                     '<"col-sm-12 col-md-6"i>' +
                     '<"col-sm-12 col-md-6"p>' +
                     '>',
-                lengthMenu: [7, 10, 15, 20],
+                lengthMenu: [20, 25, 30, 35],
                 language: {
                     lengthMenu: '_MENU_',
                     search: '',
@@ -42,11 +43,11 @@ $(document).ready(function () {
                         className: 'btn btn-outline-secondary dropdown-toggle me-4 waves-effect waves-light',
                         text: '<i class="ri-download-line ri-16px me-1"></i><span class="d-none d-sm-inline-block">Export</span>',
                         buttons: [
-                            { extend: 'print', title: 'Zone Data', text: '<i class="ri-printer-line me-1"></i>Print', className: 'dropdown-item', exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6] } },
-                            { extend: 'csv', title: 'Zones', text: '<i class="ri-file-text-line me-1"></i>CSV', className: 'dropdown-item', exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6] } },
-                            { extend: 'excel', title: 'Zones', text: '<i class="ri-file-excel-line me-1"></i>Excel', className: 'dropdown-item', exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6] } },
-                            { extend: 'pdf', title: 'Zones', text: '<i class="ri-file-pdf-line me-1"></i>PDF', className: 'dropdown-item', exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6] } },
-                            { extend: 'copy', title: 'Zones', text: '<i class="ri-file-copy-line me-1"></i>Copy', className: 'dropdown-item', exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6] } }
+                            { extend: 'print', title: 'Zone Data', text: '<i class="ri-printer-line me-1"></i>Print', className: 'dropdown-item', exportOptions: { columns: [0, 1, 2, 3, 4] } },
+                            { extend: 'csv', title: 'Zones', text: '<i class="ri-file-text-line me-1"></i>CSV', className: 'dropdown-item', exportOptions: { columns: [0, 1, 2, 3, 4] } },
+                            { extend: 'excel', title: 'Zones', text: '<i class="ri-file-excel-line me-1"></i>Excel', className: 'dropdown-item', exportOptions: { columns: [0, 1, 2, 3, 4] } },
+                            { extend: 'pdf', title: 'Zones', text: '<i class="ri-file-pdf-line me-1"></i>PDF', className: 'dropdown-item', exportOptions: { columns: [0, 1, 2, 3, 4] } },
+                            { extend: 'copy', title: 'Zones', text: '<i class="ri-file-copy-line me-1"></i>Copy', className: 'dropdown-item', exportOptions: { columns: [0, 1, 2, 3, 4] } }
                         ]
                     },
                     {
@@ -55,20 +56,19 @@ $(document).ready(function () {
                         attr: { 'data-bs-toggle': 'offcanvas', 'data-bs-target': '#createZoneOffcanvas' }
                     }
                 ],
-                responsive: true,
+                responsive: true,             
                 columnDefs: [
-                    { targets: 0, responsivePriority: 1 }, // ZoneID
-                    { targets: 1, responsivePriority: 2 }, // ZoneName
-                    { targets: 2, responsivePriority: 3 }, // ZGUID
-                    { targets: 3, responsivePriority: 4 }, // Institution
-                    { targets: 4, responsivePriority: 5 }, // ShortCode
-                    { targets: 5, responsivePriority: 6 }, // Status
-                    { targets: 6, responsivePriority: 7 }, // CreatedDate
+                    
+                    { targets: 0, responsivePriority: 1 }, // ZoneName                    
+                    { targets: 1, responsivePriority: 2 }, // Institution
+                    { targets: 2, responsivePriority: 3 }, // ShortCode
+                    { targets: 3, responsivePriority: 4 }, // Status
+                    { targets: 4, responsivePriority: 5 }, // CreatedDate
                     {
-                        targets: -1, // Actions
+                        targets: 5, // Actions
                         searchable: false,
                         orderable: false,
-                        responsivePriority: 1,
+                        responsivePriority: 6,
                         render: data => data // Preserve HTML
                     }
                 ],
@@ -112,20 +112,14 @@ $(document).ready(function () {
         console.log(`Setting up validation for: ${formId}`);
         $form.validate({
             rules: {
-                'Zone.InstitutionID': { required: true },
-                'Zone.ZGUID': { required: true, maxlength: 50 },
+                'Zone.InstitutionID': { required: true },             
                 'Zone.ZoneName': { required: true, maxlength: 100 },
-                'Zone.ShortCode': { maxlength: 10 },
-                'Zone.Status': { required: true },
-                'Zone.CreatedDate': { required: true }
+                'Zone.ShortCode': { maxlength: 10 },                
             },
             messages: {
-                'Zone.InstitutionID': 'Select Institution Name',
-                'Zone.ZGUID': { required: 'Please enter ZGUID', maxlength: 'Max 50 characters' },
+                'Zone.InstitutionID': 'Select Institution Name',                
                 'Zone.ZoneName': { required: 'Please enter Zone Name', maxlength: 'Max 100 characters' },
-                'Zone.ShortCode': 'Max 10 characters',
-                'Zone.Status': 'Please enter Status',
-                'Zone.CreatedDate': 'Please enter Created Date'
+                'Zone.ShortCode': 'Max 10 characters',                                
             },
             errorPlacement: (error, element) => {
                 const $errorSpan = element.closest('.form-floating').find('.text-danger');
@@ -163,7 +157,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: '/Zone/ZoneIndex?handler=CreateZone',
+            url: '/Zone/Index?handler=CreateZone',
             type: 'POST',
             data: $form.serialize(),
             headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
@@ -177,10 +171,11 @@ $(document).ready(function () {
                         timer: 1500 // Auto-dismiss after 1.5 seconds
                     }).then(() => {
                         $('#createZoneOffcanvas').offcanvas('hide');
-                        location.reload();
+                        window.location.reload();
                     });
                 } else {
                     Swal.fire('Error', response.message || 'Failed to create zone', 'error');
+                    window.location.reload();
                 }
             },
             error: xhr => {
@@ -201,7 +196,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: '/Zone/ZoneIndex?handler=EditZone',
+            url: '/Zone/Index?handler=EditZone',
             type: 'POST',
             data: $form.serialize(),
             headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
@@ -246,7 +241,7 @@ $(document).ready(function () {
         }).then(result => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/Zone/ZoneIndex?handler=DeleteZone',
+                    url: '/Zone/Index?handler=DeleteZone',
                     type: 'POST',
                     data: { id: zoneId },
                     headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },

@@ -12,13 +12,12 @@ namespace SchoolWebApp.Models
         [ForeignKey("Institution")]
         public int InstitutionID { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string ZGUID { get; set; } 
+       
+        public string? ZGUID { get; set; } 
 
         [Required]
         [StringLength(100)]
-        public string ZoneName { get; set; }
+        public string? ZoneName { get; set; }
 
   
         [StringLength(10)]
@@ -26,18 +25,10 @@ namespace SchoolWebApp.Models
 
         [Required]
         public int Status { get; set; }
-
-        [Required]
+        
         public DateTime CreatedDate { get; set; }
 
-        public virtual Institution? Institution { get; set; }
-        public static string GetStatusBadge(int status)
-        {
-            return status == 1
-                ? "<span class='badge bg-success'>Active</span>"
-                : "<span class='badge bg-danger'>Inactive</span>";
-        }
-
+        public virtual Institution? Institution { get; set; }       
 
     }
 }

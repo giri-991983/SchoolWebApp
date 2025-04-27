@@ -3,142 +3,39 @@
 @{
     ViewData["Title"] = "Zone Management";
 }
-
-@section VendorStyles {
+@section VendorStyles
+{
     <link rel="stylesheet" href="~/vendor/libs/datatables-bs5/datatables.bootstrap5.dist.css">
     <link rel="stylesheet" href="~/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.dist.css">
     <link rel="stylesheet" href="~/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.dist.css">
     <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.dist.css" />
+    <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
 }
 
-@section VendorScripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-    <script src="/vendor/libs/moment/moment.dist.js"></script>
-    <script src="/vendor/libs/datatables/datatables.min.js"></script>
-    <script src="/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
-    <script src="/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+@section VendorScripts
+{
+    <script src="~/vendor/libs/moment/moment.dist.js"></script>
+    <script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
+    <script src="~/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/popular.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/bootstrap5.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/auto-focus.dist.js"></script>
+    <script src="~/vendor/libs/cleavejs/cleave.dist.js"></script>
+    <script src="~/vendor/libs/cleavejs/cleave-phone.dist.js"></script>
 }
 @section PageScripts {
-    <script src="~/js/zone-crud.dist.js"></script>
-    <script>
-        function loadInstitution(zoneId) {
-            console.log("Loading zone with ID: " + zoneId);
-        }
-    </script>
+    <script src="~/code_js/zone-crud.js"></script>  
 }
 
-
-@* User Analytics Widget *@
-<div class="row g-6 mb-6">
-    @* Total Users *@
-    <div class="col-sm-6 col-xl-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div class="me-1">
-                        <p class="text-heading mb-1">Users</p>
-                        <div class="d-flex align-items-center">
-                            @* <h4 class="mb-1 me-2">@Model.TotalUserCount</h4> *@
-                            <p class="text-primary mb-1">(+100%)</p>
-                        </div>
-                        <small class="mb-0">Total Users</small>
-                    </div>
-                    <div class="avatar">
-                        <div class="avatar-initial bg-label-primary rounded">
-                            <div class="ri-user-line ri-26px"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @* Verified Users *@
-    <div class="col-sm-6 col-xl-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div class="me-1">
-                        <p class="text-heading mb-1">Verified Users</p>
-                        <div class="d-flex align-items-center">
-                            @*  <h4 class="mb-1 me-2">@Model.VerifiedUserCount</h4> *@
-                            <p class="text-success mb-1">( +@ViewData["VerifiedUsersPercentage"]% )</p>
-                        </div>
-                        <small class="mb-0">Recent analytics</small>
-                    </div>
-                    <div class="avatar">
-                        <div class="avatar-initial bg-label-success rounded">
-                            <div class="ri-user-follow-line ri-26px"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @* Duplicate Users *@
-    <div class="col-sm-6 col-xl-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div class="me-1">
-                        <p class="text-heading mb-1">Duplicate Users</p>
-                        <div class="d-flex align-items-center">
-                            @* <h4 class="mb-1 me-2">@Model.DuplicateUserCount</h4> *@
-                            <p class="text-danger mb-1">( +@ViewData["DuplicateUsersPercentage"]% )</p>
-                        </div>
-                        <small class="mb-0">Recent analytics</small>
-                    </div>
-                    <div class="avatar">
-                        <div class="avatar-initial bg-label-danger rounded">
-                            <div class="ri-group-line ri-26px"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @* Unverified Users *@
-    <div class="col-sm-6 col-xl-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div class="me-1">
-                        <p class="text-heading mb-1">Unverified Users</p>
-                        <div class="d-flex align-items-center">
-                            @*  <h4 class="mb-1 me-2">@Model.UnverifiedUserCount</h4> *@
-                            <p class="text-warning mb-1">( +@ViewData["UnverifiedUsersPercentage"]% )</p>
-                        </div>
-                        <small class="mb-0">Recent analytics</small>
-                    </div>
-                    <div class="avatar">
-                        <div class="avatar-initial bg-label-warning rounded">
-                            <div class="ri-user-search-line ri-26px"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <div class="container-fluid">
-    <h1 class="mb-4">Zone Management</h1>
-
+    <h2 class="mb-4">Zone Management</h2>
     <!-- DataTable -->
-    <div class="card">
-        <div class="card-header pb-0">
-            <h5 class="card-title mb-0">Search Filter</h5>
-            
-        </div>
+    <div class="card">      
         <div class="card-datatable table-responsive">
             <table id="ZoneTable" class="table">
                 <thead>
-                    <tr>
-                        <th>ZoneID</th>
-                        <th>Zone Name</th>
-                        <th>ZGUID</th>
+                    <tr>                         
+                        <th>Zone Name</th>                      
                         <th>Institution</th>
                         <th>Short Code</th>
                         <th>Status</th>
@@ -151,10 +48,8 @@
                     {
                         @foreach (var zone in Model.Zones)
                         {
-                            <tr data-id="@zone.ZoneID">
-                                <td>@zone.ZoneID</td>
-                                <td>@zone.ZoneName</td>
-                                <td>@zone.ZGUID</td>
+                            <tr data-id="@zone.ZoneID">                                     
+                                <td>@zone.ZoneName</td>                             
                                 <td>@(zone.Institution?.InstitutionName ?? "N/A")</td>
                                 <td>@zone.ShortCode</td>
                                 <td>@Html.Raw(PageHelpers.GetStatusBadge(zone.Status))</td>
@@ -174,7 +69,7 @@
                                                 <i class="ri-delete-bin-7-line ri-20px"></i>
                                             </button>
                                         </form>
-                                        <div class="btn-group d-inline">
+                                      @*   <div class="btn-group d-inline">
                                             <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow"
                                                     data-bs-toggle="dropdown">
                                                 <i class="ri-more-2-line ri-20px"></i>
@@ -183,30 +78,23 @@
                                                 <li><a class="dropdown-item" href="/Admin/ViewInstitution?id=@zone.InstitutionID">View</a></li>
                                                 <li><a class="dropdown-item" href="/Admin/SuspendInstitution?id=@zone.InstitutionID">Suspend</a></li>
                                             </ul>
-                                        </div>
+                                        </div> *@
                                     </div>
-                                </td>
+                                </td>                              
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="8" class="text-center">
-                                @(Model.Zones == null ? "Zones data is null" : "No zones available")
-                            </td>
-                        </tr>
-                    }
+                    }                   
                 </tbody>
             </table>
         </div>
     </div>
 
     <!-- Create Offcanvas -->
-    @await Html.PartialAsync("~/Pages/Zone/Create.cshtml", Model)
+  
+    @await Html.PartialAsync("~/Pages/Zone/_Create.cshtml") 
 
     <!-- Edit Offcanvas for Each Zone -->
-    @if (Model.Zones != null && Model.Zones.Any())
+   @*  @if (Model.Zones != null && Model.Zones.Any())
     {
         @foreach (var zone in Model.Zones)
         {
@@ -217,5 +105,5 @@
     Zones = Model.Zones
 })
         }
-    }
+    } *@
 </div>
