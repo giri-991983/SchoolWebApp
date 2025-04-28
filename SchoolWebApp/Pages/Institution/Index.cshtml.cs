@@ -3,11 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Win32;
-using SchoolSoft.Data;
-using SchoolSoft.Models;
-namespace SchoolSoft.Pages.Institution
+using SchoolWebApp.Data;
+using SchoolWebApp.Models;
+
+namespace SchoolWebApp.Pages.Institution
 {
     public class IndexModel : PageModel
     {
@@ -19,8 +18,15 @@ namespace SchoolSoft.Pages.Institution
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _environment = environment ?? throw new ArgumentNullException(nameof(environment));
         }
-        public CreateModel CreateModel => new CreateModel(_context, _environment);
-        public IList<SchoolSoft.Models.Institution>? Institutions { get; set; }
+
+        public IList<Models.Institution>? Institutions { get; set; }
+        public async Task OnGetAsync()
+        {
+            Institutions = await _context.Institutions.OrderBy(a => a.InstitutionName).ToListAsync();
+        }
+
+
+        #region Add New Institution Data
 
         public List<SelectListItem> PackageTypes { get; set; } = new List<SelectListItem>
         {
@@ -33,19 +39,120 @@ namespace SchoolSoft.Pages.Institution
             new SelectListItem { Value = "1", Text = "Active" },
             new SelectListItem { Value = "0", Text = "Inactive" }
         };
-  
-        public async Task<IActionResult> OnGetAsync()
+
+        [BindProperty]
+        public Models.Institution Institution { get; set; }
+
+        [BindProperty]
+        public IFormFile? LogoFile { get; set; }
+
+        public async Task<IActionResult> OnPostCreateInstitutionAsync()
         {
-            // Populate PackageTypes (example: static list or from DB)
-        
-            Institutions = await _context.Institutions.ToListAsync();
-            return View();
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                Console.WriteLine("ModelState errors: " + string.Join(", ", errors));
+                return new JsonResult(new { success = false, message = "Validation failed", errors });
+            }
+            try
+            {
+                if (LogoFile != null && LogoFile.Length > 0)
+                {
+                    var allowedExtensions = new List<string> { ".jpg", ".jpeg", ".png" };
+                    var uploadsFolder = Path.Combine(_environment.WebRootPath, "img", "InstitutionLogo");
+                    Directory.CreateDirectory(uploadsFolder);
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(LogoFile.FileName);
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await LogoFile.CopyToAsync(stream);
+                    }
+                    Institution.LogoUrl = "/img/InstitutionLogo/" + fileName;
+                }
+
+                Institution.IGUID = System.Guid.NewGuid().ToString().ToUpper();
+                Institution.CreatedDate = DateTime.Now;
+                Institution.Status = 1;
+                _context.Institutions.Add(Institution);
+                await _context.SaveChangesAsync();
+                return new JsonResult(new
+                {
+                    success = true,
+                    message = "Institution created successfully!",
+                    data = new { institutionID = Institution.InstitutionID, logoUrl = Institution.LogoUrl }
+                });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { success = false, message = $"Failed to create institution: {ex.Message}" });
+            }
         }
 
-     
+        #endregion
 
-        public async Task<IActionResult> OnPostDeleteInstitutionAsync(int id )
-        { 
+
+        #region Edit Instutions
+        public async Task<IActionResult> OnPostEditInstitutionAsync()
+        {
+
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return new JsonResult(new { success = false, message = "Validation failed", errors });
+            }
+
+            try
+            {
+                var existingInstitution = await _context.Institutions.FindAsync(Institution.InstitutionID);
+                if (existingInstitution == null)
+                {
+                    return new JsonResult(new { success = false, message = "Institution not found" });
+                }
+
+                if (LogoFile != null && LogoFile.Length > 0)
+                {
+                    var allowedExtensions = new List<string> { ".jpg", ".jpeg", ".png" };
+
+                    var uploadsFolder = Path.Combine(_environment.WebRootPath, "img", "InstitutionLogo");
+                    Directory.CreateDirectory(uploadsFolder);
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(LogoFile.FileName);
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await LogoFile.CopyToAsync(stream);
+                    }
+
+                    if (!string.IsNullOrEmpty(existingInstitution.LogoUrl))
+                    {
+                        var oldFilePath = Path.Combine(_environment.WebRootPath, existingInstitution.LogoUrl.TrimStart('/'));
+                        if (System.IO.File.Exists(oldFilePath))
+                        {
+                            System.IO.File.Delete(oldFilePath);
+                        }
+                    }
+                    Institution.LogoUrl = "/img/InstitutionLogo/" + fileName;
+                }
+                else
+                {
+                    Institution.LogoUrl = existingInstitution.LogoUrl;
+                }
+
+                _context.Entry(existingInstitution).CurrentValues.SetValues(Institution);
+                await _context.SaveChangesAsync();
+                return new JsonResult(new { success = true, message = "Institution updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { success = false, message = $"Failed to update institution: {ex.Message}" });
+            }
+        }
+
+        public async Task<IActionResult> OnPostDeleteInstitutionAsync(int id)
+        {
             if (id <= 0)
             {
                 return new JsonResult(new { success = false, message = "Invalid institution ID" });
@@ -77,5 +184,9 @@ namespace SchoolSoft.Pages.Institution
                 return new JsonResult(new { success = false, message = $"Failed to delete institution: {ex.Message}" });
             }
         }
+
+        #endregion
+
+
     }
 }

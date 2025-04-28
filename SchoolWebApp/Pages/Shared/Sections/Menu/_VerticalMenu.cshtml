@@ -32,6 +32,12 @@
                 <div data-i18n="Manage Institution"> Manage Institution </div>
             </a>
         </li>
+        <li class='menu-item@(currentPage == "/Zone/Index" ? " active" : "")'>
+            <a asp-page="/Zone/Index" class="menu-link">
+                <i class="menu-icon tf-icons ri-database-2-line"></i>
+                <div data-i18n="Manage Zones"> Manage Zones </div>
+            </a>
+        </li>
 
         <!-- Dashboards -->
         <li class='menu-item@(currentPage.StartsWith("/Dashboards/") ? " active open" : "")'>
@@ -41,11 +47,7 @@
                 <div class="badge bg-danger rounded-pill ms-auto">5</div>
             </a>
             <ul class="menu-sub">
-                <li class='menu-item@(currentPage == "/Admin/AllBranchesData" ? " active" : "")'>
-                    <a asp-page="/Admin/AllBranchesData" class="menu-link">
-                        <div data-i18n="View Branches"> View Branches </div>
-                    </a>
-                </li>
+
                 <li class='menu-item@(currentPage == "/Dashboards/Analytics" ? " active" : "")'>
                     <a asp-page="/Dashboards/Analytics" class="menu-link">
                         <div data-i18n="Analytics">Analytics</div>

@@ -1,4 +1,4 @@
-﻿namespace SchoolSoft.Pages
+﻿namespace SchoolWebApp
 {
     public class PageHelpers
     {

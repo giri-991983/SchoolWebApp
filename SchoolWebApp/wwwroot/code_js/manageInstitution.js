@@ -16,7 +16,7 @@ $(document).ready(function () {
 
     // User List DataTable Initialization (For User CRUD Page)
     $('#InstitutionTable').DataTable({
-        order: [[9, 'desc']],
+        order: [[1, 'asc']],
         displayLength: 20,
         dom:
             // Datatable DOM positioning
@@ -372,7 +372,7 @@ function CreateNewInstituionDtaa(form) {
     console.log('Create form data:', Array.from(formData.entries()));
 
     $.ajax({
-        url: '/Institution/Create',
+        url: '/Admin/InstitutionIndex?handler=CreateInstitution',
         type: 'POST',
         data: formData,
         processData: false,
@@ -531,8 +531,6 @@ function DeleteInstitutionData(institutionId) {
     });
 }
 
-
-
 const EdiNewrForm = document.getElementById('editInstitutionForm');
 
 const fv122 = FormValidation.formValidation(EdiNewrForm, {
@@ -580,10 +578,10 @@ const fv122 = FormValidation.formValidation(EdiNewrForm, {
     }
 })
     .on('core.form.valid', function () {
-        
+
         UpdateNewInstituionDtaa(EdiNewrForm)
     })
-    .on('core.form.invalid', function () {       
+    .on('core.form.invalid', function () {
         return;
     });
 
@@ -594,7 +592,7 @@ function UpdateNewInstituionDtaa(form) {
     console.log('Create form data:', Array.from(formData.entries()));
 
     $.ajax({
-        url: '/Institution?handler=Edit',
+        url: '/Admin/InstitutionIndex?handler=EditInstitution',
         type: 'POST',
         data: formData,
         processData: false,

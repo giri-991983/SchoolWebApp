@@ -1,6 +1,5 @@
 ﻿@page
-@model SchoolSoft.Pages.Institution.IndexModel
-
+@model SchoolWebApp.Pages.Institution.IndexModel
 @{
     ViewData["Title"] = "List of Institutions";
 
@@ -20,7 +19,8 @@
     <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
 }
 
-@section VendorScripts {
+@section VendorScripts
+{
     <script src="~/vendor/libs/moment/moment.dist.js"></script>
     <script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
     <script src="~/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
@@ -32,8 +32,7 @@
 }
 @section PageScripts
 {
-@* <script src="~/js/institution-crud.dist.js"></script> *@
-    <script src="~/js/manageinstitution.js"></script>
+    <script src="~/code_js/manageinstitution.js"></script>
 }
 
 @if (Model?.Institutions != null && Model.Institutions.Any())
@@ -73,19 +72,18 @@
                             <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>
                             <td>@Html.Raw(PageHelpers.GetLogoHtml(item.LogoUrl))</td>
                             <td>@Html.Raw(PageHelpers.GetWebsiteLink(item.WebsiteUrl))</td>
-                            <td>@item.CreatedDate.ToString("dd MMM yyyy")</td>
+                            <td>@Convert.ToDateTime(item.CreatedDate).ToString("dd MMM yyyy")</td>
                             <td class="text-nowrap">
                                 <div class="col-md-12 text-center">
                                     <!-- Edit Button -->
                                     <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editInstitutionOffcanvas_@item.InstitutionID">
                                         <i class="ri-edit-box-line ri-20px"></i>
                                     </button>
-                                    <!-- Render Partial with Simplified View Model -->
-                                @*     @await Html.PartialAsync("~/Pages/Institution/Edit.cshtml", new
+                                    @await Html.PartialAsync("~/Pages/Institution/_Edit.cshtml", new
                                         {
-                                            Institution = item ,
+                                            Institution = item,
                                             PackageTypes = Model.PackageTypes,
-                                            Statuses=Model.Statuses
+                                            Statuses = Model.Statuses
                                         })
  *@
                                     <!-- Delete Button -->
@@ -138,12 +136,10 @@ else
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @* <tr><td colspan="10"></td></tr> *@
-                </tbody>
+                <tbody> </tbody>
             </table>
         </div>
     </div>
 }
- 
-  @await Html.PartialAsync("~/Pages/Institution/Create.cshtml", Model.CreateModel,createViewData)   
+
+@await Html.PartialAsync("~/Pages/Institution/_Create.cshtml")

@@ -4,30 +4,28 @@
     ViewData["main"] = isFront ? "front-" : "";
     ViewData["frontVar"] = isFront ? "Front" : "";
     @* Compact/Fluid class *@
-    ViewData["contentType"] = ViewData["container"] is string container && container == "container-xxl" ? "layout-compact" :
-    "layout-wide";
+    ViewData["contentType"] = ViewData["container"] is string container && container == "container-xxl" ? "layout-compact" : "layout-wide";
 }
 
 @inject IHttpContextAccessor httpContextAccessor
 
 <!DOCTYPE html>
 <html lang="en"
-      class='light-style @(ViewData["navbarType"] is string navbarType ? navbarType : "") @(ViewData["menuFixed"] is string menuFixed ? menuFixed : "") @(ViewData["menuCollapsed"] is string menuCollapsed ? menuCollapsed : "") @(ViewData["contentType"] is string contentType ? contentType : "") @(ViewData["footerFixed"] is string footerFixed ? footerFixed : "") @(ViewData["customizerHidden"] is string customizerHidden ? customizerHidden : "")'
+      class='light-style @(ViewData["navbarType"] is string navbarType ? navbarType : "") @(ViewData["menuFixedmenuFixed"] is string menuFixed ? menuFixed : "") @(ViewData["menuCollapsed"] is string menuCollapsed ? menuCollapsed : "") @(ViewData["contentType"] is string contentType ? contentType : "") @(ViewData["footerFixed"] is string footerFixed ? footerFixed : "") @(ViewData["customizerHidden"] is string customizerHidden ? customizerHidden : "")'
       dir="ltr" data-theme="theme-default"
       data-assets-path='@((httpContextAccessor.HttpContext?.Request.PathBase ?? "") + "/")'
       data-template='@(isFront ? "front-page" : (Convert.ToBoolean(TempData.Peek("menuHorizontal")?.ToString()) ? "horizontal-menu-template" : "vertical-menu-template"))'>
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
     @{
         string title = ViewData["title"] as string ?? "";
         string appName = TempData.Peek("appName") as string ?? "";
         string productPage = TempData.Peek("productPage") as string ?? "";
     }
-    <title>@title | @appName - Asp.Net Core Admin Template</title>
+    <title>@title | @appName </title>
     <meta name="description" content="" />
 
     <!-- Canonical SEO -->

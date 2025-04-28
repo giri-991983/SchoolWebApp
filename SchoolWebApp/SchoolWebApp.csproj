@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\Institution\InstitutionsDetails.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\Institution\InstitutionsDetails.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Pages\Campus\" />
   </ItemGroup>
 

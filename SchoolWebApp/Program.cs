@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using SchoolSoft.Models;
-using SchoolSoft.Data;
+using SchoolWebApp.Models;
+using SchoolWebApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
