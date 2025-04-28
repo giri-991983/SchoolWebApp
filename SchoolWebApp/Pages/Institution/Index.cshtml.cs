@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Win32;
 using SchoolSoft.Data;
 using SchoolSoft.Models;
 namespace SchoolSoft.Pages.Institution
@@ -17,14 +19,31 @@ namespace SchoolSoft.Pages.Institution
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _environment = environment ?? throw new ArgumentNullException(nameof(environment));
         }
-
+        public CreateModel CreateModel => new CreateModel(_context, _environment);
         public IList<SchoolSoft.Models.Institution>? Institutions { get; set; }
 
-
-        public async Task OnGetAsync()
+        public List<SelectListItem> PackageTypes { get; set; } = new List<SelectListItem>
         {
+            new SelectListItem { Value = "1", Text = "Basic" },
+            new SelectListItem { Value = "2", Text = "Standard" },
+            new SelectListItem { Value = "3", Text = "Premium" }
+        };
+        public List<SelectListItem> Statuses { get; set; } = new List<SelectListItem>
+        {
+            new SelectListItem { Value = "1", Text = "Active" },
+            new SelectListItem { Value = "0", Text = "Inactive" }
+        };
+  
+        public async Task<IActionResult> OnGetAsync()
+        {
+            // Populate PackageTypes (example: static list or from DB)
+        
             Institutions = await _context.Institutions.ToListAsync();
+            return View();
         }
+
+     
+
         public async Task<IActionResult> OnPostDeleteInstitutionAsync(int id )
         { 
             if (id <= 0)

@@ -3,6 +3,12 @@
 
 @{
     ViewData["Title"] = "List of Institutions";
+
+    var createViewData = new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<SchoolSoft.Pages.Institution.CreateModel>(
+        new Microsoft.AspNetCore.Mvc.ModelBinding.EmptyModelMetadataProvider(),
+        new Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary()
+    )
+            { Model = Model.CreateModel };
 }
 
 @section VendorStyles
@@ -75,11 +81,13 @@
                                         <i class="ri-edit-box-line ri-20px"></i>
                                     </button>
                                     <!-- Render Partial with Simplified View Model -->
-                                    @await Html.PartialAsync("~/Pages/Institution/Edit.cshtml", new
+                                @*     @await Html.PartialAsync("~/Pages/Institution/Edit.cshtml", new
                                         {
-                                            Institution = item                                           
+                                            Institution = item ,
+                                            PackageTypes = Model.PackageTypes,
+                                            Statuses=Model.Statuses
                                         })
-
+ *@
                                     <!-- Delete Button -->
                                     <form method="post" id="deleteInstitutionForm-@item.InstitutionID" class="d-inline">
                                         @Html.AntiForgeryToken()
@@ -137,6 +145,5 @@ else
         </div>
     </div>
 }
-<!-- Include CreateInstitution Offcanvas with Correct Model -->
-@await Html.PartialAsync("~/Pages/Institution/Create.cshtml")
-
+ 
+  @await Html.PartialAsync("~/Pages/Institution/Create.cshtml", Model.CreateModel,createViewData)   

@@ -12,6 +12,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("dbcs")));
+builder.Services.AddSingleton<IWebHostEnvironment>(env => builder.Environment);
 
 
 var app = builder.Build();

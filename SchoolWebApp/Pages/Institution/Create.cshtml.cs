@@ -16,6 +16,7 @@ namespace SchoolSoft.Pages.Institution
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _environment = environment ?? throw new ArgumentNullException(nameof(environment));
+            Institution = new SchoolSoft.Models.Institution();
         }
         
         [BindProperty]
@@ -29,10 +30,12 @@ namespace SchoolSoft.Pages.Institution
             new SelectListItem { Value = "1", Text = "Basic" },
             new SelectListItem { Value = "2", Text = "Standard" },
             new SelectListItem { Value = "3", Text = "Premium" }
-        };      
+        };
+       
 
         public IActionResult OnGet()
         {
+           
             return Page();
         }
 
@@ -47,36 +50,30 @@ namespace SchoolSoft.Pages.Institution
             }
             try
             {
-                if (Institution != null)
-                {
-                    if (LogoFile != null && LogoFile.Length > 0)
-                    {
-                        var allowedExtensions = new List<string> { ".jpg", ".jpeg", ".png" };
-                        var uploadsFolder = Path.Combine(_environment.WebRootPath, "img", "InstitutionLogo");
-                        Directory.CreateDirectory(uploadsFolder);
-                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(LogoFile.FileName);
-                        var filePath = Path.Combine(uploadsFolder, fileName);
 
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await LogoFile.CopyToAsync(stream);
-                        }
-                        Institution.LogoUrl = "/img/InstitutionLogo/" + fileName;
+                if (LogoFile != null && LogoFile.Length > 0)
+                {
+                    var allowedExtensions = new List<string> { ".jpg", ".jpeg", ".png" };
+                    var uploadsFolder = Path.Combine(_environment.WebRootPath, "img", "InstitutionLogo");
+                    Directory.CreateDirectory(uploadsFolder);
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(LogoFile.FileName);
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await LogoFile.CopyToAsync(stream);
                     }
+                    Institution.LogoUrl = "/img/InstitutionLogo/" + fileName;
+                }
 
-                    _context.Institutions.Add(Institution);
-                    await _context.SaveChangesAsync();
-                    return new JsonResult(new
-                    {
-                        success = true,
-                        message = "Institution created successfully!",
-                        data = new { institutionID = Institution.InstitutionID, logoUrl = Institution.LogoUrl }
-                    });
-                }
-                else
+                _context.Institutions.Add(Institution);
+                await _context.SaveChangesAsync();
+                return new JsonResult(new
                 {
-                    return new JsonResult(new { success = false, message = $"Failed to create institution" });
-                }
+                    success = true,
+                    message = "Institution created successfully!",
+                    data = new { institutionID = Institution.InstitutionID, logoUrl = Institution.LogoUrl }
+                });
             }
             catch (Exception ex)
             {

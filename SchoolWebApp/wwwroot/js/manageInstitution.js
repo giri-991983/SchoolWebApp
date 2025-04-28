@@ -185,12 +185,13 @@ $(document).ready(function () {
                 ]
             },
             {
-                // For Create User Button (Add New )
                 text: '<i class="ri-add-line ri-16px me-0 me-sm-1_5"></i><span class="d-none d-sm-inline-block">Add Institution</span>',
                 className: 'add-new btn btn-primary waves-effect waves-light',
-                attr: {
-                    'data-bs-toggle': 'offcanvas',
-                    'data-bs-target': '#createInstitutionOffcanvas'
+                action: function () {
+                    // Trigger the offcanvas
+                    var offcanvas = document.getElementById('createInstitutionOffcanvas');
+                    var bsOffcanvas = new bootstrap.Offcanvas(offcanvas);
+                    bsOffcanvas.show();
                 }
             }
         ],
@@ -371,7 +372,7 @@ function CreateNewInstituionDtaa(form) {
     console.log('Create form data:', Array.from(formData.entries()));
 
     $.ajax({
-        url: '/Admin/InstitutionIndex?handler=CreateInstitution',
+        url: '/Institution/Create',
         type: 'POST',
         data: formData,
         processData: false,
@@ -476,7 +477,7 @@ function showDeleteConfirmation(institutionId) {
 function DeleteInstitutionData(institutionId) {
     debugger;
     $.ajax({
-        url: '/Admin/InstitutionIndex?handler=DeleteInstitution',
+        url: '/Institution/Index?handler=DeleteInstitution',
         type: 'POST',
         data: { id: institutionId },
         headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
@@ -593,7 +594,7 @@ function UpdateNewInstituionDtaa(form) {
     console.log('Create form data:', Array.from(formData.entries()));
 
     $.ajax({
-        url: '/Admin/InstitutionIndex?handler=EditInstitution',
+        url: '/Institution?handler=Edit',
         type: 'POST',
         data: formData,
         processData: false,
