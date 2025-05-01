@@ -1,13 +1,10 @@
 ﻿@page
+@using SchoolWebApp
 @model SchoolWebApp.Pages.Institution.IndexModel
 @{
     ViewData["Title"] = "List of Institutions";
 
-    var createViewData = new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<SchoolSoft.Pages.Institution.CreateModel>(
-        new Microsoft.AspNetCore.Mvc.ModelBinding.EmptyModelMetadataProvider(),
-        new Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary()
-    )
-            { Model = Model.CreateModel };
+ 
 }
 
 @section VendorStyles
@@ -75,17 +72,26 @@
                             <td>@Convert.ToDateTime(item.CreatedDate).ToString("dd MMM yyyy")</td>
                             <td class="text-nowrap">
                                 <div class="col-md-12 text-center">
-                                    <!-- Edit Button -->
-                                    <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editInstitutionOffcanvas_@item.InstitutionID">
-                                        <i class="ri-edit-box-line ri-20px"></i>
-                                    </button>
-                                    @await Html.PartialAsync("~/Pages/Institution/_Edit.cshtml", new
-                                        {
-                                            Institution = item,
-                                            PackageTypes = Model.PackageTypes,
-                                            Statuses = Model.Statuses
-                                        })
- *@
+                                   
+                                   
+                                        <!-- Edit Button -->
+                                        <button class="btn btn-sm btn-icon"
+                                                data-bs-toggle="offcanvas"
+                                                data-bs-target="#editInstitutionOffcanvas"
+                                            onclick="editInstitution(@item.InstitutionID)"
+                                                data-id="@item.InstitutionID" >
+                                            <i class="ri-edit-box-line ri-20px"></i>
+                                        </button>
+                                    <!-- Single Offcanvas for Editing -->
+                                    <div class="offcanvas offcanvas-end" tabindex="-1" id="editInstitutionOffcanvas" aria-labelledby="editInstitutionOffcanvasLabel">
+                                        <div class="offcanvas-header">
+                                            <h5 id="editInstitutionOffcanvasLabel" class="offcanvas-title">Edit Institution</h5>
+                                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                        </div>
+                                        <div class="offcanvas-body">
+                                            <div id="editFormContainer"></div>
+                                        </div>
+                                    </div>
                                     <!-- Delete Button -->
                                     <form method="post" id="deleteInstitutionForm-@item.InstitutionID" class="d-inline">
                                         @Html.AntiForgeryToken()

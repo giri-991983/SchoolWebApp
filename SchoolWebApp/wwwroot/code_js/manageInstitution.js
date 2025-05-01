@@ -372,7 +372,7 @@ function CreateNewInstituionDtaa(form) {
     console.log('Create form data:', Array.from(formData.entries()));
 
     $.ajax({
-        url: '/Admin/InstitutionIndex?handler=CreateInstitution',
+        url: '/Institution/Index?handler=CreateInstitution',
         type: 'POST',
         data: formData,
         processData: false,
@@ -531,133 +531,491 @@ function DeleteInstitutionData(institutionId) {
     });
 }
 
-const EdiNewrForm = document.getElementById('editInstitutionForm');
+//$('.edit-institution').on('click', function () {
+//    var institutionId = $(this).data('id');
+//    $.ajax({
+//        url: '/Institution/Index?handler=EditForm',
+//        type: 'GET',
+//        data: { id: institutionId },
+//        success: function (response) {
+//            $('#editFormContainer').html(response);
+//            $('#editInstitutionOffcanvas').offcanvas('show');
+//        },
+//        error: function (xhr, status, error) {
+//            console.error('Error loading edit form:', error);
+//            Swal.fire({
+//                icon: 'error',
+//                title: 'Error',
+//                text: 'Failed to load the edit form. Please try again.',
+//                confirmButtonText: 'OK'
+//            });
+//        }
+//    });
+//});
 
-const fv122 = FormValidation.formValidation(EdiNewrForm, {
-    fields: {
-        'Institution.InstitutionName': {
-            validators: {
-                notEmpty: { message: 'Please enter a InstitutionName' },
-                stringLength: { min: 6, max: 200, message: 'The InstitutionName must be more than 6 and less than 200 characters long' }
-            }
-        },
-        'Institution.Description': {
-            validators: {
-                notEmpty: { message: 'Please enter a Description' }
-                // stringLength: { min: 10, max: 200, message: 'The InstitutionName must be more than 6 and less than 20 characters long' }
-            }
-        },
-        'Institution.ShortCode': {
-            validators: {
-                notEmpty: { message: 'Please enter a ShortCode' },
-                stringLength: { min: 0, max: 10, message: 'The Institution Short Code must be less than 10 characters' }
-            }
-        },
-        'Institution.PackageType': {
-            validators: {
-                notEmpty: { message: 'Please enter a PackageTypes' }
-                // stringLength: { min: 10, max: 200, message: 'The InstitutionName must be more than 6 and less than 20 characters long' }
-            }
-        }
-    },
-    plugins: {
-        trigger: new FormValidation.plugins.Trigger(),
-        bootstrap5: new FormValidation.plugins.Bootstrap5({
-            eleValidClass: 'is-valid',
-            rowSelector: function (field, ele) {
-                return '.mb-5';
-            }
-        }),
-        submitButton: new FormValidation.plugins.SubmitButton({
-            // Specify the selector for your submit button
-            button: '[type="submit"]'
-        }),
-        // Submit the form when all fields are valid
-        // defaultSubmit: new FormValidation.plugins.DefaultSubmit(),
-        autoFocus: new FormValidation.plugins.AutoFocus()
-    }
-})
-    .on('core.form.valid', function () {
+//const EdiNewrForm = document.getElementById('editInstitutionForm');
 
-        UpdateNewInstituionDtaa(EdiNewrForm)
-    })
-    .on('core.form.invalid', function () {
-        return;
-    });
+//const fv122 = FormValidation.formValidation(EdiNewrForm, {
+//    fields: {
+//        'Institution.InstitutionName': {
+//            validators: {
+//                notEmpty: { message: 'Please enter a InstitutionName' },
+//                stringLength: { min: 6, max: 200, message: 'The InstitutionName must be more than 6 and less than 200 characters long' }
+//            }
+//        },
+//        'Institution.Description': {
+//            validators: {
+//                notEmpty: { message: 'Please enter a Description' }
+//                // stringLength: { min: 10, max: 200, message: 'The InstitutionName must be more than 6 and less than 20 characters long' }
+//            }
+//        },
+//        'Institution.ShortCode': {
+//            validators: {
+//                notEmpty: { message: 'Please enter a ShortCode' },
+//                stringLength: { min: 0, max: 10, message: 'The Institution Short Code must be less than 10 characters' }
+//            }
+//        },
+//        'Institution.PackageType': {
+//            validators: {
+//                notEmpty: { message: 'Please enter a PackageTypes' }
+//                // stringLength: { min: 10, max: 200, message: 'The InstitutionName must be more than 6 and less than 20 characters long' }
+//            }
+//        }
+//    },
+//    plugins: {
+//        trigger: new FormValidation.plugins.Trigger(),
+//        bootstrap5: new FormValidation.plugins.Bootstrap5({
+//            eleValidClass: 'is-valid',
+//            rowSelector: function (field, ele) {
+//                return '.mb-5';
+//            }
+//        }),
+//        submitButton: new FormValidation.plugins.SubmitButton({
+//            // Specify the selector for your submit button
+//            button: '[type="submit"]'
+//        }),
+//        // Submit the form when all fields are valid
+//        // defaultSubmit: new FormValidation.plugins.DefaultSubmit(),
+//        autoFocus: new FormValidation.plugins.AutoFocus()
+//    }
+//})
+//    .on('core.form.valid', function () {
 
-function UpdateNewInstituionDtaa(form) {
-    debugger;
-    console.log('Create form validated');
-    var formData = new FormData(form);
-    console.log('Create form data:', Array.from(formData.entries()));
+//        UpdateNewInstituionDtaa(EdiNewrForm)
+//    })
+//    .on('core.form.invalid', function () {
+//        return;
+//    });
 
+//function UpdateNewInstituionDtaa(form) {
+//    debugger;
+//    console.log('Create form validated');
+//    var formData = new FormData(form);
+//    console.log('Create form data:', Array.from(formData.entries()));
+
+//    $.ajax({
+//        url: '/Institution/Index?handler=EditInstitution',
+//        type: 'POST',
+//        data: formData,
+//        processData: false,
+//        contentType: false,
+//        headers: {
+//            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+//        },
+//        beforeSend: function () {
+//            console.log('Sending create AJAX request');
+//            if (typeof Swal !== 'undefined') {
+//                Swal.fire({
+//                    title: 'Processing...',
+//                    text: 'Processing...',
+//                    showConfirmButton: false,
+//                    showCancelButton: false,
+//                    allowOutsideClick: false,
+//                    // allowEscapeKey: false,
+//                    didOpen: () => Swal.showLoading()
+//                });
+//            }
+//        },
+//        success: function (response) {
+//            console.log('Create AJAX success:', response);
+
+//            if (response.success) {
+//                if (typeof Swal !== 'undefined') {
+//                    Swal.fire({
+//                        icon: 'success',
+//                        title: 'Updated Successfully',
+//                        text: response.message || 'Institution Updated successfully!',
+//                        timer: 1500,
+//                        showConfirmButton: false
+//                    }).then(() => {
+
+//                        $('#editInstitutionOffcanvas_').offcanvas('hide');
+//                        window.location.reload();
+//                    });
+//                }
+//                else { window.location.reload(); }
+//            }
+//            else {
+//                if (typeof Swal !== 'undefined') {
+//                    Swal.fire({
+//                        icon: 'error',
+//                        title: 'Error',
+//                        text: response.message || 'An error occurred while creating the institution.',
+//                        confirmButtonText: 'OK'
+//                    });
+//                }
+//            }
+
+//            //  Swal.close();
+//        },
+//        error: function (xhr, status, error) {
+//            //Swal.close();
+//            console.error('Create AJAX error:', { status, error, responseText: xhr.responseText });
+//            if (typeof Swal !== 'undefined') {
+//                Swal.fire({
+//                    icon: 'error',
+//                    title: 'Submission Failed',
+//                    text: 'Failed to create the institution: ' + (xhr.responseText || error),
+//                    confirmButtonText: 'OK'
+//                });
+//            }
+//        }
+//    });
+//}
+
+
+//// Edit Button Click
+//$(document).on('click', '.edit-institution', function () {
+//    var institutionId = $(this).data('id');
+//    console.log('Edit button clicked for institution ID:', institutionId);
+//    $.ajax({
+//        url: '/Institution/Index?handler=EditForm',
+//        type: 'GET',
+//        data: { id: institutionId },
+//        success: function (response) {
+//            console.log('Edit form loaded successfully');
+//            $('#editFormContainer').html(response);
+//            $('#editInstitutionOffcanvas').offcanvas('show');
+
+//            // Initialize FormValidation for the dynamically loaded edit form
+//            const EdiNewrForm = document.getElementById('editInstitutionForm');
+//            if (EdiNewrForm) {
+//                console.log('Edit form found, initializing FormValidation');
+//                FormValidation.formValidation(EdiNewrForm, {
+//                    fields: {
+//                        'Institution.InstitutionName': {
+//                            validators: {
+//                                notEmpty: { message: 'Please enter an Institution Name' },
+//                                stringLength: { min: 6, max: 200, message: 'The Institution Name must be more than 6 and less than 200 characters long' }
+//                            }
+//                        },
+//                        'Institution.Description': {
+//                            validators: {
+//                                notEmpty: { message: 'Please enter a Description' }
+//                            }
+//                        },
+//                        'Institution.ShortCode': {
+//                            validators: {
+//                                notEmpty: { message: 'Please enter a Short Code' },
+//                                stringLength: { min: 0, max: 10, message: 'The Short Code must be less than 10 characters' }
+//                            }
+//                        },
+//                        'Institution.PackageType': {
+//                            validators: {
+//                                notEmpty: { message: 'Please select a Package Type' }
+//                            }
+//                        },
+//                        'Institution.Status': {
+//                            validators: {
+//                                notEmpty: { message: 'Please select a Status' }
+//                            }
+//                        },
+//                        'LogoFile': {
+//                            validators: {
+//                                file: {
+//                                    extension: 'jpg,jpeg,png',
+//                                    message: 'Please upload a valid image file (JPG, JPEG, PNG)'
+//                                }
+//                            }
+//                        },
+//                        'Institution.WebsiteUrl': {
+//                            validators: {
+//                                uri: { message: 'Please enter a valid URL' }
+//                            }
+//                        }
+//                    },
+//                    plugins: {
+//                        trigger: new FormValidation.plugins.Trigger(),
+//                        bootstrap5: new FormValidation.plugins.Bootstrap5({
+//                            eleValidClass: 'is-valid',
+//                            rowSelector: function (field, ele) {
+//                                return '.mb-5';
+//                            }
+//                        }),
+//                        submitButton: new FormValidation.plugins.SubmitButton({
+//                            button: '[type="submit"]'
+//                        }),
+//                        autoFocus: new FormValidation.plugins.AutoFocus()
+//                    }
+//                })
+//                    .on('core.form.valid', function () {
+//                        console.log('Edit form valid, submitting');
+//                        UpdateNewInstituionDtaa(EdiNewrForm, institutionId);
+//                    })
+//                    .on('core.form.invalid', function () {
+//                        console.log('Edit form invalid');
+//                    });
+//            } else {
+//                console.error('Edit form not found');
+//            }
+//        },
+//        error: function (xhr, status, error) {
+//            console.error('Error loading edit form:', { status, error, responseText: xhr.responseText });
+//            Swal.fire({
+//                icon: 'error',
+//                title: 'Error',
+//                text: 'Failed to load the edit form. Please try again.',
+//                confirmButtonText: 'OK'
+//            });
+//        }
+//    });
+//});
+//// Update Institution Data
+//function UpdateNewInstituionDtaa(form, institutionId) {
+//    console.log('Edit form validated');
+//    var formData = new FormData(form);
+//    console.log('Edit form data:', Array.from(formData.entries()));
+
+//    $.ajax({
+//        url: '/Institution/Index?handler=EditInstitution',
+//        type: 'POST',
+//        data: formData,
+//        processData: false,
+//        contentType: false,
+//        headers: {
+//            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+//        },
+//        beforeSend: function () {
+//            console.log('Sending edit AJAX request');
+//            Swal.fire({
+//                title: 'Processing...',
+//                text: 'Processing...',
+//                showConfirmButton: false,
+//                allowOutsideClick: false,
+//                didOpen: () => Swal.showLoading()
+//            });
+//        },
+//        success: function (response) {
+//            console.log('Create AJAX success:', response);
+
+//            if (response.success) {
+//                if (typeof Swal !== 'undefined') {
+//                    Swal.fire({
+//                        icon: 'success',
+//                        title: 'Updated Successfully',
+//                        text: response.message || 'Institution Updated successfully!',
+//                        timer: 1500,
+//                        showConfirmButton: false
+//                    }).then(() => {
+
+//                        $('#editInstitutionOffcanvas_').offcanvas('hide');
+//                        window.location.reload();
+//                    });
+//                }
+//                else { window.location.reload(); }
+//            }
+//            else {
+//                if (typeof Swal !== 'undefined') {
+//                    Swal.fire({
+//                        icon: 'error',
+//                        title: 'Error',
+//                        text: response.message || 'An error occurred while creating the institution.',
+//                        confirmButtonText: 'OK'
+//                    });
+//                }
+//            }
+
+//            //  Swal.close();
+//        },
+//        error: function (xhr, status, error) {
+//            //Swal.close();
+//            console.error('Create AJAX error:', { status, error, responseText: xhr.responseText });
+//            if (typeof Swal !== 'undefined') {
+//                Swal.fire({
+//                    icon: 'error',
+//                    title: 'Submission Failed',
+//                    text: 'Failed to create the institution: ' + (xhr.responseText || error),
+//                    confirmButtonText: 'OK'
+//                });
+//            }
+//        }
+//    });
+//}
+
+// Edit Button Click
+function editInstitution(institutionId) {
+    console.log('Edit button clicked for Institution ID:', institutionId);
     $.ajax({
-        url: '/Admin/InstitutionIndex?handler=EditInstitution',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+        url: '/Institution/Index?handler=EditForm',
+        type: 'GET',
+        data: { id: institutionId },
+        success: function (response) {
+            console.log('Edit form loaded successfully');
+            $('#editFormContainer').html(response);
+            $('#editInstitutionOffcanvas').offcanvas('show');
+
+            // Initialize FormValidation for the dynamically loaded edit form
+            const EdiNewrForm = document.getElementById('editInstitutionForm');
+            if (EdiNewrForm) {
+                console.log('Edit form found, initializing FormValidation');
+                FormValidation.formValidation(EdiNewrForm, {
+                    fields: {
+                        'Institution.InstitutionName': {
+                            validators: {
+                                notEmpty: { message: 'Please enter an Institution Name' },
+                                stringLength: { min: 6, max: 200, message: 'The Institution Name must be more than 6 and less than 200 characters long' }
+                            }
+                        },
+                        'Institution.Description': {
+                            validators: {
+                                notEmpty: { message: 'Please enter a Description' }
+                            }
+                        },
+                        'Institution.ShortCode': {
+                            validators: {
+                                notEmpty: { message: 'Please enter a Short Code' },
+                                stringLength: { min: 0, max: 10, message: 'The Short Code must be less than 10 characters' }
+                            }
+                        },
+                        'Institution.PackageType': {
+                            validators: {
+                                notEmpty: { message: 'Please select a Package Type' }
+                            }
+                        },
+                        'Institution.Status': {
+                            validators: {
+                                notEmpty: { message: 'Please select a Status' }
+                            }
+                        },
+                        'LogoFile': {
+                            validators: {
+                                file: {
+                                    extension: 'jpg,jpeg,png',
+                                    message: 'Please upload a valid image file (JPG, JPEG, PNG)'
+                                }
+                            }
+                        },
+                        'Institution.WebsiteUrl': {
+                            validators: {
+                                uri: { message: 'Please enter a valid URL' }
+                            }
+                        }
+                    },
+                    plugins: {
+                        trigger: new FormValidation.plugins.Trigger(),
+                        bootstrap5: new FormValidation.plugins.Bootstrap5({
+                            eleValidClass: 'is-valid',
+                            rowSelector: function (field, ele) {
+                                return '.mb-5';
+                            }
+                        }),
+                        submitButton: new FormValidation.plugins.SubmitButton({
+                            button: '[type="submit"]'
+                        }),
+                        autoFocus: new FormValidation.plugins.AutoFocus()
+                    }
+                })
+                    .on('core.form.valid', function () {
+                        console.log('Edit form valid, submitting');
+                        UpdateNewInstituionDtaa(EdiNewrForm, institutionId);
+                    })
+                    .on('core.form.invalid', function () {
+                        console.log('Edit form invalid');
+                    });
+            } else {
+                console.error('Edit form not found');
+            }
         },
-        beforeSend: function () {
-            console.log('Sending create AJAX request');
-            if (typeof Swal !== 'undefined') {
+        error: function (xhr, status, error) {
+            console.error('Error loading edit form:', { status, error, responseText: xhr.responseText });
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load the edit form. Please try again.',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+    // Update Institution Data
+    function UpdateNewInstituionDtaa(form) {
+        console.log('Edit form validated');
+        var formData = new FormData(form);
+        console.log('Edit form data:', Array.from(formData.entries()));
+
+        $.ajax({
+            url: '/Institution/Index?handler=EditInstitution',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            beforeSend: function () {
+                console.log('Sending edit AJAX request');
                 Swal.fire({
                     title: 'Processing...',
                     text: 'Processing...',
                     showConfirmButton: false,
-                    showCancelButton: false,
                     allowOutsideClick: false,
-                    // allowEscapeKey: false,
                     didOpen: () => Swal.showLoading()
                 });
-            }
-        },
-        success: function (response) {
-            console.log('Create AJAX success:', response);
+            },
+            success: function (response) {
+                console.log('Create AJAX success:', response);
 
-            if (response.success) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Updated Successfully',
-                        text: response.message || 'Institution Updated successfully!',
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
+                if (response.success) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Updated Successfully',
+                            text: response.message || 'Institution Updated successfully!',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
 
-                        $('#editInstitutionOffcanvas_').offcanvas('hide');
-                        window.location.reload();
-                    });
+                            $('#editInstitutionOffcanvas_').offcanvas('hide');
+                            window.location.reload();
+                        });
+                    }
+                    else { window.location.reload(); }
                 }
-                else { window.location.reload(); }
-            }
-            else {
+                else {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message || 'An error occurred while creating the institution.',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }
+
+                //  Swal.close();
+            },
+            error: function (xhr, status, error) {
+                //Swal.close();
+                console.error('Create AJAX error:', { status, error, responseText: xhr.responseText });
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: response.message || 'An error occurred while creating the institution.',
+                        title: 'Submission Failed',
+                        text: 'Failed to create the institution: ' + (xhr.responseText || error),
                         confirmButtonText: 'OK'
                     });
                 }
-            }
 
-            //  Swal.close();
-        },
-        error: function (xhr, status, error) {
-            //Swal.close();
-            console.error('Create AJAX error:', { status, error, responseText: xhr.responseText });
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Submission Failed',
-                    text: 'Failed to create the institution: ' + (xhr.responseText || error),
-                    confirmButtonText: 'OK'
-                });
             }
-        }
-    });
+        });
+    }
 }
-

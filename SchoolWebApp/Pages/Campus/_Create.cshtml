@@ -1,0 +1,111 @@
+﻿@model SchoolWebApp.Pages.Campus.IndexModel
+@{
+    ViewData["Title"] = "Campus Management";
+}
+
+
+
+<!-- Create Campus Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="createCampusOffcanvas" aria-labelledby="createCampusOffcanvasLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="createCampusOffcanvasLabel">Add Campus Details</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body mx-0 flex-grow-0">
+        <form id="createCampusForm" method="post" enctype="multipart/form-data">
+            <div class="form-floating form-floating-outline mb-5">
+                <select asp-for="Campus.InstitutionID" id="InstitutionID" class="form-select" required onchange="loadZones(this.value)">
+                    <option value="">Select Institution</option>
+                    @foreach (var institution in Model.Institutions)
+                    {
+                        <option value="@institution.InstitutionID">@institution.InstitutionName</option>
+                    }
+                </select>
+                <label for="InstitutionID">Institution</label>
+            </div>
+
+            <!-- Zone Dropdown (Initially Empty) -->
+            <div class="form-floating form-floating-outline mb-5">
+                <select asp-for="Campus.ZoneID" id="ZoneID" class="form-select">
+                    <option value="">Select Zone</option>
+                </select>
+                <label for="ZoneID">Zone</label>
+            </div>
+
+            @*  <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Campus.CGUID" autocomplete="off" class="form-control" id="CGUID" placeholder="CGUID"  />
+                <label for="CGUID">CGUID</label>
+            </div> *@
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Campus.CampuseName" autocomplete="off" class="form-control" id="CampusName" placeholder="Campus Name" />
+                <label for="CampusName">Campus Name</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Campus.AffiliationNo" autocomplete="off" class="form-control" id="AffiliationNo" placeholder="Affiliation No" />
+                <label for="AffiliationNo">Affiliation No</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Campus.SchoolCode" autocomplete="off" class="form-control" id="SchoolCode" placeholder="School Code" />
+                <label for="SchoolCode">School Code</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <select asp-for="Campus.CampusTypeID" id="CampuseType" class="form-select">
+                    <option value="">Select Campus Type</option>
+                    @foreach (var campusType in Model.CampusTypes)
+                    {
+                        <option value="@campusType.CampusTypeID">@campusType.CampusTypeName</option>
+                    }
+                </select>
+                <label for="CampusTypeID">Campus Type</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Campus.PhoneNos" autocomplete="off" class="form-control" id="PhoneNos" placeholder="Phone Numbers" />
+                <label for="PhoneNos">Phone Numbers</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <textarea asp-for="Campus.Address" class="form-control" style="height: 100px;" id="Address" placeholder="Address"></textarea>
+                <label for="Address">Address</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Campus.Locality" autocomplete="off" class="form-control" id="Locality" placeholder="Locality" />
+                <label for="Locality">Locality</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Campus.CityID" type="number" autocomplete="off" class="form-control" id="CityID" placeholder="City ID" />
+                <label for="CityID">City ID</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Campus.StateID" type="number" autocomplete="off" class="form-control" id="StateID" placeholder="State ID" />
+                <label for="StateID">State ID</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Campus.Country" autocomplete="off" class="form-control" id="Country" placeholder="Country" />
+                <label for="Country">Country</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Campus.PinCode" autocomplete="off" class="form-control" id="PinCode" placeholder="Pin Code" />
+                <label for="PinCode">Pin Code</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-5">
+                <select asp-for="Campus.Status" id="Status" class="form-select">
+                    <option value="">Select Status</option>
+                    @foreach (var item in Model.Statuses)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+                <label for="Status">Status</label>
+            </div>
+            @*  <div class="form-floating form-floating-outline mb-5">
+                <input type="file" asp-for="Campus.LogoFile" id="LogoFile" class="form-control" accept=".jpg,.jpeg,.png" />
+                <label for="LogoFile">Upload Logo</label>
+            </div> *@
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-3">Submit</button>
+                    <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

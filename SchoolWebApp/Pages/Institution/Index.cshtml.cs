@@ -94,6 +94,33 @@ namespace SchoolWebApp.Pages.Institution
 
 
         #region Edit Instutions
+
+
+       
+      public async Task<IActionResult> OnGetEditFormAsync(int id)
+        {
+          try
+              {
+        var institution = await _context.Institutions.FindAsync(id);
+        if (institution == null)
+        {
+            return NotFound();
+        }
+
+        Institution = institution;
+        return Partial("~/Pages/Institution/_Edit.cshtml", this);
+    }
+    catch (Exception ex)
+    {
+        // Log the error (optional: use a logging framework)
+        return new JsonResult(new
+        {
+            success = false,
+            message = $"An error occurred while loading the edit form: {ex.Message}"
+        });
+    }
+}
+
         public async Task<IActionResult> OnPostEditInstitutionAsync()
         {
 

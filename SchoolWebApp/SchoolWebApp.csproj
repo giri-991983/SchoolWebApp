@@ -7,15 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Pages\Institution\InstitutionsDetails.cshtml.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="Pages\Institution\InstitutionsDetails.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\Campus\" />
+    <Compile Remove="Pages\Institution\Create.cshtml.cs" />
   </ItemGroup>
 
   <ItemGroup>

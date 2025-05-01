@@ -6,11 +6,11 @@
     </div>
     <div class="offcanvas-body mx-0 flex-grow-0">
         <form id="createZoneForm" method="post" enctype="multipart/form-data" >
-           @*  @Html.AntiForgeryToken() *@
+@*              @Html.AntiForgeryToken() 
             <input type="hidden" asp-for="Zone.ZGUID" />
             <input type="hidden" asp-for="Zone.CreatedDate" />
             <input type="hidden" asp-for="Zone.Status" value="1" />
-            <div class="form-floating form-floating-outline mb-4">
+ *@            <div class="form-floating form-floating-outline mb-5">
                 <select name="Zone.InstitutionID" id="InstitutionID" class="form-control">
                     <option value="">Select Institution</option>
                     @foreach (var institution in Model.Institutions)
@@ -21,12 +21,12 @@
                 <label for="InstitutionID">Institution</label>
                 <span class="text-danger"></span>
             </div>           
-            <div class="form-floating form-floating-outline mb-4">
+            <div class="form-floating form-floating-outline mb-5">
                 <input type="text" name="Zone.ZoneName" id="ZoneName" class="form-control" />
                 <label for="ZoneName">Zone Name</label>
                 <span class="text-danger"></span>
             </div>
-            <div class="form-floating form-floating-outline mb-4">
+            <div class="form-floating form-floating-outline mb-5">
                 <input type="text" name="Zone.ShortCode" id="ShortCode" class="form-control" />
                 <label for="ShortCode">Short Code</label>
                 <span class="text-danger"></span>

@@ -1,4 +1,5 @@
 ﻿@page
+@using SchoolWebApp
 @model SchoolWebApp.Pages.Zone.IndexModel
 @{
     ViewData["Title"] = "Zone Management";
@@ -34,7 +35,8 @@
         <div class="card-datatable table-responsive">
             <table id="ZoneTable" class="table">
                 <thead>
-                    <tr>                         
+                    <tr>   
+                        <th>S.No</th>
                         <th>Zone Name</th>                      
                         <th>Institution</th>
                         <th>Short Code</th>
@@ -46,11 +48,14 @@
                 <tbody>
                     @if (Model.Zones != null && Model.Zones.Any())
                     {
+                        var kk = 0;
                         @foreach (var zone in Model.Zones)
                         {
-                            <tr data-id="@zone.ZoneID">                                     
-                                <td>@zone.ZoneName</td>                             
-                                <td>@(zone.Institution?.InstitutionName ?? "N/A")</td>
+                            kk = kk + 1; var tcc = "zone-name-full-"+ zone.ZoneID;
+                            <tr data-id="@zone.ZoneID">
+                                <td> @kk</td>
+                                <td class="@tcc">@zone.ZoneName</td>
+                                 <td>@(zone.Institution?.InstitutionName ?? "N/A")</td>
                                 <td>@zone.ShortCode</td>
                                 <td>@Html.Raw(PageHelpers.GetStatusBadge(zone.Status))</td>
                                 <td>@zone.CreatedDate.ToString("dd-MM-yyyy")</td>
@@ -58,9 +63,19 @@
                                     <div class="col-md-12 text-center">
                                         <button class="btn btn-sm btn-icon"
                                                 data-bs-toggle="offcanvas"
-                                                data-bs-target="#editZoneOffcanvas_@zone.ZoneID">
+                                                data-bs-target="#editZoneOffcanvas"
+                                                onclick="editZone(@zone.ZoneID)">
                                             <i class="ri-edit-box-line ri-20px"></i>
                                         </button>
+                                        <div class="offcanvas offcanvas-end" tabindex="-1" id="editZoneOffcanvas" aria-labelledby="editZoneOffcanvasLabel">
+                                            <div class="offcanvas-header">
+                                                <h5 id="editZoneOffcanvasLabel" class="offcanvas-title">Edit Zone</h5>
+                                                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                            </div>
+                                            <div class="offcanvas-body">
+                                                <div id="editFormContainer"></div>
+                                            </div>
+                                        </div>
                                         <form method="post" id="deleteZoneForm-@zone.ZoneID" class="d-inline">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@zone.ZoneID" />
