@@ -29,7 +29,8 @@ namespace SchoolWebApp.Models
         [Required, StringLength(50)]
         public string SchoolCode { get; set; }
 
-        [ForeignKey("CampusType")] // Reference the navigation property
+        [Required]
+        [ForeignKey("CampusTypeID")] // Reference the navigation property
         public int CampusTypeID { get; set; } //// Foreign key for CampusType
 
         [Required, StringLength(100)]
@@ -46,7 +47,7 @@ namespace SchoolWebApp.Models
         public int StateID { get; set; }
 
         [StringLength(50)]
-        public string Country { get; set; }
+        public string CountryID { get; set; }
 
         [StringLength(50)]
         public string PinCode { get; set; }

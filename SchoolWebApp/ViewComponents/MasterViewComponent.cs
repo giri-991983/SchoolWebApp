@@ -15,7 +15,7 @@ namespace SchoolWebApp.ViewComponents
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string viewname, string? FilterIds, string? SelectedIDs)
+        public async Task<IViewComponentResult> InvokeAsync(string viewname, string? FilterIds, int? SelectedIDs)
         {
             if (viewname == "Institutions")
             {
@@ -37,8 +37,7 @@ namespace SchoolWebApp.ViewComponents
                 }
                 ViewBag.ResZones = zonses;
             }
-
-            ViewBag.selectedIDs = (!string.IsNullOrEmpty(SelectedIDs) ? SelectedIDs : "0");
+            ViewBag.selectedIDs = SelectedIDs;
 
             return View();
         }

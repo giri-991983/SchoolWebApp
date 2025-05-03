@@ -16,11 +16,11 @@ namespace SchoolWebApp.Data
  //Map Campus entity
             modelBuilder.Entity<Campus>().ToTable("Campuses");
             modelBuilder.Entity<Campus>().Property(c => c.CampuseName).HasColumnName("CampuseName");
-            modelBuilder.Entity<Campus>().Property(c => c.CampusTypeID).HasColumnName("CampuseType");
+            modelBuilder.Entity<Campus>().Property(c => c.CampusTypeID).HasColumnName("CampusTypeID");
 
             // Map CampusType entity
             modelBuilder.Entity<CampusType>().ToTable("CampusTypes");
-            modelBuilder.Entity<CampusType>().Property(ct => ct.CampusTypeName).HasColumnName("CampusType");
+            modelBuilder.Entity<CampusType>().Property(ct => ct.CampusTypeName).HasColumnName("CampusTypeName");
 
             // Map Institution entity
             modelBuilder.Entity<Institution>().ToTable("Institutions");
