@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "List of Institutions";
 
- 
+
 }
 
 @section VendorStyles
@@ -72,16 +72,14 @@
                             <td>@Convert.ToDateTime(item.CreatedDate).ToString("dd MMM yyyy")</td>
                             <td class="text-nowrap">
                                 <div class="col-md-12 text-center">
-                                   
-                                   
-                                        <!-- Edit Button -->
-                                        <button class="btn btn-sm btn-icon"
-                                                data-bs-toggle="offcanvas"
-                                                data-bs-target="#editInstitutionOffcanvas"
+                                    <!-- Edit Button -->
+                                    <button class="btn btn-sm btn-icon"
+                                            data-bs-toggle="offcanvas"
+                                            data-bs-target="#editInstitutionOffcanvas"
                                             onclick="editInstitution(@item.InstitutionID)"
-                                                data-id="@item.InstitutionID" >
-                                            <i class="ri-edit-box-line ri-20px"></i>
-                                        </button>
+                                            data-id="@item.InstitutionID">
+                                        <i class="ri-edit-box-line ri-20px"></i>
+                                    </button>
                                     <!-- Single Offcanvas for Editing -->
                                     <div class="offcanvas offcanvas-end" tabindex="-1" id="editInstitutionOffcanvas" aria-labelledby="editInstitutionOffcanvasLabel">
                                         <div class="offcanvas-header">

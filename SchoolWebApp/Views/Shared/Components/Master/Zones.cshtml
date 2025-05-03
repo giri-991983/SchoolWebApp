@@ -1,0 +1,11 @@
+﻿@using SchoolWebApp.Models;
+@{
+    var ZoneID1 = ViewBag.selectedIDs;
+    var ZoneModel = ViewBag.ResZones as List<Zone>;
+}
+
+<option value="">Select Zone</option>
+@foreach (var z in ZoneModel)
+{
+    <option value="@z.ZoneID" selected="@(z.ZoneID == ZoneID1)">@z.ZoneName</option>
+}

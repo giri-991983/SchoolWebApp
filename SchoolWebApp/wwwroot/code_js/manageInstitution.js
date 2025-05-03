@@ -853,7 +853,8 @@ function DeleteInstitutionData(institutionId) {
 //}
 
 // Edit Button Click
-function editInstitution(institutionId) {
+function editInstitution(institutionId)
+{
     console.log('Edit button clicked for Institution ID:', institutionId);
     $.ajax({
         url: '/Institution/Index?handler=EditForm',

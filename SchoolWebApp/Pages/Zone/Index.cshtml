@@ -25,19 +25,19 @@
     <script src="~/vendor/libs/cleavejs/cleave-phone.dist.js"></script>
 }
 @section PageScripts {
-    <script src="~/code_js/zone-crud.js"></script>  
+    <script src="~/code_js/zone-crud.js"></script>
 }
 
 <div class="container-fluid">
     <h2 class="mb-4">Zone Management</h2>
     <!-- DataTable -->
-    <div class="card">      
+    <div class="card">
         <div class="card-datatable table-responsive">
             <table id="ZoneTable" class="table">
                 <thead>
-                    <tr>   
+                    <tr>
                         <th>S.No</th>
-                        <th>Zone Name</th>                      
+                        <th>Zone Name</th>
                         <th>Institution</th>
                         <th>Short Code</th>
                         <th>Status</th>
@@ -51,16 +51,18 @@
                         var kk = 0;
                         @foreach (var zone in Model.Zones)
                         {
-                            kk = kk + 1; var tcc = "zone-name-full-"+ zone.ZoneID;
+                            kk = kk + 1; var tcc = "zone-name-full-" + zone.ZoneID;
                             <tr data-id="@zone.ZoneID">
                                 <td> @kk</td>
                                 <td class="@tcc">@zone.ZoneName</td>
-                                 <td>@(zone.Institution?.InstitutionName ?? "N/A")</td>
+                                <td>@(zone.Institution?.InstitutionName ?? "N/A")</td>
                                 <td>@zone.ShortCode</td>
                                 <td>@Html.Raw(PageHelpers.GetStatusBadge(zone.Status))</td>
-                                <td>@zone.CreatedDate.ToString("dd-MM-yyyy")</td>
+                                <td>@zone.CreatedDate.ToString("dd MMM yyyy")</td>
+                                @*  <td class="text-nowrap">
+                                    <div class="col-md-12 text-center"> *@
                                 <td class="text-nowrap">
-                                    <div class="col-md-12 text-center">
+                                    <div>
                                         <button class="btn btn-sm btn-icon"
                                                 data-bs-toggle="offcanvas"
                                                 data-bs-target="#editZoneOffcanvas"
@@ -84,7 +86,7 @@
                                                 <i class="ri-delete-bin-7-line ri-20px"></i>
                                             </button>
                                         </form>
-                                      @*   <div class="btn-group d-inline">
+                                        @*   <div class="btn-group d-inline">
                                             <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow"
                                                     data-bs-toggle="dropdown">
                                                 <i class="ri-more-2-line ri-20px"></i>
@@ -95,30 +97,16 @@
                                             </ul>
                                         </div> *@
                                     </div>
-                                </td>                              
+                                </td>
                             </tr>
                         }
-                    }                   
+                    }
                 </tbody>
             </table>
         </div>
     </div>
 
     <!-- Create Offcanvas -->
-  
-    @await Html.PartialAsync("~/Pages/Zone/_Create.cshtml") 
+    @await Html.PartialAsync("~/Pages/Zone/_Create.cshtml")
 
-    <!-- Edit Offcanvas for Each Zone -->
-   @*  @if (Model.Zones != null && Model.Zones.Any())
-    {
-        @foreach (var zone in Model.Zones)
-        {
-
-            @await Html.PartialAsync("~/Pages/Zone/Edit.cshtml", new 
-{
-    Zone = zone,
-    Zones = Model.Zones
-})
-        }
-    } *@
 </div>

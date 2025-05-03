@@ -7,7 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\ModelComponents.cs" />
     <Compile Remove="Pages\Institution\Create.cshtml.cs" />
+    <Compile Remove="Pages\Zone\Edit.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\Zone\Edit.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
