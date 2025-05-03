@@ -39,7 +39,7 @@ namespace SchoolWebApp.ViewComponents
             }
             ViewBag.selectedIDs = SelectedIDs;
 
-            return View();
+            return View(viewname);
         }
 
 
