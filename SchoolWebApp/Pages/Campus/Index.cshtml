@@ -14,8 +14,12 @@
     <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
 }
 
+<<<<<<< HEAD
 @section VendorScripts
 {
+=======
+@section VendorScripts {
+>>>>>>> 5b24e174187477113e5ed4e8b880ada24b4e6e89
     <script src="~/vendor/libs/moment/moment.dist.js"></script>
     <script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
     <script src="~/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
@@ -45,7 +49,7 @@
                         <th>Institution</th>
                         <th>Affiliation No</th>
                         <th>School Code</th>
-                        <th>Campus Type</th> 
+                        <th>Campus Type</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -66,7 +70,11 @@
                             <td>@(item.Institution?.InstitutionName ?? "N/A")</td>
                             <td>@item.AffiliationNo</td>
                             <td>@item.SchoolCode</td>
+<<<<<<< HEAD
                            <td>@(item.CampusType?.CampusTypeName ?? "N/A")</td> 
+=======
+                            <td>@item.CampusType?.CampusTypeName</td>
+>>>>>>> 5b24e174187477113e5ed4e8b880ada24b4e6e89
                             <td>@(item.Status == 1 ? "Active" : "Inactive")</td>
                             <td class="text-nowrap">
                                 <div class="text-center">
@@ -74,6 +82,21 @@
                                     <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editCampusOffcanvas_@item.CampusID">
                                         <i class="ri-edit-box-line ri-20px"></i>
                                     </button>
+<<<<<<< HEAD
+=======
+
+                                    <!-- Edit Partial -->
+                                    @*   @await Html.PartialAsync("~/Pages/Campus/_EditCampusOffcanvasPartial.cshtml", new
+                                         {
+                                             Campus = item,
+                                            Institutions = Model.Institutions,
+                                            Zones = Model.Zones,
+                                            Statuses = Model.Statuses,
+                                            CampusTypes = Model.CampusTypes
+
+                                        }) *@
+
+>>>>>>> 5b24e174187477113e5ed4e8b880ada24b4e6e89
                                     <!-- Delete Button -->
                                     <form method="post" id="deleteCampusForm-@item.CampusID" class="d-inline">
                                         @Html.AntiForgeryToken()
@@ -86,15 +109,38 @@
                             </td>
                         </tr>
                     }
-                }
-                else
-                {
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-header pb-0">
+            <h5 class="card-title mb-0">Manage Campus</h5>
+        </div>
+        <div class="card-datatable table-responsive">
+            <table id="CampusTable" class="table">
+                <thead>
                     <tr>
+                        <th>S.No</th>
+                        <th>Campus Name</th>
+                        <th>Zone</th>
+                        <th>Institution</th>
+                        <th>Affiliation No</th>
+                        <th>School Code</th>
+                        <th>Campus Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                @*  <tbody>
+                       <tr>
                         <td colspan="9" class="text-center">No data available in table</td>
                     </tr>
-                }
-
-                </tbody>
+                </tbody> *@
+>>>>>>> 5b24e174187477113e5ed4e8b880ada24b4e6e89
             </table>
         </div>
     </div>

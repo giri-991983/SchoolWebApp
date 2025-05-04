@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using SchoolWebApp.Models;
 using SchoolWebApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +13,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("dbcs")));
 builder.Services.AddSingleton<IWebHostEnvironment>(env => builder.Environment);
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,6 +23,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -32,6 +31,11 @@ app.UseRouting();
 
 
 app.UseAuthorization();
+
+// Define the default route
+app.MapControllerRoute(name: "default",
+    pattern: "{controller=MasterData}/{action=Index}/{id?}"
+    );
 
 app.MapRazorPages();
 

@@ -5,7 +5,6 @@ using SchoolWebApp.Models;
 
 namespace SchoolWebApp.ViewComponents
 {
-
     public class MasterViewComponent : ViewComponent
     {
         private readonly ApplicationDbContext _context;
@@ -43,6 +42,6 @@ namespace SchoolWebApp.ViewComponents
         }
 
 
-
+    
     }
 }
