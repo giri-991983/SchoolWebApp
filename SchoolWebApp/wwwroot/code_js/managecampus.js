@@ -3,24 +3,44 @@
 
 
 function loadZones(institutionId) {
-    const zoneSelect = document.getElementById("ZoneID");
-    zoneSelect.innerHTML = '<option value="">Loading...</option>';
+    debugger;
+    //const zoneSelect = document.getElementById("ZoneID");
+    //zoneSelect.innerHTML = '<option value="">Loading...</option>';
 
-    fetch(`/Campus/CampusIndex?handler=ZonesByInstitution&institutionId=${institutionId}`)
-        .then(response => response.json())
-        .then(data => {
-            zoneSelect.innerHTML = '<option value="">Select Zone</option>';
-            data.forEach(zone => {
-                const option = document.createElement("option");
-                option.value = zone.zoneID;
-                option.text = zone.zoneName;
-                zoneSelect.appendChild(option);
-            });
-        })
-        .catch(error => {
-            console.error("Error loading zones:", error);
-            zoneSelect.innerHTML = '<option value="">Error loading zones</option>';
-        });
+    //fetch(`/Campus/CampusIndex?handler=ZonesByInstitution&institutionId=${institutionId}`)
+    //    .then(response => response.json())
+    //    .then(data => {
+    //        zoneSelect.innerHTML = '<option value="">Select Zone</option>';
+    //        data.forEach(zone => {
+    //            const option = document.createElement("option");
+    //            option.value = zone.zoneID;
+    //            option.text = zone.zoneName;
+    //            zoneSelect.appendChild(option);
+    //        });
+    //    })
+    //    .catch(error => {
+    //        console.error("Error loading zones:", error);
+    //        zoneSelect.innerHTML = '<option value="">Error loading zones</option>';
+    //    });
+
+
+    $.ajax({
+        url: '/Campus/Index?handler=LoadComponent',
+        type: 'GET',
+        data: { id: institutionId },
+        success: function (response) {
+            $('#ZoneID').html(response);
+        }
+    });
+
+    //$.ajax({
+    //    url: '/MasterData/LoadComponent',
+    //    type: 'GET',
+    //    data: { id: institutionId },
+    //    success: function (response) {
+    //        $('#ZoneID').html(response);
+    //    }
+    //});
 }
 
 $(document).ready(function () {
@@ -272,7 +292,7 @@ const fv = FormValidation.formValidation(createNewCampusForm, {
             }
         }
     },
-  
+
     plugins: {
         trigger: new FormValidation.plugins.Trigger(),
         bootstrap5: new FormValidation.plugins.Bootstrap5({

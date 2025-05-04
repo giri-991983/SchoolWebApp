@@ -15,11 +15,12 @@
         <form id="createCampusForm" method="post" enctype="multipart/form-data">
             <div class="form-floating form-floating-outline mb-5">
                 <select asp-for="Campus.InstitutionID" id="InstitutionID" class="form-select" required onchange="loadZones(this.value)">
-                    <option value="">Select Institution</option>
+                    @*  <option value="">Select Institution</option>
                     @foreach (var institution in Model.Institutions)
                     {
                         <option value="@institution.InstitutionID">@institution.InstitutionName</option>
-                    }
+                    } *@
+                    @await Component.InvokeAsync("Master", new { viewname = "Institutions" })
                 </select>
                 <label for="InstitutionID">Institution</label>
             </div>
@@ -27,15 +28,13 @@
             <!-- Zone Dropdown (Initially Empty) -->
             <div class="form-floating form-floating-outline mb-5">
                 <select asp-for="Campus.ZoneID" id="ZoneID" class="form-select">
-                    <option value="">Select Zone</option>
+                    @*    <option value="">Select Zone</option> *@
+
+                  @*   @await Component.InvokeAsync("Master", new { viewname = "Zones", FilterIds = "1", SelectedIDs = 0 }) *@
                 </select>
                 <label for="ZoneID">Zone</label>
             </div>
 
-            @*  <div class="form-floating form-floating-outline mb-5">
-                <input asp-for="Campus.CGUID" autocomplete="off" class="form-control" id="CGUID" placeholder="CGUID"  />
-                <label for="CGUID">CGUID</label>
-            </div> *@
             <div class="form-floating form-floating-outline mb-5">
                 <input asp-for="Campus.CampuseName" autocomplete="off" class="form-control" id="CampusName" placeholder="Campus Name" />
                 <label for="CampusName">Campus Name</label>

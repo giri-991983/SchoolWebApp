@@ -11,25 +11,24 @@
 @section VendorStyles
 {
     <link rel="stylesheet" href="~/vendor/libs/datatables-bs5/datatables.bootstrap5.dist.css">
-        <link rel="stylesheet" href="~/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.dist.css">
-            <link rel="stylesheet" href="~/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.dist.css">
-            <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.dist.css" />
-            <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
+    <link rel="stylesheet" href="~/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.dist.css" />
+    <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
 }
 
 @section VendorScripts {
-<script src="~/vendor/libs/moment/moment.dist.js"></script>
-<script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
-<script src="~/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
-<script src="~/vendor/libs/&#64;form-validation/popular.dist.js"></script>
-<script src="~/vendor/libs/&#64;form-validation/bootstrap5.dist.js"></script>
-<script src="~/vendor/libs/&#64;form-validation/auto-focus.dist.js"></script>
-<script src="~/vendor/libs/cleavejs/cleave.dist.js"></script>
-<script src="~/vendor/libs/cleavejs/cleave-phone.dist.js"></script>
+    <script src="~/vendor/libs/moment/moment.dist.js"></script>
+    <script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
+    <script src="~/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/popular.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/bootstrap5.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/auto-focus.dist.js"></script>
+    <script src="~/vendor/libs/cleavejs/cleave.dist.js"></script>
+    <script src="~/vendor/libs/cleavejs/cleave-phone.dist.js"></script>
 }
 @section PageScripts
 {
-@* <script src="~/js/institution-crud.dist.js"></script> *@
     <script src="~/code_js/managecampus.js"></script>
 }
 
@@ -50,7 +49,7 @@
                         <th>Institution</th>
                         <th>Affiliation No</th>
                         <th>School Code</th>
-                        <th>Campus Type</th> 
+                        <th>Campus Type</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -66,7 +65,7 @@
                             <td>@item.Institution?.InstitutionName</td>
                             <td>@item.AffiliationNo</td>
                             <td>@item.SchoolCode</td>
-                             <td>@item.CampusType?.CampusTypeName</td>
+                            <td>@item.CampusType?.CampusTypeName</td>
                             <td>@(item.Status == 1 ? "Active" : "Inactive")</td>
                             <td class="text-nowrap">
                                 <div class="col-md-12 text-center">
@@ -76,7 +75,7 @@
                                     </button>
 
                                     <!-- Edit Partial -->
-                                  @*   @await Html.PartialAsync("~/Pages/Campus/_EditCampusOffcanvasPartial.cshtml", new
+                                    @*   @await Html.PartialAsync("~/Pages/Campus/_EditCampusOffcanvasPartial.cshtml", new
                                          {
                                              Campus = item,
                                             Institutions = Model.Institutions,
@@ -124,11 +123,11 @@ else
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
+                @*  <tbody>
+                       <tr>
                         <td colspan="9" class="text-center">No data available in table</td>
                     </tr>
-                </tbody>
+                </tbody> *@
             </table>
         </div>
     </div>

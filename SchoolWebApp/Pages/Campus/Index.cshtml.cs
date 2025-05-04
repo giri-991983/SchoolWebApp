@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using SchoolWebApp.Data;
 using SchoolWebApp.Models;
+using SchoolWebApp.ViewComponents;
+using System.Text.Encodings.Web;
 
 
 namespace SchoolWebApp.Pages.Campus
@@ -12,10 +16,21 @@ namespace SchoolWebApp.Pages.Campus
     {
         private readonly ApplicationDbContext _context;
 
-        public IndexModel(ApplicationDbContext context)
+        private readonly IViewComponentHelper _viewComponentHelper;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ITempDataDictionaryFactory _tempDataFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+
+        public IndexModel(IViewComponentHelper viewComponentHelper, IServiceProvider serviceProvider, ITempDataDictionaryFactory tempDataFactory, IHttpContextAccessor httpContextAccessor, ApplicationDbContext context)
         {
+            _viewComponentHelper = viewComponentHelper;
+            _serviceProvider = serviceProvider;
+            _tempDataFactory = tempDataFactory;
+            _httpContextAccessor = httpContextAccessor;
             _context = context;
         }
+
 
         public List<SchoolWebApp.Models.Campus> Campuses { get; set; } = new();
         public List<SchoolWebApp.Models.Institution> Institutions { get; set; } = new();
@@ -98,5 +113,36 @@ namespace SchoolWebApp.Pages.Campus
 
             return new JsonResult(new { success = true, message = "Campus deleted successfully" });
         }
+
+
+
+
+
+        public async Task<IActionResult> OnGetLoadComponentAsync(int id)
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new PageActionDescriptor());
+
+            // Manually initialize the ViewComponentHelper
+            var viewContext = new ViewContext(
+                actionContext,
+                new FakeView(), // You must define this class (see below)
+                new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary()),
+                _tempDataFactory.GetTempData(httpContext),
+                TextWriter.Null,
+                new HtmlHelperOptions()
+            );
+
+            ((IViewContextAware)_viewComponentHelper).Contextualize(viewContext);
+
+            var html = await _viewComponentHelper.InvokeAsync("Master", new { viewname = "Zones", FilterIds = id.ToString(), SelectedIDs = 0 });
+
+            using var writer = new StringWriter();
+            html.WriteTo(writer, HtmlEncoder.Default);
+
+            return Content(writer.ToString(), "text/html");
+
+        }
+
     }
 }
