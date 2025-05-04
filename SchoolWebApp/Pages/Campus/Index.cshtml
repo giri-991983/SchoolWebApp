@@ -1,9 +1,12 @@
 ﻿@page
 @model SchoolWebApp.Pages.Campus.IndexModel
 @{
-    ViewData["Title"] = "List of Campus";
 }
 
+
+@{
+    ViewData["Title"] = "List of Campus";
+}
 
 @section VendorStyles
 {
@@ -14,12 +17,7 @@
     <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
 }
 
-<<<<<<< HEAD
-@section VendorScripts
-{
-=======
 @section VendorScripts {
->>>>>>> 5b24e174187477113e5ed4e8b880ada24b4e6e89
     <script src="~/vendor/libs/moment/moment.dist.js"></script>
     <script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
     <script src="~/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
@@ -29,12 +27,14 @@
     <script src="~/vendor/libs/cleavejs/cleave.dist.js"></script>
     <script src="~/vendor/libs/cleavejs/cleave-phone.dist.js"></script>
 }
-
 @section PageScripts
 {
     <script src="~/code_js/managecampus.js"></script>
 }
 
+@if (Model?.Campuses != null && Model.Campuses.Any())
+{
+    var serial = 0;
     <div class="card">
         <div class="card-header pb-0">
             <h5 class="card-title mb-0">Manage Campus</h5>
@@ -55,35 +55,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model?.Campuses != null && Model.Campuses.Any())
-                    {
-                        var serial = 0;
-
                     @foreach (var item in Model.Campuses)
                     {
-                        serial++;
-                        var tcc = "camp-name-full-" + item.CampusID;
+                        serial++; var tcc = "inst-name-full-" + item.CampusID;
                         <tr data-id="@item.CampusID">
                             <td>@serial</td>
                             <td class="@tcc">@item.CampuseName</td>
-                            <td>@(item.Zone?.ZoneName ?? "N/A")</td>
-                            <td>@(item.Institution?.InstitutionName ?? "N/A")</td>
+                            <td>@item.Zone?.ZoneName</td>
+                            <td>@item.Institution?.InstitutionName</td>
                             <td>@item.AffiliationNo</td>
                             <td>@item.SchoolCode</td>
-<<<<<<< HEAD
-                           <td>@(item.CampusType?.CampusTypeName ?? "N/A")</td> 
-=======
                             <td>@item.CampusType?.CampusTypeName</td>
->>>>>>> 5b24e174187477113e5ed4e8b880ada24b4e6e89
                             <td>@(item.Status == 1 ? "Active" : "Inactive")</td>
                             <td class="text-nowrap">
-                                <div class="text-center">
+                                <div class="col-md-12 text-center">
                                     <!-- Edit Button -->
                                     <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editCampusOffcanvas_@item.CampusID">
                                         <i class="ri-edit-box-line ri-20px"></i>
                                     </button>
-<<<<<<< HEAD
-=======
 
                                     <!-- Edit Partial -->
                                     @*   @await Html.PartialAsync("~/Pages/Campus/_EditCampusOffcanvasPartial.cshtml", new
@@ -96,7 +85,6 @@
 
                                         }) *@
 
->>>>>>> 5b24e174187477113e5ed4e8b880ada24b4e6e89
                                     <!-- Delete Button -->
                                     <form method="post" id="deleteCampusForm-@item.CampusID" class="d-inline">
                                         @Html.AntiForgeryToken()
@@ -140,11 +128,9 @@ else
                         <td colspan="9" class="text-center">No data available in table</td>
                     </tr>
                 </tbody> *@
->>>>>>> 5b24e174187477113e5ed4e8b880ada24b4e6e89
             </table>
         </div>
     </div>
-
-
-<!-- Create Campus Partial -->
+}
+<!-- Create Campus Partial Page -->
 @await Html.PartialAsync("~/Pages/Campus/_Create.cshtml")
