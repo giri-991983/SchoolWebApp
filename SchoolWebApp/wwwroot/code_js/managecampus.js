@@ -2,33 +2,13 @@
 
 
 
-function loadZones(institutionId) {
-    const zoneSelect = document.getElementById("ZoneID");
-    zoneSelect.innerHTML = '<option value="">Loading...</option>';
-
-    fetch(`/Campus/CampusIndex?handler=ZonesByInstitution&institutionId=${institutionId}`)
-        .then(response => response.json())
-        .then(data => {
-            zoneSelect.innerHTML = '<option value="">Select Zone</option>';
-            data.forEach(zone => {
-                const option = document.createElement("option");
-                option.value = zone.zoneID;
-                option.text = zone.zoneName;
-                zoneSelect.appendChild(option);
-            });
-        })
-        .catch(error => {
-            console.error("Error loading zones:", error);
-            zoneSelect.innerHTML = '<option value="">Error loading zones</option>';
-        });
-}
 
 $(document).ready(function () {
 
-    //  Zone DataTable Initialization
+    //  Campus DataTable Initialization
     $('#CampusTable').DataTable({
 
-        order: [[0, 'asc']],
+        order: [[1, 'asc']],
         displayLength: 20,
         dom:
             // Datatable DOM positioning
@@ -80,10 +60,10 @@ $(document).ready(function () {
                             $(win.document.body).find('h1').css('text-align', 'center');
                         },
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                            columns: [1, 2, 3, 4, 5, 6, 7],
                             format: {
                                 body: function (data, row, column, node) {
-
+                                  
                                     return data;
                                 }
                             }
@@ -95,10 +75,10 @@ $(document).ready(function () {
                         text: '<i class="ri-file-text-line me-1" ></i>Csv',
                         className: 'dropdown-item',
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                            columns: [1, 2, 3, 4, 5, 6,7],
                             format: {
                                 body: function (data, row, column, node) {
-
+                                  
                                     return data;
                                 }
                             }
@@ -110,10 +90,10 @@ $(document).ready(function () {
                         text: '<i class="ri-file-excel-line me-1"></i>Excel',
                         className: 'dropdown-item',
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                            columns: [1, 2, 3, 4, 5, 6, 7],
                             format: {
                                 body: function (data, row, column, node) {
-
+                                  
                                     return data;
                                 }
                             }
@@ -125,10 +105,10 @@ $(document).ready(function () {
                         text: '<i class="ri-file-pdf-line me-1"></i>Pdf',
                         className: 'dropdown-item',
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                            columns: [1, 2, 3, 4, 5, 6, 7],
                             format: {
                                 body: function (data, row, column, node) {
-
+                                 
                                     return data;
                                 }
                             }
@@ -140,10 +120,10 @@ $(document).ready(function () {
                         text: '<i class="ri-file-copy-line me-1"></i>Copy',
                         className: 'dropdown-item',
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                            columns: [1, 2, 3, 4, 5, 6, 7],
                             format: {
                                 body: function (data, row, column, node) {
-
+                                   
                                     return data;
                                 }
                             }
@@ -152,16 +132,29 @@ $(document).ready(function () {
                 ]
             },
             {
-                // For Create User Button (Add New )
                 text: '<i class="ri-add-line ri-16px me-0 me-sm-1_5"></i><span class="d-none d-sm-inline-block">Add Campus</span>',
                 className: 'add-new btn btn-primary waves-effect waves-light',
-                attr: {
-                    'data-bs-toggle': 'offcanvas',
-                    'data-bs-target': '#createCampusOffcanvas'
+                action: function () {
+                    // Trigger the offcanvas
+                    var offcanvas = document.getElementById('createCampusOffcanvas');
+                    var bsOffcanvas = new bootstrap.Offcanvas(offcanvas);
+                    bsOffcanvas.show();
                 }
             }
         ],
         responsive: true,
+        columns: [
+            { title: 'S.No' },
+            { title: 'Campus Name' },
+            { title: 'Zone' },
+            { title: 'Institution' },
+            { title: 'Affiliation No' },
+            { title: 'School Code' },
+            { title: 'Campus Type' },
+            { title: 'Status' },
+            { title: 'Actions', orderable: false, searchable: false }
+        ]
+
 
     });
 
@@ -228,7 +221,7 @@ const fv = FormValidation.formValidation(createNewCampusForm, {
                 }
             }
         },
-        'Campus.CampuseType': {
+        'Campus.CampusTypeID': {
             validators: {
                 notEmpty: { message: 'Please select Campus Type' }
             }
@@ -353,7 +346,7 @@ function CreateNewCampusData(form) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: response.message || 'An error occurred while creating the institution.',
+                        text: response.message || 'An error occurred while creating the campus.',
                         confirmButtonText: 'OK'
                     });
                 }
@@ -368,7 +361,7 @@ function CreateNewCampusData(form) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Submission Failed',
-                    text: 'Failed to create the institution: ' + (xhr.responseText || error),
+                    text: 'Failed to create the Campus: ' + (xhr.responseText || error),
                     confirmButtonText: 'OK'
                 });
             }
@@ -379,7 +372,7 @@ function CreateNewCampusData(form) {
 function showDeleteConfirmation(campusId) {
     //  event.preventDefault(); // prevent form submit
     debugger;
-    const CampusName = document.querySelector(`.inst-name-full-${campusId}`).innerText;
+    const CampusName = document.querySelector(`.camp-name-full-${campusId}`).innerText;
 
     Swal.fire({
         title: 'Delete Campus Name',

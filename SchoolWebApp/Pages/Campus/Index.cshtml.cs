@@ -17,10 +17,10 @@ namespace SchoolWebApp.Pages.Campus
             _context = context;
         }
 
-        public List<SchoolWebApp.Models.Campus> Campuses { get; set; } = new();
-        public List<SchoolWebApp.Models.Institution> Institutions { get; set; } = new();
-        public List<SchoolWebApp.Models.Zone> Zones { get; set; } = new();
-        public List<SchoolWebApp.Models.CampusType> CampusTypes { get; set; } = new();
+        public List<SchoolWebApp.Models.Campus> Campuses { get; set; } 
+        public List<SchoolWebApp.Models.Institution> Institutions { get; set; } 
+        public List<SchoolWebApp.Models.Zone> Zones { get; set; } 
+        public List<SchoolWebApp.Models.CampusType> CampusTypes { get; set; }
         public List<SelectListItem> Statuses { get; set; } = new()
         {
             new SelectListItem { Value = "1", Text = "Active" },
@@ -59,6 +59,9 @@ namespace SchoolWebApp.Pages.Campus
             {
                 return new JsonResult(new { success = false, message = "Invalid data" });
             }
+            Campus.CreatedDate= DateTime.Now;
+            Campus.CGUID = System.Guid.NewGuid().ToString().ToUpper();
+            Campus.Status = 1;
 
             _context.Campuses.Add(Campus);
             await _context.SaveChangesAsync();

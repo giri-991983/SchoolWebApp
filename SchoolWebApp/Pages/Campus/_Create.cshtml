@@ -49,7 +49,7 @@
                 <label for="SchoolCode">School Code</label>
             </div>
             <div class="form-floating form-floating-outline mb-5">
-                <select asp-for="Campus.CampusTypeID" id="CampuseType" class="form-select">
+                <select asp-for="Campus.CampusTypeID" id="CampuseTypeID" class="form-select">
                     <option value="">Select Campus Type</option>
                     @foreach (var campusType in Model.CampusTypes)
                     {
@@ -86,7 +86,7 @@
                 <input asp-for="Campus.PinCode" autocomplete="off" class="form-control" id="PinCode" placeholder="Pin Code" />
                 <label for="PinCode">Pin Code</label>
             </div>
-            <div class="form-floating form-floating-outline mb-5">
+         @*    <div class="form-floating form-floating-outline mb-5">
                 <select asp-for="Campus.Status" id="Status" class="form-select">
                     <option value="">Select Status</option>
                     @foreach (var item in Model.Statuses)
@@ -95,11 +95,8 @@
                     }
                 </select>
                 <label for="Status">Status</label>
-            </div>
-            @*  <div class="form-floating form-floating-outline mb-5">
-                <input type="file" asp-for="Campus.LogoFile" id="LogoFile" class="form-control" accept=".jpg,.jpeg,.png" />
-                <label for="LogoFile">Upload Logo</label>
             </div> *@
+           
             <div class="row">
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary me-3">Submit</button>

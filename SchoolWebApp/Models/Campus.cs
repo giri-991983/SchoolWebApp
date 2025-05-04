@@ -30,7 +30,7 @@ namespace SchoolWebApp.Models
         public string SchoolCode { get; set; }
 
         [Required]
-        [ForeignKey("CampusTypeID")] // Reference the navigation property
+        [ForeignKey("CampusType")] // Reference the navigation property
         public int CampusTypeID { get; set; } //// Foreign key for CampusType
 
         [Required, StringLength(100)]

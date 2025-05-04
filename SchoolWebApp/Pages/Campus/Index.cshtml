@@ -1,41 +1,36 @@
 ﻿@page
 @model SchoolWebApp.Pages.Campus.IndexModel
 @{
-}
-
-
-@{
     ViewData["Title"] = "List of Campus";
 }
+
 
 @section VendorStyles
 {
     <link rel="stylesheet" href="~/vendor/libs/datatables-bs5/datatables.bootstrap5.dist.css">
-        <link rel="stylesheet" href="~/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.dist.css">
-            <link rel="stylesheet" href="~/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.dist.css">
-            <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.dist.css" />
-            <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
+    <link rel="stylesheet" href="~/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.dist.css" />
+    <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
 }
 
-@section VendorScripts {
-<script src="~/vendor/libs/moment/moment.dist.js"></script>
-<script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
-<script src="~/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
-<script src="~/vendor/libs/&#64;form-validation/popular.dist.js"></script>
-<script src="~/vendor/libs/&#64;form-validation/bootstrap5.dist.js"></script>
-<script src="~/vendor/libs/&#64;form-validation/auto-focus.dist.js"></script>
-<script src="~/vendor/libs/cleavejs/cleave.dist.js"></script>
-<script src="~/vendor/libs/cleavejs/cleave-phone.dist.js"></script>
+@section VendorScripts
+{
+    <script src="~/vendor/libs/moment/moment.dist.js"></script>
+    <script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
+    <script src="~/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/popular.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/bootstrap5.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/auto-focus.dist.js"></script>
+    <script src="~/vendor/libs/cleavejs/cleave.dist.js"></script>
+    <script src="~/vendor/libs/cleavejs/cleave-phone.dist.js"></script>
 }
+
 @section PageScripts
 {
-@* <script src="~/js/institution-crud.dist.js"></script> *@
     <script src="~/code_js/managecampus.js"></script>
 }
 
-@if (Model?.Campuses != null && Model.Campuses.Any())
-{
-    var serial = 0;
     <div class="card">
         <div class="card-header pb-0">
             <h5 class="card-title mb-0">Manage Campus</h5>
@@ -56,36 +51,29 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @if (Model?.Campuses != null && Model.Campuses.Any())
+                    {
+                        var serial = 0;
+
                     @foreach (var item in Model.Campuses)
                     {
-                        serial++; var tcc = "inst-name-full-" + item.CampusID;
+                        serial++;
+                        var tcc = "camp-name-full-" + item.CampusID;
                         <tr data-id="@item.CampusID">
                             <td>@serial</td>
                             <td class="@tcc">@item.CampuseName</td>
-                            <td>@item.Zone?.ZoneName</td>
-                            <td>@item.Institution?.InstitutionName</td>
+                            <td>@(item.Zone?.ZoneName ?? "N/A")</td>
+                            <td>@(item.Institution?.InstitutionName ?? "N/A")</td>
                             <td>@item.AffiliationNo</td>
                             <td>@item.SchoolCode</td>
-                             <td>@item.CampusType?.CampusTypeName</td>
+                           <td>@(item.CampusType?.CampusTypeName ?? "N/A")</td> 
                             <td>@(item.Status == 1 ? "Active" : "Inactive")</td>
                             <td class="text-nowrap">
-                                <div class="col-md-12 text-center">
+                                <div class="text-center">
                                     <!-- Edit Button -->
                                     <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editCampusOffcanvas_@item.CampusID">
                                         <i class="ri-edit-box-line ri-20px"></i>
                                     </button>
-
-                                    <!-- Edit Partial -->
-                                  @*   @await Html.PartialAsync("~/Pages/Campus/_EditCampusOffcanvasPartial.cshtml", new
-                                         {
-                                             Campus = item,
-                                            Institutions = Model.Institutions,
-                                            Zones = Model.Zones,
-                                            Statuses = Model.Statuses,
-                                            CampusTypes = Model.CampusTypes
-
-                                        }) *@
-
                                     <!-- Delete Button -->
                                     <form method="post" id="deleteCampusForm-@item.CampusID" class="d-inline">
                                         @Html.AntiForgeryToken()
@@ -98,40 +86,19 @@
                             </td>
                         </tr>
                     }
-                </tbody>
-            </table>
-        </div>
-    </div>
-}
-else
-{
-    <div class="card">
-        <div class="card-header pb-0">
-            <h5 class="card-title mb-0">Manage Campus</h5>
-        </div>
-        <div class="card-datatable table-responsive">
-            <table id="CampusTable" class="table">
-                <thead>
-                    <tr>
-                        <th>S.No</th>
-                        <th>Campus Name</th>
-                        <th>Zone</th>
-                        <th>Institution</th>
-                        <th>Affiliation No</th>
-                        <th>School Code</th>
-                        <th>Campus Type</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
+                }
+                else
+                {
                     <tr>
                         <td colspan="9" class="text-center">No data available in table</td>
                     </tr>
+                }
+
                 </tbody>
             </table>
         </div>
     </div>
-}
-<!-- Create Campus Partial Page -->
+
+
+<!-- Create Campus Partial -->
 @await Html.PartialAsync("~/Pages/Campus/_Create.cshtml")
