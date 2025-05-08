@@ -12,7 +12,7 @@ namespace SchoolWebApp.Models
         [ForeignKey("Institution")]
         public int InstitutionID { get; set; }
 
-       
+        
         public string? ZGUID { get; set; } 
 
         [Required]

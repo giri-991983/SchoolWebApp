@@ -57,7 +57,7 @@
                 <tbody>
                     @foreach (var item in Model.Campuses)
                     {
-                        serial++; var tcc = "inst-name-full-" + item.CampusID;
+                        serial++; var tcc = "camp-name-full-" + item.CampusID;
                         <tr data-id="@item.CampusID">
                             <td>@serial</td>
                             <td class="@tcc">@item.CampuseName</td>
@@ -66,24 +66,23 @@
                             <td>@item.AffiliationNo</td>
                             <td>@item.SchoolCode</td>
                             <td>@item.CampusType?.CampusTypeName</td>
-                            <td>@(item.Status == 1 ? "Active" : "Inactive")</td>
+                            <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>
                             <td class="text-nowrap">
                                 <div class="col-md-12 text-center">
                                     <!-- Edit Button -->
-                                    <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editCampusOffcanvas_@item.CampusID">
+                                    <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editCampusOffcanvas" onclick="editCampus(@item.CampusID)">
                                         <i class="ri-edit-box-line ri-20px"></i>
                                     </button>
-
-                                    <!-- Edit Partial -->
-                                    @*   @await Html.PartialAsync("~/Pages/Campus/_EditCampusOffcanvasPartial.cshtml", new
-                                         {
-                                             Campus = item,
-                                            Institutions = Model.Institutions,
-                                            Zones = Model.Zones,
-                                            Statuses = Model.Statuses,
-                                            CampusTypes = Model.CampusTypes
-
-                                        }) *@
+                                  
+                                    <div class="offcanvas offcanvas-end" tabindex="-1" id="editCampusOffcanvas" aria-labelledby="editCampusOffcanvasLabel">
+                                        <div class="offcanvas-header">
+                                            <h5 id="editCampusOffcanvasLabel" class="offcanvas-title">Edit Campus</h5>
+                                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                        </div>
+                                        <div class="offcanvas-body">
+                                            <div id="editFormContainer"></div>
+                                        </div>
+                                    </div>
 
                                     <!-- Delete Button -->
                                     <form method="post" id="deleteCampusForm-@item.CampusID" class="d-inline">

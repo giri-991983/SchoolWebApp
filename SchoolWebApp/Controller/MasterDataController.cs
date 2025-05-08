@@ -17,5 +17,6 @@ namespace SchoolWebApp
             return ViewComponent("Master", new { viewname = "Zones", FilterIds = id.ToString(), SelectedIDs = 0 });
 
         }
+       
     }
 }

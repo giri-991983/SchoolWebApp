@@ -1,0 +1,13 @@
+﻿@using SchoolWebApp.Models;
+@{
+    var cities = ViewBag.Cities as List<City>;
+    var cityId = ViewBag.SelectedIDs as int?;
+}
+
+<option value=""> Select City</option>
+@foreach (var ct in cities)
+{
+
+    <option value="@ct.StateID" selected="@(ct.CityID == cityId)">@ct.CityName</option>
+
+}

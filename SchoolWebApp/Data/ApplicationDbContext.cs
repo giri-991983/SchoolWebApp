@@ -10,6 +10,9 @@ namespace SchoolWebApp.Data
         public DbSet<Zone> Zones { get; set; }
         public DbSet<CampusType> CampusTypes { get; set; }
         public DbSet<Campus> Campuses { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<State> States { get; set; }
+        public DbSet<City> Cities { get; set; }
 
  //       protected override void OnModelCreating(ModelBuilder modelBuilder)
  //       {

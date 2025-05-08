@@ -18,7 +18,7 @@ namespace SchoolWebApp.Models
         public int ZoneID { get; set; }
 
         [Required, StringLength(50)]
-        public string CGUID { get; set; }
+        public string? CGUID { get; set; }
 
         [Required, StringLength(100)]
         public string CampuseName { get; set; }
@@ -36,21 +36,21 @@ namespace SchoolWebApp.Models
         [Required, StringLength(100)]
         public string PhoneNos { get; set; }
 
-        [StringLength(200)]
-        public string Address { get; set; }
+       
+        public string? Address { get; set; }
 
-        [StringLength(100)]
-        public string Locality { get; set; }
+      
+        public string? Locality { get; set; }
+        [ForeignKey("City")]
+        public int? CityID { get; set; }
+        [ForeignKey("State")]
+        public int? StateID { get; set; }
 
-        public int CityID { get; set; }
-
-        public int StateID { get; set; }
+        [ForeignKey("Country")]
+        public int? CountryID { get; set; }
 
         [StringLength(50)]
-        public string CountryID { get; set; }
-
-        [StringLength(50)]
-        public string PinCode { get; set; }
+        public string? PinCode { get; set; }
 
         [Required]
         public int Status { get; set; }
@@ -63,7 +63,9 @@ namespace SchoolWebApp.Models
         public virtual Zone? Zone { get; set; }
 
         public virtual CampusType? CampusType { get; set; }
-
+        public virtual City? City { get; set; }
+        public virtual State? State { get; set; }
+        public virtual Country? Country { get; set; }
 
         //[Key]
         //public int CampusID { get; set; }

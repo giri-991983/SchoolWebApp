@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using SchoolWebApp.Data;
 using SchoolWebApp.Models;
 using SchoolWebApp.ViewComponents;
+using System;
 using System.Text.Encodings.Web;
 
 
@@ -41,6 +42,9 @@ namespace SchoolWebApp.Pages.Campus
             new SelectListItem { Value = "1", Text = "Active" },
             new SelectListItem { Value = "0", Text = "Inactive" }
         };
+        public List<City> Cities { get; set; } = new();
+        public List<State> States { get; set; } = new();
+        public List<Country> Countries { get; set; }
         [BindProperty]
         public SchoolWebApp.Models.Campus Campus { get; set; }
 
@@ -72,10 +76,18 @@ namespace SchoolWebApp.Pages.Campus
         {
             if (!ModelState.IsValid)
             {
-                return new JsonResult(new { success = false, message = "Invalid data" });
+                var errors = ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                    );
+                return new JsonResult(new { success = false, message = "Validation failed. Please check the following fields:", errors });
             }
+
             Campus.CreatedDate= DateTime.Now;
             Campus.CGUID = System.Guid.NewGuid().ToString().ToUpper();
+           
             Campus.Status = 1;
 
             _context.Campuses.Add(Campus);
@@ -83,7 +95,30 @@ namespace SchoolWebApp.Pages.Campus
 
             return new JsonResult(new { success = true, message = "Campus created successfully" });
         }
+        public async Task<IActionResult> OnGetEditCampusFormAsync(int id)
+        {
+            try
+            {
+                Campus = await _context.Campuses.FirstOrDefaultAsync(c =>c.CampusID == id);
+                if (Campus == null)
+                {
+                    return new JsonResult(new { success = false, message = "Campus not found" });
+                }
 
+                // Load related data for dropdowns
+                Institutions = await _context.Institutions.OrderBy(i => i.InstitutionName).ToListAsync();
+
+                // Optionally load other related data if needed (e.g., CampusTypes, Zones)
+                CampusTypes = await _context.CampusTypes.OrderBy(ct => ct.CampusTypeName).ToListAsync();
+                Zones = await _context.Zones.OrderBy(z => z.ZoneName).ToListAsync();
+
+                return Partial("~/Pages/Campus/_Edit.cshtml", this);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { success = false, message = $"Failed to retrieve campus: {ex.Message}" });
+            }
+        }
         public async Task<IActionResult> OnPostEditCampusAsync()
         {
             if (!ModelState.IsValid)
@@ -147,5 +182,70 @@ namespace SchoolWebApp.Pages.Campus
 
         }
 
+        
+
+        public async Task<IActionResult> OnGetLoadLocationAsync(string id, string locationType)
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new PageActionDescriptor());
+            var viewContext = new ViewContext(
+                actionContext,
+                new FakeView(),
+                new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary()),
+                _tempDataFactory.GetTempData(httpContext),
+                TextWriter.Null,
+                new HtmlHelperOptions()
+            );
+
+            ((IViewContextAware)_viewComponentHelper).Contextualize(viewContext);
+
+            string viewnames;
+            string filterIds;
+
+            switch (locationType?.ToLower())
+            {
+                //case "countries":
+                //    viewnames = "Countries";
+                //    filterIds = "";
+                //    break;
+
+                case "states":
+                    viewnames = "States";
+                    //if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out int countryId) || countryId <= 0)
+                    //{
+                    //    return Content("<option value=''>Select a country first</option>", "text/html");
+                    //}
+                    filterIds = id;
+                    break;
+
+                case "cities":
+                    viewnames = "Cities";
+                    //if (string.IsNullOrWhiteSpace(id) || !id.Contains(","))
+                    //{
+                    //    return Content("/*<option value=''>Select valid country and state</option>*/", "text/html");
+                    //}
+                    //var ids = id.Split(',');
+                    //if (ids.Length != 2 || !int.TryParse(ids[0], out int parsedCountryId) || parsedCountryId <= 0 ||
+                    //    !int.TryParse(ids[1], out int parsedStateId) || parsedStateId <= 0)
+                    //{
+                    //    return Content("/*<option value=''>Select valid country and state</option>*/", "text/html");
+                    //}
+                    filterIds = id;
+                    break;
+
+                default:
+                    return BadRequest("Invalid location type specified.");
+            }
+
+            var html = await _viewComponentHelper.InvokeAsync("Master", new { viewname = viewnames, FilterIds = filterIds, SelectedIDs = 0 });
+
+            using var writer = new StringWriter();
+            html.WriteTo(writer, HtmlEncoder.Default);
+            return Content(writer.ToString(), "text/html");
+        }
+
     }
+
+
+
 }
