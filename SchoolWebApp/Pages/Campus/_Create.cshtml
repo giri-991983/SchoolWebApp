@@ -1,4 +1,5 @@
 ﻿@model SchoolWebApp.Pages.Campus.IndexModel
+@inject IConfiguration Configuration
 @{
     ViewData["Title"] = "Campus Management";
 }
@@ -11,94 +12,152 @@
     </div>
     <div class="offcanvas-body mx-0 flex-grow-0">
         <form id="createCampusForm" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="CampusVM.Campus.CGUID"  />
+            <input type="hidden" name="CampusVM.Campus.CreatedDate" />
+            <input type="hidden" name="CampusVM.Campus.Status" />
+            <input type="hidden" name="CampusVM.CampusBoardingTypes.CreatedDate"  />
+            <input type="hidden" name="CampusVM.CampusBoardingTypes.IsActive"  />
+         
+            <!-- InstitutionID Dropdown -->
             <div class="form-floating form-floating-outline mb-5">
-                <select name="Campus.InstitutionID" id="InstitutionID" class="form-control" onchange="loadZones(this.value)">
+                <select name="CampusVM.Campus.InstitutionID" id="InstitutionID" class="form-control" onchange="loadZones(this.value)" required>
+                    
                     @await Component.InvokeAsync("Master", new { viewname = "Institutions" })
                 </select>
                 <label for="InstitutionID">Institution</label>
-                
+               
             </div>
-            <input type="hidden" name="Campus.CGUID" value="placeholder" />
+
+            <!-- ZoneID Dropdown -->
             <div class="form-floating form-floating-outline mb-5">
-                <select name="Campus.ZoneID" id="ZoneID" class="form-control">
+                <select name="CampusVM.Campus.ZoneID" id="ZoneID" class="form-control" required>
+                    <option value="">Select Zone</option>
                 </select>
                 <label for="ZoneID">Zone</label>
-               
+                
             </div>
 
+            <!-- CampuseName -->
             <div class="form-floating form-floating-outline mb-5">
-                <input name="Campus.CampuseName" autocomplete="off" class="form-control" id="CampuseName" placeholder="Campus Name" />
+                <input type="text" name="CampusVM.Campus.CampuseName" id="CampuseName" class="form-control" autocomplete="off" placeholder="Campus Name" required />
                 <label for="CampuseName">Campus Name</label>
-               
+             
             </div>
 
+            <!-- AffiliationNo -->
             <div class="form-floating form-floating-outline mb-5">
-                <input name="Campus.AffiliationNo" autocomplete="off" class="form-control" id="AffiliationNo" placeholder="Affiliation No" />
+                <input type="text" name="CampusVM.Campus.AffiliationNo" id="AffiliationNo" class="form-control" autocomplete="off" placeholder="Affiliation No" required />
                 <label for="AffiliationNo">Affiliation No</label>
-                
+            
             </div>
 
+            <!-- SchoolCode -->
             <div class="form-floating form-floating-outline mb-5">
-                <input name="Campus.SchoolCode" autocomplete="off" class="form-control" id="SchoolCode" placeholder="School Code" />
+                <input type="text" name="CampusVM.Campus.SchoolCode" id="SchoolCode" class="form-control" autocomplete="off" placeholder="School Code" required />
                 <label for="SchoolCode">School Code</label>
-                
+              
             </div>
 
+            <!-- CampusTypeID Dropdown -->
             <div class="form-floating form-floating-outline mb-5">
-                <select name="Campus.CampusTypeID" id="CampusTypeID" class="form-control">
+                <select name="CampusVM.Campus.CampusTypeID" id="CampusTypeID" class="form-control" required>
+                   
                     @await Component.InvokeAsync("Master", new { viewname = "CampusTypes" })
                 </select>
                 <label for="CampusTypeID">Campus Type</label>
+               
             </div>
-
+       
+@* <!-- BoardingTypeIDs Checkbox Dropdown -->
             <div class="form-floating form-floating-outline mb-5">
-                <input  type="text" name="Campus.PhoneNos" autocomplete="off" class="form-control" id="PhoneNos" placeholder="Phone Numbers" />
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle text-start" type="button" id="boardingTypeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select Boarding Types
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="boardingTypeDropdown">
+                        @await Component.InvokeAsync("Master", new { viewname = "BoardingTypes", Selected = (Model.CampusVM?.BoardingTypeIDs ?? new List<int>()), RenderMode = "checkboxes" })
+                    </ul>
+                </div>
+                <label for="boardingTypeDropdown">Boarding Type</label>
+                <div id="boardingTypeHiddenInputs"></div>
+                <span class="text-danger" data-fv-for="CampusVM.BoardingTypeIDs"></span>
+            </div>
+ *@            <div class="form-floating form-floating-outline mb-5">
+                <select name="CampusVM.BoardingTypeIDs"
+                        id="BoardingTypeID"
+                        class="form-control selectpicker"
+                        multiple
+                        data-selected-text-format="count > 2"
+                        title="Select Boarding Types">
+                        required>
+
+                    @await Component.InvokeAsync("Master", new { viewname = "BoardingTypes", Selected = (Model.CampusVM?.BoardingTypeIDs ?? new List<int>()) })
+                </select>
+                <label for="BoardingTypeID">Boarding Type</label>
+                <span class="text-danger" data-fv-for="CampusVM.BoardingTypeIDs"></span>
+            </div>
+          
+            <!-- PhoneNos -->
+            <div class="form-floating form-floating-outline mb-5">
+                <input type="text" name="CampusVM.Campus.PhoneNos" id="PhoneNos" class="form-control" autocomplete="off" placeholder="Phone Numbers" required />
                 <label for="PhoneNos">Phone Numbers</label>
+              
             </div>
 
+            <!-- Address -->
             <div class="form-floating form-floating-outline mb-5">
-                <textarea name="Campus.Address" class="form-control" style="height: 100px;" id="Address" placeholder="Address"></textarea>
+                <textarea name="CampusVM.Campus.Address" id="Address" class="form-control" style="height: 100px;" placeholder="Address"></textarea>
                 <label for="Address">Address</label>
+               
             </div>
 
+            <!-- Locality -->
             <div class="form-floating form-floating-outline mb-5">
-                <input name="Campus.Locality" autocomplete="off" class="form-control" id="Locality" placeholder="Locality" />
-                <label for="Locality">Locality</label>
-                <span class="text-danger" data-fv-for="Campus.Locality"></span>
+                <input type="text" name="CampusVM.Campus.Locality" id="Locality" class="form-control" autocomplete="off" placeholder="Enter Locality or City" />
+                <label for="Locality">Locality (Type City for Autosuggestions)</label>
+               
             </div>
+
             <!-- CountryID Dropdown -->
             <div class="form-floating form-floating-outline mb-5">
-                <select name="Campus.CountryID" id="CountryID" class="form-control" onchange="loadStates(this.value)">
+                <select name="CampusVM.Campus.CountryID" id="CountryID" class="form-control" onchange="loadStates(this.value)" required>
                    
                     @await Component.InvokeAsync("Master", new { viewname = "Countries" })
                 </select>
                 <label for="CountryID">Country</label>
+
             </div>
 
             <!-- StateID Dropdown -->
             <div class="form-floating form-floating-outline mb-5">
-                <select name="Campus.StateID" id="StateID" class="form-control" onchange=" loadCities(this.value)">
-                  
+                <select name="CampusVM.Campus.StateID" id="StateID" class="form-control" onchange="loadCities(this.value)" required>
+                    
                 </select>
                 <label for="StateID">State</label>
+               
             </div>
 
             <!-- CityID Dropdown -->
             <div class="form-floating form-floating-outline mb-5">
-                <select name="Campus.CityID" id="CityID" class="form-control">
+                <select name="CampusVM.Campus.CityID" id="CityID" class="form-control" required>
                    
                 </select>
                 <label for="CityID">City</label>
+              
             </div>
 
+            <!-- PinCode -->
             <div class="form-floating form-floating-outline mb-5">
-                <input name="Campus.PinCode" autocomplete="off" class="form-control" id="PinCode" placeholder="Pin Code" />
+                <input type="text" name="CampusVM.Campus.PinCode" id="PinCode" class="form-control" autocomplete="off" placeholder="Pin Code" />
                 <label for="PinCode">Pin Code</label>
+               
             </div>
 
+            <!-- Buttons -->
             <div class="row">
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary me-3">Submit</button>
+                    <button type="submit" class="btn btn-primary me-3" id="submitCreateCampusBtn">Submit</button>
                     <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
                 </div>
             </div>

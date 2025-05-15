@@ -1,284 +1,176 @@
-﻿@model SchoolWebApp.Pages.Campus.IndexModel
+﻿
+@model SchoolWebApp.Pages.Campus.IndexModel
+
+
+@if (Model == null || Model.CampusVM == null || Model.CampusVM.Campus == null)
+{
+    <div class="alert alert-danger">Unable to load campus data. Please try again.</div>
+    return;
+}
 
 <div class="offcanvas-body mx-0 flex-grow-0">
-    <form id="editCampusForm_@Model.Campus.CampusID" method="post" enctype="multipart/form-data" data-id="@Model.Campus.CampusID" >
+    <form id="editCampusForm_@Model.CampusVM.Campus.CampusID" method="post" enctype="multipart/form-data" data-id="@Model.CampusVM.Campus.CampusID">
         @Html.AntiForgeryToken()
-        <input type="hidden" name="Campus.CampusID" value="@Model.Campus.CampusID" />
-        <input type="hidden" name="Campus.CGUID" value="@Model.Campus.CGUID" />
-        <input type="hidden" name="Campus.CreatedDate" value="@Model.Campus.CreatedDate" />
-        <input type="hidden" name="Campus.Status" value="@Model.Campus.Status" />
+        <input type="hidden" name="CampusVM.Campus.CampusID" value="@Model.CampusVM.Campus.CampusID" />
+        <input type="hidden" name="CampusVM.Campus.CGUID" value="@Model.CampusVM.Campus.CGUID" />
+        <input type="hidden" name="CampusVM.Campus.CreatedDate" value="@Model.CampusVM.Campus.CreatedDate" />
+        <input type="hidden" name="CampusVM.Campus.Status" value="@Model.CampusVM.Campus.Status" />
 
         <!-- InstitutionID Dropdown -->
         <div class="form-floating form-floating-outline mb-5">
-            <select name="Campus.InstitutionID" id="editInstitutionID_@Model.Campus.CampusID" class="form-control" onchange="loadZones(this.value, @Model.Campus.CampusID)">
-                @* <option value="">Select an Institution</option> *@
-                @await Component.InvokeAsync("Master", new { viewname = "Institutions", SelectedIDs = Model.Campus.InstitutionID })
+            <select name="CampusVM.Campus.InstitutionID" id="editInstitutionID_@Model.CampusVM.Campus.CampusID" class="form-control" onchange="loadZones(this.value, @Model.CampusVM.Campus.CampusID)">
+                @await Component.InvokeAsync("Master", new { viewname = "Institutions", SelectedIDs = Model.CampusVM.Campus.InstitutionID })
             </select>
-            <label for="editInstitutionID_@Model.Campus.CampusID">Institution</label>
+            <label for="editInstitutionID_@Model.CampusVM.Campus.CampusID">Institution</label>
            
         </div>
 
         <!-- ZoneID Dropdown -->
         <div class="form-floating form-floating-outline mb-5">
-            <select name="Campus.ZoneID" id="editZoneID_@Model.Campus.CampusID" class="form-control">
-               @*  <option value="">Select a Zone</option> *@
-                @if (Model.Campus.InstitutionID != 0)
+            <select name="CampusVM.Campus.ZoneID" id="editZoneID_@Model.CampusVM.Campus.CampusID" class="form-control">
+                @if (Model.CampusVM.Campus.InstitutionID != 0)
                 {
-                    @await Component.InvokeAsync("Master", new { viewname = "Zones", FilterIds = Model.Campus.InstitutionID.ToString(), SelectedIDs = Model.Campus.ZoneID })
+                    @await Component.InvokeAsync("Master", new { viewname = "Zones", FilterIds = Model.CampusVM.Campus.InstitutionID.ToString(), SelectedIDs = Model.CampusVM.Campus.ZoneID })
                 }
             </select>
-            <label for="editZoneID_@Model.Campus.CampusID">Zone</label>
+            <label for="editZoneID_@Model.CampusVM.Campus.CampusID">Zone</label>
            
         </div>
 
-        <!-- CampusName -->
+        <!-- CampuseName -->
         <div class="form-floating form-floating-outline mb-5">
-            <input type="text" name="Campus.CampuseName" id="editCampusName_@Model.Campus.CampusID" class="form-control" value="@Model.Campus.CampuseName" autocomplete="off" />
-            <label for="editCampusName_@Model.Campus.CampusID">Campus Name</label>
-            
+            <input type="text" name="CampusVM.Campus.CampuseName" id="editCampusName_@Model.CampusVM.Campus.CampusID" class="form-control" value="@Model.CampusVM.Campus.CampuseName" autocomplete="off" />
+            <label for="editCampusName_@Model.CampusVM.Campus.CampusID">Campus Name</label>
+            <span class="text-danger" data-fv-for="Campus.CampuseName"></span>
         </div>
 
         <!-- AffiliationNo -->
         <div class="form-floating form-floating-outline mb-5">
-            <input type="text" name="Campus.AffiliationNo" id="editAffiliationNo_@Model.Campus.CampusID" class="form-control" value="@Model.Campus.AffiliationNo" autocomplete="off" />
-            <label for="editAffiliationNo_@Model.Campus.CampusID">Affiliation No</label>
-            
+            <input type="text" name="CampusVM.Campus.AffiliationNo" id="editAffiliationNo_@Model.CampusVM.Campus.CampusID" class="form-control" value="@Model.CampusVM.Campus.AffiliationNo" autocomplete="off" />
+            <label for="editAffiliationNo_@Model.CampusVM.Campus.CampusID">Affiliation No</label>
+           
         </div>
 
         <!-- SchoolCode -->
         <div class="form-floating form-floating-outline mb-5">
-            <input type="text" name="Campus.SchoolCode" id="editSchoolCode_@Model.Campus.CampusID" class="form-control" value="@Model.Campus.SchoolCode" autocomplete="off" />
-            <label for="editSchoolCode_@Model.Campus.CampusID">School Code</label>
+            <input type="text" name="CampusVM.Campus.SchoolCode" id="editSchoolCode_@Model.CampusVM.Campus.CampusID" class="form-control" value="@Model.CampusVM.Campus.SchoolCode" autocomplete="off" />
+            <label for="editSchoolCode_@Model.CampusVM.Campus.CampusID">School Code</label>
             
         </div>
 
         <!-- CampusTypeID Dropdown -->
         <div class="form-floating form-floating-outline mb-5">
-            <select name="Campus.CampusTypeID" id="editCampusTypeID_@Model.Campus.CampusID" class="form-control">
-              @*   <option value="">Select a Campus Type</option> *@
-                @await Component.InvokeAsync("Master", new { viewname = "CampusTypes", SelectedIDs = Model.Campus.CampusTypeID })
+            <select name="CampusVM.Campus.CampusTypeID" id="editCampusTypeID_@Model.CampusVM.Campus.CampusID" class="form-control">
+                @await Component.InvokeAsync("Master", new { viewname = "CampusTypes", SelectedIDs = Model.CampusVM.Campus.CampusTypeID })
             </select>
-            <label for="editCampusTypeID_@Model.Campus.CampusID">Campus Type</label>
+            <label for="editCampusTypeID_@Model.CampusVM.Campus.CampusID">Campus Type</label>
             
         </div>
 
+        <!-- BoardingTypeID Dropdown -->
+        <div class="form-floating form-floating-outline mb-5">
+            @* <p>Debug: CampusID: @Model.CampusVM.Campus.CampusID</p>
+            <p>Debug: BoardingTypeIDs in _Edit.cshtml: @(Model.CampusVM?.BoardingTypeIDs != null && Model.CampusVM.BoardingTypeIDs.Any() ? string.Join(", ", Model.CampusVM.BoardingTypeIDs) : "None")</p> *@
+            <select name="CampusVM.BoardingTypeIDs"
+                    id="editBoardingTypeID_@Model.CampusVM.Campus.CampusID"
+                 
+                    class="form-control selectpicker"
+                    multiple
+                    data-selected-text-format="count > 2"
+                    title="Select Boarding Types">
+               
+                @await Component.InvokeAsync("Master", new { viewname = "BoardingTypes", Selected = (Model.CampusVM?.BoardingTypeIDs ?? new List<int>()), SelectedIDs = (int?)null })
+            </select>
+            <label for="editBoardingTypeID_@Model.CampusVM.Campus.CampusID">Boarding Type</label>
+           
+        </div>
+
+        @* <!-- BoardingTypeIDs Checkbox Dropdown -->
+        <div class="form-floating form-floating-outline mb-5">
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle text-start" type="button" id="boardingTypeDropdown_@Model.CampusVM.Campus.CampusID" data-bs-toggle="dropdown" aria-expanded="false">
+                    Select Boarding Types
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="boardingTypeDropdown_@Model.CampusVM.Campus.CampusID">
+                    @await Component.InvokeAsync("Master", new { viewname = "BoardingTypes", Selected = (Model.CampusVM?.BoardingTypeIDs ?? new List<int>()), RenderMode = "checkboxes", CampusID = Model.CampusVM.Campus.CampusID })
+                </ul>
+            </div>
+            <label for="boardingTypeDropdown_@Model.CampusVM.Campus.CampusID">Boarding Type</label>
+            <div id="boardingTypeHiddenInputs_@Model.CampusVM.Campus.CampusID"></div>
+            <span class="text-danger" data-fv-for="CampusVM.BoardingTypeIDs"></span>
+        </div> *@
+    
+
         <!-- PhoneNos -->
         <div class="form-floating form-floating-outline mb-5">
-            <input type="text" name="Campus.PhoneNos" id="editPhoneNos_@Model.Campus.CampusID" class="form-control" value="@Model.Campus.PhoneNos" autocomplete="off" />
-            <label for="editPhoneNos_@Model.Campus.CampusID">Phone Numbers</label>
-           
+            <input type="text" name="CampusVM.Campus.PhoneNos" id="editPhoneNos_@Model.CampusVM.Campus.CampusID" class="form-control" value="@Model.CampusVM.Campus.PhoneNos" autocomplete="off" />
+            <label for="editPhoneNos_@Model.CampusVM.Campus.CampusID">Phone Numbers</label>
+            
         </div>
 
         <!-- Address -->
         <div class="form-floating form-floating-outline mb-5">
-            <textarea name="Campus.Address" id="editAddress_@Model.Campus.CampusID" class="form-control" style="height: 100px;">@Model.Campus.Address</textarea>
-            <label for="editAddress_@Model.Campus.CampusID">Address</label>
-           
+            <textarea name="CampusVM.Campus.Address" id="editAddress_@Model.CampusVM.Campus.CampusID" class="form-control" style="height: 100px;">@Model.CampusVM.Campus.Address</textarea>
+            <label for="editAddress_@Model.CampusVM.Campus.CampusID">Address</label>
+            
         </div>
 
         <!-- Locality -->
         <div class="form-floating form-floating-outline mb-5">
-            <input type="text" name="Campus.Locality" id="editLocality_@Model.Campus.CampusID" class="form-control" value="@Model.Campus.Locality" autocomplete="off" />
-            <label for="editLocality_@Model.Campus.CampusID">Locality</label>
-            <span class="text-danger" data-fv-for="Campus.Locality"></span>
+            <input type="text" name="CampusVM.Campus.Locality" id="editLocality_@Model.CampusVM.Campus.CampusID" class="form-control" value="@Model.CampusVM.Campus.Locality" autocomplete="off" />
+            <label for="editLocality_@Model.CampusVM.Campus.CampusID">Locality</label>
+            
         </div>
 
-      
         <!-- CountryID Dropdown -->
         <div class="form-floating form-floating-outline mb-5">
-            <select name="Campus.CountryID" id="editCountryID_@Model.Campus.CampusID" class="form-control" onchange="loadStates(this.value, @Model.Campus.CampusID)">
-                @* <option value="">Select a Country</option> *@
-                @await Component.InvokeAsync("Master", new { viewname = "Countries", SelectedIDs = Model.Campus.CountryID })
+            <select name="CampusVM.Campus.CountryID" id="editCountryID_@Model.CampusVM.Campus.CampusID" class="form-control" onchange="loadStates(this.value, @Model.CampusVM.Campus.CampusID)">
+                @await Component.InvokeAsync("Master", new { viewname = "Countries", SelectedIDs = Model.CampusVM.Campus.CountryID })
             </select>
-            <label for="editCountryID_@Model.Campus.CampusID">Country</label>
-            
+            <label for="editCountryID_@Model.CampusVM.Campus.CampusID">Country</label>
+           
         </div>
 
         <!-- StateID Dropdown -->
         <div class="form-floating form-floating-outline mb-5">
-            <select name="Campus.StateID" id="editStateID_@Model.Campus.CampusID" class="form-control" onchange="loadCities(this.value, @Model.Campus.CampusID)">
-                @* <option value="">Select a State</option> *@
-                @if (Model.Campus.CountryID != 0)
+            <select name="CampusVM.Campus.StateID" id="editStateID_@Model.CampusVM.Campus.CampusID" class="form-control" onchange="loadCities(this.value, @Model.CampusVM.Campus.CampusID)">
+                @if (Model.CampusVM.Campus.CountryID != 0)
                 {
-                    @await Component.InvokeAsync("Master", new { viewname = "States", FilterIds = Model.Campus.CountryID.ToString(), SelectedIDs = Model.Campus.StateID })
+                    @await Component.InvokeAsync("Master", new { viewname = "States", FilterIds = Model.CampusVM.Campus.CountryID.ToString(), SelectedIDs = Model.CampusVM.Campus.StateID })
                 }
             </select>
-            <label for="editStateID_@Model.Campus.CampusID">State</label>
+            <label for="editStateID_@Model.CampusVM.Campus.CampusID">State</label>
            
         </div>
 
         <!-- CityID Dropdown -->
         <div class="form-floating form-floating-outline mb-5">
-            <select name="Campus.CityID" id="editCityID_@Model.Campus.CampusID" class="form-control">
-                @* <option value="">Select a City</option> *@
-                @if (Model.Campus.StateID != 0)
+            <select name="CampusVM.Campus.CityID" id="editCityID_@Model.CampusVM.Campus.CampusID" class="form-control">
+                @if (Model.CampusVM.Campus.StateID != 0)
                 {
-                    var filterIds = $"{Model.Campus.CountryID},{Model.Campus.StateID}";
-                    @await Component.InvokeAsync("Master", new { viewname = "Cities", FilterIds = filterIds, SelectedIDs = Model.Campus.CityID })
+                    var filterIds = $"{Model.CampusVM.Campus.CountryID},{Model.CampusVM.Campus.StateID}";
+                    @await Component.InvokeAsync("Master", new { viewname = "Cities", FilterIds = filterIds, SelectedIDs = Model.CampusVM.Campus.CityID })
                 }
             </select>
-            <label for="editCityID_@Model.Campus.CampusID">City</label>
+            <label for="editCityID_@Model.CampusVM.Campus.CampusID">City</label>
            
         </div>
+
         <!-- PinCode -->
         <div class="form-floating form-floating-outline mb-5">
-            <input type="text" name="Campus.PinCode" id="editPinCode_@Model.Campus.CampusID" class="form-control" value="@Model.Campus.PinCode" autocomplete="off" />
-            <label for="editPinCode_@Model.Campus.CampusID">Pin Code</label>
-
+            <input type="text" name="CampusVM.Campus.PinCode" id="editPinCode_@Model.CampusVM.Campus.CampusID" class="form-control" value="@Model.CampusVM.Campus.PinCode" autocomplete="off" />
+            <label for="editPinCode_@Model.CampusVM.Campus.CampusID">Pin Code</label>
+            
         </div>
 
 
         <!-- Buttons -->
         <div class="row">
             <div class="col-12">
-                <button type="submit" class="btn btn-primary me-3" data-id="@Model.Campus.CampusID">Save</button>
+                <button type="submit" class="btn btn-primary me-3" id="submitEditCampusBtn_@Model.CampusVM.Campus.CampusID">Save</button>
                 <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
             </div>
         </div>
     </form>
 </div>
 
-@*  @model SchoolWebApp.Pages.Campus.IndexModel
-
-<div class="offcanvas offcanvas-end" tabindex="-1" id="editCampusOffcanvas" aria-labelledby="editCampusOffcanvasLabel">
-    <div class="offcanvas-header border-bottom">
-        <h5 class="offcanvas-title" id="editCampusOffcanvasLabel">Edit Campus Details</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body mx-0 flex-grow-0">
-        <form id="editCampusForm_@Model.Campus.CampusID" method="post" enctype="multipart/form-data" data-id="@Model.Campus.CampusID" onsubmit="return false;">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="Campus.CampusID" value="@Model.Campus.CampusID" />
-            <input type="hidden" name="Campus.CGUID" value="@Model.Campus.CGUID" />
-            <input type="hidden" name="Campus.CreatedDate" value="@Model.Campus.CreatedDate" />
-            <input type="hidden" name="Campus.Status" value="@Model.Campus.Status" />
-
-            <!-- InstitutionID Dropdown -->
-            <div class="form-floating form-floating-outline mb-5">
-                <select name="Campus.InstitutionID" id="editInstitutionID_@Model.Campus.CampusID" class="form-select">
-                    <option value="">Select an Institution</option>
-                    @await Component.InvokeAsync("Master", new { viewname = "Institutions", SelectedIDs = Model.Campus.InstitutionID })
-                </select>
-                <label for="editInstitutionID_@Model.Campus.CampusID">Institution</label>
-                <span class="text-danger" data-fv-for="Campus.InstitutionID"></span>
-            </div>
-
-            <!-- ZoneID Dropdown -->
-            <div class="form-floating form-floating-outline mb-5">
-                <select name="Campus.ZoneID" id="editZoneID_@Model.Campus.CampusID" class="form-select">
-                    <option value="">Select a Zone</option>
-                    @if (Model.Campus.InstitutionID != 0)
-                    {
-                        @await Component.InvokeAsync("Master", new { viewname = "Zones", FilterIds = Model.Campus.InstitutionID.ToString(), SelectedIDs = Model.Campus.ZoneID })
-                    }
-                </select>
-                <label for="editZoneID_@Model.Campus.CampusID">Zone</label>
-                <span class="text-danger" data-fv-for="Campus.ZoneID"></span>
-            </div>
-
-            <!-- CampusName -->
-            <div class="form-floating form-floating-outline mb-5">
-                <input type="text" name="Campus.CampuseName" id="editCampusName_@Model.Campus.CampusID" class="form-control" value="@Model.Campus.CampuseName" autocomplete="off" />
-                <label for="editCampusName_@Model.Campus.CampusID">Campus Name</label>
-                <span class="text-danger" data-fv-for="Campus.CampuseName"></span>
-            </div>
-
-            <!-- AffiliationNo -->
-            <div class="form-floating form-floating-outline mb-5">
-                <input type="text" name="Campus.AffiliationNo" id="editAffiliationNo_@Model.Campus.CampusID" class="form-control" value="@Model.Campus.AffiliationNo" autocomplete="off" />
-                <label for="editAffiliationNo_@Model.Campus.CampusID">Affiliation No</label>
-                <span class="text-danger" data-fv-for="Campus.AffiliationNo"></span>
-            </div>
-
-            <!-- SchoolCode -->
-            <div class="form-floating form-floating-outline mb-5">
-                <input type="text" name="Campus.SchoolCode" id="editSchoolCode_@Model.Campus.CampusID" class="form-control" value="@Model.Campus.SchoolCode" autocomplete="off" />
-                <label for="editSchoolCode_@Model.Campus.CampusID">School Code</label>
-                <span class="text-danger" data-fv-for="Campus.SchoolCode"></span>
-            </div>
-
-            <!-- CampusTypeID Dropdown -->
-            <div class="form-floating form-floating-outline mb-5">
-                <select name="Campus.CampusTypeID" id="editCampusTypeID_@Model.Campus.CampusID" class="form-select">
-                    <option value="">Select a Campus Type</option>
-                    @await Component.InvokeAsync("Master", new { viewname = "CampusTypes", SelectedIDs = Model.Campus.CampusTypeID })
-                </select>
-                <label for="editCampusTypeID_@Model.Campus.CampusID">Campus Type</label>
-                <span class="text-danger" data-fv-for="Campus.CampusTypeID"></span>
-            </div>
-
-            <!-- PhoneNos -->
-            <div class="form-floating form-floating-outline mb-5">
-                <input type="text" name="Campus.PhoneNos" id="editPhoneNos_@Model.Campus.CampusID" class="form-control" value="@Model.Campus.PhoneNos" autocomplete="off" />
-                <label for="editPhoneNos_@Model.Campus.CampusID">Phone Numbers</label>
-                <span class="text-danger" data-fv-for="Campus.PhoneNos"></span>
-            </div>
-
-            <!-- Address -->
-            <div class="form-floating form-floating-outline mb-5">
-                <textarea name="Campus.Address" id="editAddress_@Model.Campus.CampusID" class="form-control" style="height: 100px;">@Model.Campus.Address</textarea>
-                <label for="editAddress_@Model.Campus.CampusID">Address</label>
-                <span class="text-danger" data-fv-for="Campus.Address"></span>
-            </div>
-
-            <!-- Locality -->
-            <div class="form-floating form-floating-outline mb-5">
-                <input type="text" name="Campus.Locality" id="editLocality_@Model.Campus.CampusID" class="form-control" value="@Model.Campus.Locality" autocomplete="off" />
-                <label for="editLocality_@Model.Campus.CampusID">Locality</label>
-                <span class="text-danger" data-fv-for="Campus.Locality"></span>
-            </div>
-
-            <!-- PinCode -->
-            <div class="form-floating form-floating-outline mb-5">
-                <input type="text" name="Campus.PinCode" id="editPinCode_@Model.Campus.CampusID" class="form-control" value="@Model.Campus.PinCode" autocomplete="off" />
-                <label for="editPinCode_@Model.Campus.CampusID">Pin Code</label>
-                <span class="text-danger" data-fv-for="Campus.PinCode"></span>
-            </div>
-
-            <!-- CountryID Dropdown -->
-            <div class="form-floating form-floating-outline mb-5">
-                <select name="Campus.CountryID" id="editCountryID_@Model.Campus.CampusID"  class="form-select">
-                    <option value="">Select a Country</option>
-                    @await Component.InvokeAsync("Master", new { viewname = "Countries", SelectedIDs = Model.Campus.CountryID })
-                </select>
-                <label for="editCountryID_@Model.Campus.CampusID">Country</label>
-                <span class="text-danger" data-fv-for="Campus.CountryID"></span>
-            </div>
-
-            <!-- StateID Dropdown -->
-            <div class="form-floating form-floating-outline mb-5">
-                <select name="Campus.StateID" id="editStateID_@Model.Campus.CampusID" class="form-select">
-                    <option value="">Select a State</option>
-                    @if (Model.Campus.CountryID != 0)
-                    {
-                        @await Component.InvokeAsync("Master", new { viewname = "States", FilterIds = Model.Campus.CountryID.ToString(), SelectedIDs = Model.Campus.StateID })
-                    }
-                </select>
-                <label for="editStateID_@Model.Campus.CampusID">State</label>
-                <span class="text-danger" data-fv-for="Campus.StateID"></span>
-            </div>
-
-            <!-- CityID Dropdown -->
-            <div class="form-floating form-floating-outline mb-5">
-                <select name="Campus.CityID" id="editCityID_@Model.Campus.CampusID" class="form-select">
-                    <option value="">Select a City</option>
-                    @if (Model.Campus.StateID != 0)
-                    {
-                        var filterIds = $"{Model.Campus.CountryID},{Model.Campus.StateID}";
-                        @await Component.InvokeAsync("Master", new { viewname = "Cities", FilterIds = filterIds, SelectedIDs = Model.Campus.CityID })
-                    }
-                </select>
-                <label for="editCityID_@Model.Campus.CampusID">City</label>
-                <span class="text-danger" data-fv-for="Campus.CityID"></span>
-            </div>
-
-            <!-- Buttons -->
-            <div class="row">
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary me-3" data-id="@Model.Campus.CampusID">Save</button>
-                    <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>  *@

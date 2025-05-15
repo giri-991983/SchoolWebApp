@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SchoolWebApp.Data;
 using SchoolWebApp.Models;
@@ -14,9 +15,12 @@ namespace SchoolWebApp.ViewComponents
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string viewname, string? FilterIds, int? SelectedIDs)
+        public async Task<IViewComponentResult> InvokeAsync(string viewname, string? FilterIds, int? SelectedIDs = null, IEnumerable<int>? Selected = null)
         {
-           
+            
+            ViewBag.SelectedIds = Selected ?? (SelectedIDs.HasValue ? new List<int> { SelectedIDs.Value } : new List<int>());
+            //ViewBag.CampusID = CampusID; // Pa
+            //ViewBag.RenderMode = RenderMode; // Pass RenderMode to the view
             if (viewname == "Institutions")
             {
                 var Inst = await _context.Institutions.OrderBy(a => a.InstitutionName).ToListAsync();
@@ -62,12 +66,7 @@ namespace SchoolWebApp.ViewComponents
                         .OrderBy(s => s.StateName)
                         .ToListAsync();
                 }
-                else
-                {
-                    states = await _context.States
-                        .OrderBy(s => s.StateName)
-                        .ToListAsync();
-                }
+              
                 ViewBag.States = states;
             }
             else if (viewname == "Cities")
@@ -103,12 +102,45 @@ namespace SchoolWebApp.ViewComponents
                 }
                 ViewBag.Cities = cities;
             }
+            else if (viewname == "Campuses")
+            {
+                var campuses = new List<Campus>();
+                if (!string.IsNullOrEmpty(FilterIds))
+                {
+                    var filterids = FilterIds.Split(",").Select(int.Parse).ToArray();
+                    campuses = await _context.Campuses
+                   .Where(c => filterids.Contains(c.InstitutionID))
+
+                   .OrderBy(c => c.CampuseName)
+                   .ToListAsync();
+
+                }
+                else
+                {
+                    campuses = await _context.Campuses
+                        .OrderBy(c => c.CampuseName)
+                        .ToListAsync();
+                }
+                ViewBag.Campuses = campuses;
+
+            }
+
+            else if (viewname == "BoardingTypes")
+            {
+
+                var boardingTypes = await _context.BoardingTypes
+                            .OrderBy(bt => bt.BoardingType)
+                           
+                            .ToListAsync();
+                ViewBag.Items = boardingTypes ?? new List<BoardingTypes>();
+            }
+    
             ViewBag.selectedIDs = SelectedIDs;
 
             return View(viewname);
         }
 
+       
 
-    
     }
 }

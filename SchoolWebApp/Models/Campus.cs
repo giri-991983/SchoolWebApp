@@ -66,6 +66,8 @@ namespace SchoolWebApp.Models
         public virtual City? City { get; set; }
         public virtual State? State { get; set; }
         public virtual Country? Country { get; set; }
+        public virtual List<CampusBoardingType> CampusBoardingTypes { get; set; } = new List<CampusBoardingType>();
+
 
         //[Key]
         //public int CampusID { get; set; }

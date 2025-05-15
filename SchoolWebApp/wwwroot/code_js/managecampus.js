@@ -1,47 +1,321 @@
 ﻿'use strict';
 
+////window.initGoogleMaps = function () {
+////    console.log('Google Maps API loaded');
+////    initAutocomplete();
+////};
 
 
-//function loadZones(institutionId) {
-//    debugger;
-//    //const zoneSelect = document.getElementById("ZoneID");
-//    //zoneSelect.innerHTML = '<option value="">Loading...</option>';
+//// Initialize Google Maps Places Autocomplete
+////function initAutocomplete() {
+////    const localityInput = document.getElementById('LocalityAutocompleteElement');
+////    if (!localityInput) {
+////        console.error('Locality input not found');
+////        return;
+////    }
 
-//    //fetch(`/Campus/CampusIndex?handler=ZonesByInstitution&institutionId=${institutionId}`)
-//    //    .then(response => response.json())
-//    //    .then(data => {
-//    //        zoneSelect.innerHTML = '<option value="">Select Zone</option>';
-//    //        data.forEach(zone => {
-//    //            const option = document.createElement("option");
-//    //            option.value = zone.zoneID;
-//    //            option.text = zone.zoneName;
-//    //            zoneSelect.appendChild(option);
-//    //        });
-//    //    })
-//    //    .catch(error => {
-//    //        console.error("Error loading zones:", error);
-//    //        zoneSelect.innerHTML = '<option value="">Error loading zones</option>';
-//    //    });
+////    const autocomplete = new google.maps.places.Autocomplete(localityInput, {
+////        types: ['geocode'], // Allows localities, cities, etc.
+////        fields: ['address_components', 'name', 'formatted_address']
+////    });
+////    // Prevent form submission on Enter key in the Locality input
+////    localityInput.addEventListener('keydown', (e) => {
+////        if (e.key === 'Enter') {
+////            e.preventDefault();
+////        }
+////    });
 
 
-//    $.ajax({
-//        url: '/Campus/Index?handler=LoadComponent',
-//        type: 'GET',
-//        data: { id: institutionId },
-//        success: function (response) {
-//            $('#ZoneID').html(response);
-//        }
-//    });
+////    autocomplete.addListener('place_changed', function () {
+////        const place = autocomplete.getPlace();
+////        if (!place.address_components) {
+////            console.error('No address components found for selected place:', place);
+////            return;
+////        }
 
-//    //$.ajax({
-//    //    url: '/MasterData/LoadComponent',
-//    //    type: 'GET',
-//    //    data: { id: institutionId },
-//    //    success: function (response) {
-//    //        $('#ZoneID').html(response);
-//    //    }
-//    //});
-//}
+////        let countryName = '', stateName = '', cityName = '', localityName = place.name;
+
+////        // Extract address components
+////        place.address_components.forEach(component => {
+////            const types = component.types;
+////            if (types.includes('country')) {
+////                countryName = component.long_name;
+////            } else if (types.includes('administrative_area_level_1')) {
+////                stateName = component.long_name;
+////            } else if (types.includes('locality')) {
+////                cityName = component.long_name;
+////            } else if (types.includes('sublocality') || types.includes('sublocality_level_1')) {
+////                // Use sublocality as city if locality is not present
+////                cityName = cityName || component.long_name;
+////            }
+////        });
+
+////        // Fallback: If cityName is empty, use localityName or formatted_address
+////        if (!cityName) {
+////            cityName = localityName;
+////            console.warn(`No locality/sublocality found, using localityName: ${cityName}`);
+////        }
+
+////        // Update Locality input
+////        $('#Locality').val(localityName);
+////        console.log(`Selected place: ${localityName}, Country: ${countryName}, State: ${stateName}, City: ${cityName}`);
+
+////        // Update dropdowns
+////        updateDropdowns(countryName, stateName, cityName);
+////    });
+////}
+
+////// Update Country, State, and City dropdowns based on names
+////function updateDropdowns(countryName, stateName, cityName) {
+////    if (!countryName) {
+////        console.error('Country name is empty');
+////        $('#CountryID').val('').trigger('change');
+////        $('#StateID').val('').trigger('change');
+////        $('#CityID').val('').trigger('change');
+////        return;
+////    }
+
+////    // Step 1: Find CountryID
+////    $.ajax({
+////        url: '/Campus/Index?handler=SearchCountryByName',
+////        type: 'GET',
+////        data: { name: countryName },
+////        headers: {
+////            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+////        },
+////        success: function (response) {
+////            if (response.success && response.country) {
+////                const countryId = response.country.CountryID;
+////                $('#CountryID').val(countryId).trigger('change'); // Trigger loadStates
+////                console.log(`Country matched: ${countryName} -> ID: ${countryId}`);
+////                // Load states immediately
+////                loadStates(countryId);
+
+////                // Step 2: Find StateID
+////                if (stateName) {
+////                    $.ajax({
+////                        url: '/Campus/Index?handler=SearchStateByName',
+////                        type: 'GET',
+////                        data: { name: stateName, countryId: countryId },
+////                        headers: {
+////                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+////                        },
+////                        success: function (response) {
+////                            if (response.success && response.state) {
+////                                const stateId = response.state.StateID;
+////                                console.log(`State matched: ${stateName} -> ID: ${stateId}`);
+
+////                                // Load States to ensure dropdown is populated
+////                                loadStates(countryId);
+
+////                                // Set StateID after a short delay
+////                                setTimeout(() => {
+////                                    $('#StateID').val(stateId).trigger('change'); // Trigger loadCities
+
+////                                    // Step 3: Find CityID
+////                                    if (cityName) {
+////                                        $.ajax({
+////                                            url: '/Campus/Index?handler=SearchCityByName',
+////                                            type: 'GET',
+////                                            data: { name: cityName, countryId: countryId, stateId: stateId },
+////                                            headers: {
+////                                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+////                                            },
+////                                            success: function (response) {
+////                                                if (response.success && response.city) {
+////                                                    const cityId = response.city.CityID;
+////                                                    console.log(`City matched: ${cityName} -> ID: ${cityId}`);
+
+////                                                    // Load Cities to ensure dropdown is populated
+////                                                    loadCities(stateId);
+
+////                                                    // Set CityID after a short delay
+////                                                    setTimeout(() => {
+////                                                        $('#CityID').val(cityId);
+////                                                    }, 500);
+////                                                } else {
+////                                                    console.warn(`City not found: ${cityName}`);
+////                                                    $('#CityID').val('');
+////                                                }
+////                                            },
+////                                            error: function (xhr) {
+////                                                console.error(`Failed to search city ${cityName}:`, xhr.status, xhr.responseText);
+////                                                $('#CityID').val('');
+////                                            }
+////                                        });
+////                                    } else {
+////                                        $('#CityID').val('');
+////                                    }
+////                                }, 500);
+////                            } else {
+////                                console.warn(`State not found: ${stateName}`);
+////                                $('#StateID').val('');
+////                                $('#CityID').val('');
+////                            }
+////                        },
+////                        error: function (xhr) {
+////                            console.error(`Failed to search state ${stateName}:`, xhr.status, xhr.responseText);
+////                            $('#StateID').val('');
+////                            $('#CityID').val('');
+////                        }
+////                    });
+////                } else {
+////                    $('#StateID').val('');
+////                    $('#CityID').val('');
+////                }
+////            } else {
+////                console.warn(`Country not found: ${countryName}`);
+////                $('#CountryID').val('');
+////                $('#StateID').val('');
+////                $('#CityID').val('');
+////            }
+////        },
+////        error: function (xhr) {
+////            console.error(`Failed to search country ${countryName}:`, xhr.status, xhr.responseText);
+////            $('#CountryID').val('');
+////            $('#StateID').val('');
+////            $('#CityID').val('');
+////        }
+////    });
+////}
+//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+//// Initialize Google Maps Places Autocomplete using PlaceAutocompleteElement
+////window.initGoogleMaps = function () {
+////    console.log('Google Maps API loaded');
+////    if (!window.google || !google.maps || !google.maps.places) {
+////        console.error('Google Maps Places API not loaded');
+////        return;
+////    }
+////    initAutocomplete(); // <-- Call it here
+
+   
+////};
+
+////function initAutocomplete() {
+////    console.log('Initializing Google Maps PlaceAutocompleteElement');
+////    const autocompleteElement = document.getElementById('LocalityAutocomplete');
+////    const localityInput = document.getElementById('Locality');
+////    if (!autocompleteElement || !localityInput) {
+////        console.error('LocalityAutocomplete or Locality input not found');
+////        return;
+////    }
+
+////    try {
+////        autocompleteElement.type = 'cities';
+////        autocompleteElement.addEventListener('input', (e) => {
+////            console.log('Typing in LocalityAutocomplete:', e.target.value);
+////        });
+////        autocompleteElement.addEventListener('gmp-placeselect', (event) => {
+////            const place = event.detail;
+////            console.log('Place selected:', place);
+
+////            let localityName = place.displayName || '';
+////            let countryName = '', stateName = '', cityName = '';
+
+////            if (place.addressComponents) {
+////                place.addressComponents.forEach(component => {
+////                    const types = component.types;
+////                    if (types.includes('country')) {
+////                        countryName = component.longName;
+////                    } else if (types.includes('administrative_area_level_1')) {
+////                        stateName = component.longName;
+////                    } else if (types.includes('locality')) {
+////                        cityName = component.longName;
+////                        localityName = component.longName;
+////                    } else if (types.includes('sublocality') || types.includes('sublocality_level_1')) {
+////                        cityName = cityName || component.longName;
+////                    }
+////                });
+////                if (!cityName) cityName = localityName;
+////            }
+
+////            localityInput.value = localityName;
+////            console.log(`Locality set to: ${localityName}, Country: ${countryName}, State: ${stateName}, City: ${cityName}`);
+////            updateDropdowns(countryName, stateName, cityName);
+////        });
+
+////        autocompleteElement.addEventListener('keydown', (e) => {
+////            if (e.key === 'Enter') e.preventDefault();
+////        });
+////    } catch (error) {
+////        console.error('Error initializing autocomplete:', error);
+////    }
+////}
+
+
+////function updateDropdowns(countryName, stateName, cityName) {
+////    console.log('Updating dropdowns with:', { countryName, stateName, cityName });
+////    if (!countryName) {
+////        console.error('Country name is empty');
+////        $('#CountryID').val('').trigger('change');
+////        $('#StateID').val('').trigger('change');
+////        $('#CityID').val('').trigger('change');
+////        return;
+////    }
+
+////    $.ajax({
+////        url: '/Campus/Create?handler=SearchCountryByName',
+////        type: 'GET',
+////        data: { name: countryName },
+////        headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+////        success: function (response) {
+////            console.log('Country search response:', response);
+////            if (response.success && response.country) {
+////                const countryId = response.country.CountryID;
+////                $('#CountryID').val(countryId).trigger('change');
+////                console.log(`Country matched: ${countryName} -> ID: ${countryId}`);
+////                loadStates(countryId);
+
+////                if (stateName) {
+////                    setTimeout(() => {
+////                        $.ajax({
+////                            url: '/Campus/Create?handler=SearchStateByName',
+////                            data: { name: stateName, countryId: countryId },
+////                            success: function (response) {
+////                                console.log('State search response:', response);
+////                                if (response.success && response.state) {
+////                                    const stateId = response.state.StateID;
+////                                    $('#StateID').val(stateId).trigger('change');
+////                                    console.log(`State matched: ${stateName} -> ID: ${stateId}`);
+////                                    loadCities(stateId);
+
+////                                    if (cityName) {
+////                                        setTimeout(() => {
+////                                            $.ajax({
+////                                                url: '/Campus/Create?handler=SearchCityByName',
+////                                                data: { name: cityName, countryId: countryId, stateId: stateId },
+////                                                success: function (response) {
+////                                                    console.log('City search response:', response);
+////                                                    if (response.success && response.city) {
+////                                                        const cityId = response.city.CityID;
+////                                                        $('#CityID').val(cityId).trigger('change');
+////                                                        console.log(`City matched: ${cityName} -> ID: ${cityId}`);
+////                                                    }
+////                                                },
+////                                                error: function (xhr) {
+////                                                    console.error(`City search failed: ${xhr.status} ${xhr.responseText}`);
+////                                                }
+////                                            });
+////                                        }, 1000);
+////                                    }
+////                                }
+////                            },
+////                            error: function (xhr) {
+////                                console.error(`State search failed: ${xhr.status} ${xhr.responseText}`);
+////                            }
+////                        });
+////                    }, 1000);
+////                }
+////            }
+////        },
+////        error: function (xhr) {
+////            console.error(`Country search failed: ${xhr.status} ${xhr.responseText}`);
+////        }
+////    });
+////}
+
+// Function to initialize boarding type checkboxes for both Create and Edit forms
 
 // Load Zones based on InstitutionID
 function loadZones(institutionId, campusId = null) {
@@ -71,31 +345,33 @@ function loadZones(institutionId, campusId = null) {
 function loadStates(countryId, campusId = null) {
     const stateSelectId = campusId ? `editStateID_${campusId}` : 'StateID';
     const citySelectId = campusId ? `editCityID_${campusId}` : 'CityID';
-    if (!countryId || countryId <= 0) {
+    if (!countryId) {
         $(`#${stateSelectId}`).html('');
         $(`#${stateSelectId}`).val('').trigger('change');
         $(`#${citySelectId}`).html('');
         $(`#${citySelectId}`).val('').trigger('change');
         return;
+    } else {
+        $.ajax({
+            url: '/Campus/Index?handler=LoadLocation',
+            type: 'GET',
+            data: { id: countryId, locationType: 'States' },
+            success: function (response) {
+                $(`#${stateSelectId}`).html(response);
+                $(`#${stateSelectId}`).val('').trigger('change');
+                $(`#${citySelectId}`).html('');
+                $(`#${citySelectId}`).val('').trigger('change');
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading states:', error);
+                $(`#${stateSelectId}`).html('<option value="">Error loading states</option>');
+                $(`#${stateSelectId}`).val('').trigger('change');
+                $(`#${citySelectId}`).html('<option value="">Select a state first</option>');
+                $(`#${citySelectId}`).val('').trigger('change');
+            }
+
+        });
     }
-    $.ajax({
-        url: '/Campus/Index?handler=LoadLocation',
-        type: 'GET',
-        data: { id: countryId, locationType: 'States' },
-        success: function (response) {
-            $(`#${stateSelectId}`).html(response);
-            $(`#${stateSelectId}`).val('').trigger('change');
-            $(`#${citySelectId}`).html('');
-            $(`#${citySelectId}`).val('').trigger('change');
-        },
-        error: function (xhr, status, error) {
-            console.error('Error loading states:', error);
-            $(`#${stateSelectId}`).html('<option value="">Error loading states</option>');
-            $(`#${stateSelectId}`).val('').trigger('change');
-            $(`#${citySelectId}`).html('<option value="">Select a state first</option>');
-            $(`#${citySelectId}`).val('').trigger('change');
-        }
-    });
 }
 
 // Load Cities based on StateID
@@ -124,10 +400,45 @@ function loadCities(stateId, campusId = null) {
     });
 }
 
+function initializeSelectPickers() {
+    console.log(`[2025-05-15T15:08:00+05:30] Initializing selectpickers`);
+    $('select.selectpicker').each(function () {
+        const $select = $(this);
+        // Destroy existing selectpicker if initialized
+        if ($select.hasClass('selectpicker-initialized')) {
+            $select.selectpicker('destroy').removeClass('selectpicker-initialized');
+           
+        }
 
+        const preSelectedValues = $select.find('option[selected]').map(function () {
+            return $(this).val();
+        }).get();
+      
 
+        $select.selectpicker({
+            liveSearch: true,
+            selectedTextFormat: 'count > 2',
+            noneSelectedText: 'Select Boarding Types',
+            style: 'btn btn-outline-secondary form-control', // Consistent styling
+             // Full width
+            dropupAuto: false // Prevent dropdown direction issues
+        }).addClass('selectpicker-initialized');
 
+        // Explicitly set pre-selected values
+        if (preSelectedValues.length > 0) {
+            $select.selectpicker('val', preSelectedValues);
+            console.log(`[2025-05-15T15:08:00+05:30] Set pre-selected values for ${$select.attr('id')}:`, preSelectedValues);
+        }
+
+        $select.selectpicker('refresh');
+        console.log(`[2025-05-15T15:08:00+05:30] Selectpicker initialized for ${$select.attr('id')}, values:`, $select.val());
+    });
+} 
+
+   
 $(document).ready(function () {
+   
+
 
     //  Zone DataTable Initialization
     $('#CampusTable').DataTable({
@@ -279,124 +590,87 @@ setTimeout(() => {
     $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
 }, 300);
 
-
 // Get the Create for validation
 const createNewCampusForm = document.getElementById('createCampusForm');
-const fv = FormValidation.formValidation(createNewCampusForm, {
-    fields: {
-        'Campus.InstitutionID': {
-            validators: {
-                notEmpty: { message: 'Please select an Institution' }
-            }
-        },
-        'Campus.ZoneID': {
-            validators: {
-                notEmpty: { message: 'Please select a Zone' }
-            }
-        },
-       
-        'Campus.CampuseName': {
-            validators: {
-                notEmpty: { message: 'Please enter the Campus Name' },
-                stringLength: {
-                   min:3,
-                    max: 100,
-                    message: 'Campus Name must be between 3 and 100 characters'
+if (createNewCampusForm) {
+    const fv = FormValidation.formValidation(createNewCampusForm, {
+        fields: {
+            'CampusVM.Campus.InstitutionID': {
+                validators: { notEmpty: { message: 'Please select an Institution' } }
+            },
+            'CampusVM.Campus.ZoneID': {
+                validators: { notEmpty: { message: 'Please select a Zone' } }
+            },
+            'CampusVM.Campus.CampuseName': {
+                validators: {
+                    notEmpty: { message: 'Please enter the Campus Name' },
+                    stringLength: { max: 100, message: 'Campus Name must be less than 100 characters' }
                 }
-            }
-        },
-        'Campus.AffiliationNo': {
-            validators: {
-                notEmpty: { message: 'Please enter Affiliation No' },
-                stringLength: {
-                    max: 50,
-                    message: 'Affiliation No must be less than 50 characters'
+            },
+            'CampusVM.Campus.AffiliationNo': {
+                validators: {
+                    notEmpty: { message: 'Please enter Affiliation No' },
+                    stringLength: { max: 50, message: 'Affiliation No must be less than 50 characters' }
                 }
-            }
-        },
-        'Campus.SchoolCode': {
-            validators: {
-                notEmpty: { message: 'Please enter School Code' },
-                stringLength: {
-                    max: 50,
-                    message: 'School Code must be less than 20 characters'
+            },
+            'CampusVM.Campus.SchoolCode': {
+                validators: {
+                    notEmpty: { message: 'Please enter School Code' },
+                    stringLength: { max: 50, message: 'School Code must be less than 50 characters' }
                 }
-            }
-        },
-        'Campus.CampusTypeID': {
-            validators: {
-                notEmpty: { message: 'Please select Campus Type' }
-            }
-        },
-        'Campus.PhoneNos': {
-            validators: {
-                notEmpty: { message: 'Please enter Phone Number(s)' },
-                stringLength: {
-                    max: 100,
-                    message: 'Phone numbers must be less than 100 characters'
+            },
+            'CampusVM.Campus.CampusTypeID': {
+                validators: { notEmpty: { message: 'Please select a Campus Type' } }
+            },
+            'CampusVM.BoardingTypeIDs': {
+                validators: { notEmpty: { message: 'Please select a Boarding Type' } }
+            },
+            'CampusVM.Campus.PhoneNos': {
+                validators: {
+                    notEmpty: { message: 'Please enter Phone Number(s)' },
+                    stringLength: { max: 100, message: 'Phone Numbers must be less than 100 characters' }
                 }
+            },
+            'CampusVM.Campus.Address': {
+                validators: { stringLength: { max: 500, message: 'Address must be less than 500 characters' } }
+            },
+            'CampusVM.Campus.Locality': {
+                validators: { stringLength: { max: 100, message: 'Locality must be less than 200 characters' } }
+            },
+            
+            'CampusVM.Campus.PinCode': {
+                validators: { stringLength: { max: 50, message: 'Pin Code must be less than 50 characters' } }
             }
         },
-        'Campus.Address': { // Added validation for Address
-            validators: {
-                stringLength: {
-                    max: 500, // Adjust max length as needed
-                    message: 'Address must be less than 500 characters'
+        plugins: {
+            trigger: new FormValidation.plugins.Trigger(),
+            bootstrap5: new FormValidation.plugins.Bootstrap5({
+                eleValidClass: 'is-valid',
+              
+                rowSelector: function (field, ele) {
+                    return '.mb-5';
                 }
-            }
-        },
-        'Campus.Locality': { // Added validation for Locality
-            validators: {
-                stringLength: {
-                    max: 100,
-                    message: 'Locality must be less than 100 characters'
-                }
-            }
-        },
-        'Campus.PinCode': {
-            validators: {
-                stringLength: {
-                    max: 50,
-                    message: 'Pin Code must be less than 50 characters'
-                }
-            }
+            }),
+            submitButton: new FormValidation.plugins.SubmitButton({
+                button: '[type="submit"]'
+            }),
+            autoFocus: new FormValidation.plugins.AutoFocus()
         }
-       
-    },
-
-    plugins: {
-        trigger: new FormValidation.plugins.Trigger(),
-        bootstrap5: new FormValidation.plugins.Bootstrap5({
-            eleValidClass: 'is-valid',
-            rowSelector: function (field, ele) {
-                return '.mb-5';
-            }
-        }),
-        submitButton: new FormValidation.plugins.SubmitButton({
-            // Specify the selector for your submit button
-            button: '[type="submit"]'
-        }),
-        // Submit the form when all fields are valid
-        // defaultSubmit: new FormValidation.plugins.DefaultSubmit(),
-        autoFocus: new FormValidation.plugins.AutoFocus()
-    }
-})
-    .on('core.form.valid', function () {
-        // if fields are valid then
-        // submitFormAndSetSuccessFlag(createNewUserForm, 'newUserFlag');
-        CreateNewCampusData(createNewCampusForm)
     })
-    .on('core.form.invalid', function () {
-        // if fields are invalid
-        return;
-    });
+        .on('core.form.valid', function () {
+            console.log('Form validated, submitting');
+            CreateNewCampusData(createNewCampusForm);
+        })
+        .on('core.form.invalid', function () {
+            // if fields are invalid
+            return;
+        });
+}
 
 function CreateNewCampusData(form) {
-    debugger;
-    console.log('Create form validated');
+    console.log('Submitting form');
     var formData = new FormData(form);
-    console.log('Create form data:', Array.from(formData.entries()));
-
+    console.log('Form data:', formData);
     $.ajax({
         url: '/Campus/Index?handler=CreateCampus',
         type: 'POST',
@@ -566,35 +840,23 @@ function editCampus(campusId) {
         headers: {
             'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
         },
-        
+
         success: function (response) {
             console.log('Edit campus form loaded successfully');
             $('#editFormContainer').html(response);
             $('#editCampusOffcanvas').offcanvas('show');
-
-            //// Get the initial values of InstitutionID, CountryID, and StateID
-            //var institutionId = $(`#editInstitutionID_${campusId}`).val();
-            //var countryId = $(`#editCountryID_${campusId}`).val();
-            //var stateId = $(`#editStateID_${campusId}`).val();
+            $('#editCampusOffcanvas').one('shown.bs.offcanvas', function () {
+                initializeSelectPickers();
+                
+                // Ensure selectpicker is initialized
+                const boardingTypeSelect = $(`#editBoardingTypeID_${campusId}`);
+                if (boardingTypeSelect.length) {
+                    console.log(`[${new Date().toISOString()}] BoardingTypeID selectpicker refreshed for editBoardingTypeID_${campusId}`);
+                    console.log(`[${new Date().toISOString()}] Final selected values:`, boardingTypeSelect.val());
+                }
+            });
             
 
-            //// Pre-populate dependent dropdowns
-            //if (institutionId && institutionId !== "0" && institutionId !== "" && institutionId !== "null") {
-            //    loadZones(institutionId, campusId);
-            //} else {
-            //    $(`#editZoneID_${campusId}`).html('<option value="">Select a Zone</option>');
-            //}
-            //if (countryId && countryId !== "0" && countryId !== "" && countryId !== "null") {
-            //    loadStates(countryId, campusId);
-            //} else {
-            //    $(`#editStateID_${campusId}`).html('<option value="">Select a State</option>');
-            //    $(`#editCityID_${campusId}`).html('<option value="">Select a City</option>');
-            //}
-            //if (stateId && stateId !== "0" && stateId !== "" && stateId !== "null") {
-            //    loadCities(stateId, campusId);
-            //} else {
-            //    $(`#editCityID_${campusId}`).html('<option value="">Select a City</option>');
-            //}
             // Edit form change handlers
             $(`#editInstitutionID_${campusId}`).on('change', function () {
                 const institutionId = $(this).val();
@@ -618,81 +880,51 @@ function editCampus(campusId) {
                 console.log('Edit campus form found, initializing FormValidation');
                 FormValidation.formValidation(editCampusForm, {
                     fields: {
-                        'Campus.InstitutionID': {
-                            validators: {
-                                notEmpty: { message: 'Please select an Institution' }
-                            }
+                        'CampusVM.Campus.InstitutionID': {
+                            validators: { notEmpty: { message: 'Please select an Institution' } }
                         },
-                        'Campus.ZoneID': {
-                            validators: {
-                                notEmpty: { message: 'Please select a Zone' }
-                            }
+                        'CampusVM.Campus.ZoneID': {
+                            validators: { notEmpty: { message: 'Please select a Zone' } }
                         },
-                        'Campus.CampuseName': {
+                        'CampusVM.Campus.CampuseName': {
                             validators: {
                                 notEmpty: { message: 'Please enter the Campus Name' },
-                                stringLength: {
-                                    min: 3,
-                                    max: 100,
-                                    message: 'Campus Name must be between 3 and 100 characters'
-                                }
+                                stringLength: { max: 100, message: 'Campus Name must be less than 100 characters' }
                             }
                         },
-                        'Campus.AffiliationNo': {
+                        'CampusVM.Campus.AffiliationNo': {
                             validators: {
                                 notEmpty: { message: 'Please enter Affiliation No' },
-                                stringLength: {
-                                    max: 50,
-                                    message: 'Affiliation No must be less than 50 characters'
-                                }
+                                stringLength: { max: 50, message: 'Affiliation No must be less than 50 characters' }
                             }
                         },
-                        'Campus.SchoolCode': {
+                        'CampusVM.Campus.SchoolCode': {
                             validators: {
                                 notEmpty: { message: 'Please enter School Code' },
-                                stringLength: {
-                                    max: 50,
-                                    message: 'School Code must be less than 50 characters'
-                                }
+                                stringLength: { max: 50, message: 'School Code must be less than 50 characters' }
                             }
                         },
-                        'Campus.CampusTypeID': {
-                            validators: {
-                                notEmpty: { message: 'Please select Campus Type' }
-                            }
+                        'CampusVM.Campus.CampusTypeID': {
+                            validators: { notEmpty: { message: 'Please select a Campus Type' } }
                         },
-                        'Campus.PhoneNos': {
+                        'CampusVM.BoardingTypeIDs': {
+                            validators: { notEmpty: { message: 'Please select a Boarding Type' } }
+                        },
+                        'CampusVM.Campus.PhoneNos': {
                             validators: {
                                 notEmpty: { message: 'Please enter Phone Number(s)' },
-                                stringLength: {
-                                    max: 100,
-                                    message: 'Phone numbers must be less than 100 characters'
-                                }
+                                stringLength: { max: 100, message: 'Phone Numbers must be less than 100 characters' }
                             }
                         },
-                        'Campus.Address': {
-                            validators: {
-                                stringLength: {
-                                    max: 500,
-                                    message: 'Address must be less than 500 characters'
-                                }
-                            }
+                        'CampusVM.Campus.Address': {
+                            validators: { stringLength: { max: 500, message: 'Address must be less than 500 characters' } }
                         },
-                        'Campus.Locality': {
-                            validators: {
-                                stringLength: {
-                                    max: 100,
-                                    message: 'Locality must be less than 100 characters'
-                                }
-                            }
+                        'CampusVM.Campus.Locality': {
+                            validators: { stringLength: { max: 100, message: 'Locality must be less than 200 characters' } }
                         },
-                        'Campus.PinCode': {
-                            validators: {
-                                stringLength: {
-                                    max: 50,
-                                    message: 'Pin Code must be less than 50 characters'
-                                }
-                            }
+
+                        'CampusVM.Campus.PinCode': {
+                            validators: { stringLength: { max: 50, message: 'Pin Code must be less than 50 characters' } }
                         }
                     },
                     plugins: {
@@ -735,6 +967,7 @@ function editCampus(campusId) {
 function UpdateNewCampusData(form, campusId) {
     console.log('Edit campus form validated for Campus ID:', campusId);
     var formData = new FormData(form);
+
     console.log('Edit campus form data:', Array.from(formData.entries()));
 
     $.ajax({

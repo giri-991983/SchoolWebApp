@@ -1,4 +1,5 @@
 ﻿@page
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @model SchoolWebApp.Pages.Campus.IndexModel
 @{
 }
@@ -15,6 +16,10 @@
     <link rel="stylesheet" href="~/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.dist.css">
     <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.dist.css" />
     <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
+@*     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" rel="stylesheet" /> 
+ *@
+@*     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css"> *@
+   
 }
 
 @section VendorScripts {
@@ -26,10 +31,20 @@
     <script src="~/vendor/libs/&#64;form-validation/auto-focus.dist.js"></script>
     <script src="~/vendor/libs/cleavejs/cleave.dist.js"></script>
     <script src="~/vendor/libs/cleavejs/cleave-phone.dist.js"></script>
+  @*   <script src="https://maps.googleapis.com/maps/api/js?key=@Configuration["GoogleMapsApiKey"]&libraries=places&callback=initGoogleMaps&loading=async" async defer></script>
+
+      *@
+   @*   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>  *@
+   @*  <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script> *@
+
+   
+ 
+  
 }
 @section PageScripts
 {
-    <script src="~/code_js/managecampus.js"></script>
+      <script src="~/code_js/managecampus.js"></script>
+ 
 }
 
 @if (Model?.Campuses != null && Model.Campuses.Any())
@@ -133,3 +148,4 @@ else
 }
 <!-- Create Campus Partial Page -->
 @await Html.PartialAsync("~/Pages/Campus/_Create.cshtml")
+
