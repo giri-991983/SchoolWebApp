@@ -1,5 +1,8 @@
 ﻿'use strict';
 
+
+$(function () { Seclect2Initilizer(); });
+
 ////window.initGoogleMaps = function () {
 ////    console.log('Google Maps API loaded');
 ////    initAutocomplete();
@@ -189,7 +192,7 @@
 ////    }
 ////    initAutocomplete(); // <-- Call it here
 
-   
+
 ////};
 
 ////function initAutocomplete() {
@@ -401,26 +404,26 @@ function loadCities(stateId, campusId = null) {
 }
 
 function initializeSelectPickers() {
-    console.log(`[2025-05-15T15:08:00+05:30] Initializing selectpickers`);
+    //console.log(`[2025-05-15T15:08:00+05:30] Initializing selectpickers`);
     $('select.selectpicker').each(function () {
         const $select = $(this);
         // Destroy existing selectpicker if initialized
         if ($select.hasClass('selectpicker-initialized')) {
             $select.selectpicker('destroy').removeClass('selectpicker-initialized');
-           
+
         }
 
         const preSelectedValues = $select.find('option[selected]').map(function () {
             return $(this).val();
         }).get();
-      
+
 
         $select.selectpicker({
             liveSearch: true,
             selectedTextFormat: 'count > 2',
             noneSelectedText: 'Select Boarding Types',
             style: 'btn btn-outline-secondary form-control', // Consistent styling
-             // Full width
+            // Full width
             dropupAuto: false // Prevent dropdown direction issues
         }).addClass('selectpicker-initialized');
 
@@ -433,11 +436,11 @@ function initializeSelectPickers() {
         $select.selectpicker('refresh');
         console.log(`[2025-05-15T15:08:00+05:30] Selectpicker initialized for ${$select.attr('id')}, values:`, $select.val());
     });
-} 
+}
 
-   
+
 $(document).ready(function () {
-   
+
 
 
     //  Zone DataTable Initialization
@@ -637,7 +640,7 @@ if (createNewCampusForm) {
             'CampusVM.Campus.Locality': {
                 validators: { stringLength: { max: 100, message: 'Locality must be less than 200 characters' } }
             },
-            
+
             'CampusVM.Campus.PinCode': {
                 validators: { stringLength: { max: 50, message: 'Pin Code must be less than 50 characters' } }
             }
@@ -646,7 +649,7 @@ if (createNewCampusForm) {
             trigger: new FormValidation.plugins.Trigger(),
             bootstrap5: new FormValidation.plugins.Bootstrap5({
                 eleValidClass: 'is-valid',
-              
+
                 rowSelector: function (field, ele) {
                     return '.mb-5';
                 }
@@ -845,17 +848,17 @@ function editCampus(campusId) {
             console.log('Edit campus form loaded successfully');
             $('#editFormContainer').html(response);
             $('#editCampusOffcanvas').offcanvas('show');
-            $('#editCampusOffcanvas').one('shown.bs.offcanvas', function () {
-                initializeSelectPickers();
-                
-                // Ensure selectpicker is initialized
-                const boardingTypeSelect = $(`#editBoardingTypeID_${campusId}`);
-                if (boardingTypeSelect.length) {
-                    console.log(`[${new Date().toISOString()}] BoardingTypeID selectpicker refreshed for editBoardingTypeID_${campusId}`);
-                    console.log(`[${new Date().toISOString()}] Final selected values:`, boardingTypeSelect.val());
-                }
-            });
-            
+            //$('#editCampusOffcanvas').one('shown.bs.offcanvas', function () {
+            //    initializeSelectPickers();
+
+            //    // Ensure selectpicker is initialized
+            //    const boardingTypeSelect = $(`#editBoardingTypeID_${campusId}`);
+            //    if (boardingTypeSelect.length) {
+            //        console.log(`[${new Date().toISOString()}] BoardingTypeID selectpicker refreshed for editBoardingTypeID_${campusId}`);
+            //        console.log(`[${new Date().toISOString()}] Final selected values:`, boardingTypeSelect.val());
+            //    }
+            //});
+
 
             // Edit form change handlers
             $(`#editInstitutionID_${campusId}`).on('change', function () {
@@ -872,6 +875,9 @@ function editCampus(campusId) {
                 const stateId = $(this).val();
                 loadCities(stateId, campusId);
             });
+
+
+            Seclect2Initilizer();
 
             // Initialize FormValidation for the dynamically loaded edit form
             const editCampusForm = document.getElementById(`editCampusForm_${campusId}`);
@@ -1035,4 +1041,20 @@ function UpdateNewCampusData(form, campusId) {
             }
         }
     });
+}
+
+function Seclect2Initilizer()
+{
+    const select2 = $('.select2');
+    // Default
+    if (select2.length) {
+        select2.each(function () {
+            var $this = $(this);
+            select2Focus($this);
+            $this.wrap('<div class="position-relative"></div>').select2({
+                placeholder: 'Select Boarding Type',
+                dropdownParent: $this.parent()
+            });
+        });
+    }
 }

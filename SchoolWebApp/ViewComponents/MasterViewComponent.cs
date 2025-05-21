@@ -19,6 +19,7 @@ namespace SchoolWebApp.ViewComponents
         {
             
             ViewBag.SelectedIds = Selected ?? (SelectedIDs.HasValue ? new List<int> { SelectedIDs.Value } : new List<int>());
+            ViewBag.BrdSelectedIds = Selected ?? (SelectedIDs.HasValue ? new List<int> { SelectedIDs.Value } : new List<int>());
             //ViewBag.CampusID = CampusID; // Pa
             //ViewBag.RenderMode = RenderMode; // Pass RenderMode to the view
             if (viewname == "Institutions")

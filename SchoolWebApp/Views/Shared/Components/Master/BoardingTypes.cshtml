@@ -1,15 +1,21 @@
 ﻿  @using SchoolWebApp.Models
 @{
-    var selectedID = ViewBag.SelectedIds as IEnumerable<int> ?? new List<int>();
-var boardingTypes = ViewBag.Items as List<BoardingTypes>; // Use dynamic to handle anonymous type}
+    var selectedID = ViewBag.BrdSelectedIds as IEnumerable<int> ?? new List<int>();
+    var boardingTypes = ViewBag.Items as List<BoardingTypes>; // Use dynamic to handle anonymous type}
 }
+
+
 @foreach (var item in boardingTypes ?? new List<BoardingTypes>())
 {
     var isSelected = selectedID.Contains(item.BoardingTypeID);
-   
+
     <option value="@item.BoardingTypeID" @(isSelected ? "selected=\"selected\"" : "")>@item.BoardingType</option>
 
-}  
+}
+
+
+
+
 @* @using SchoolWebApp.Models
 @{
     var selectedID = ViewBag.SelectedIds as IEnumerable<int> ?? new List<int>();
