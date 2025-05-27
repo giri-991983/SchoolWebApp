@@ -52,13 +52,11 @@
     <script src="~/code_js/managecampus.js"></script>
 }
 
-@if (Model?.Campuses != null && Model.Campuses.Any())
-{
-    var serial = 0;
     <div class="card">
         <div class="card-header pb-0">
             <h5 class="card-title mb-0">Manage Campus</h5>
         </div>
+      
         <div class="card-datatable table-responsive">
             <table id="CampusTable" class="table">
                 <thead>
@@ -75,14 +73,18 @@
                     </tr>
                 </thead>
                 <tbody>
+                @if (Model?.Campuses != null && Model.Campuses.Any())
+                {
+                    var serial = 0;
+
                     @foreach (var item in Model.Campuses)
                     {
                         serial++; var tcc = "camp-name-full-" + item.CampusID;
                         <tr data-id="@item.CampusID">
                             <td>@serial</td>
                             <td class="@tcc">@item.CampuseName</td>
-                            <td>@item.Zone?.ZoneName</td>
-                            <td>@item.Institution?.InstitutionName</td>
+                            <td data-zone-id="@item.ZoneID">@item.Zone?.ZoneName</td>
+                            <td data-institution-id="@item.InstitutionID">@item.Institution?.InstitutionName</td>
                             <td>@item.AffiliationNo</td>
                             <td>@item.SchoolCode</td>
                             <td>@item.CampusType?.CampusTypeName</td>
@@ -116,41 +118,13 @@
                             </td>
                         </tr>
                     }
+                    }
+                    
                 </tbody>
             </table>
         </div>
     </div>
-}
-else
-{
-    <div class="card">
-        <div class="card-header pb-0">
-            <h5 class="card-title mb-0">Manage Campus</h5>
-        </div>
-        <div class="card-datatable table-responsive">
-            <table id="CampusTable" class="table">
-                <thead>
-                    <tr>
-                        <th>S.No</th>
-                        <th>Campus Name</th>
-                        <th>Zone</th>
-                        <th>Institution</th>
-                        <th>Affiliation No</th>
-                        <th>School Code</th>
-                        <th>Campus Type</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                @*  <tbody>
-                       <tr>
-                        <td colspan="9" class="text-center">No data available in table</td>
-                    </tr>
-                </tbody> *@
-            </table>
-        </div>
-    </div>
-}
+
 <!-- Create Campus Partial Page -->
 @await Html.PartialAsync("~/Pages/Campus/_Create.cshtml")
 

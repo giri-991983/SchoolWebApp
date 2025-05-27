@@ -28,83 +28,48 @@
     <script src="~/code_js/zone-crud.js"></script>
 }
 
-<div class="container-fluid">
-    <h2 class="mb-4">Zone Management</h2>
-    <!-- DataTable -->
-    <div class="card">
-        <div class="card-datatable table-responsive">
-            <table id="ZoneTable" class="table">
-                <thead>
-                    <tr>
-                        <th>S.No</th>
-                        <th>Zone Name</th>
-                        <th>Institution</th>
-                        <th>Short Code</th>
-                        <th>Status</th>
-                        <th>Created Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.Zones != null && Model.Zones.Any())
-                    {
-                        var kk = 0;
-                        @foreach (var zone in Model.Zones)
-                        {
-                            kk = kk + 1; var tcc = "zone-name-full-" + zone.ZoneID;
-                            <tr data-id="@zone.ZoneID">
-                                <td> @kk</td>
-                                <td class="@tcc">@zone.ZoneName</td>
-                                <td>@(zone.Institution?.InstitutionName ?? "N/A")</td>
-                                <td>@zone.ShortCode</td>
-                                <td>@Html.Raw(PageHelpers.GetStatusBadge(zone.Status))</td>
-                                <td>@zone.CreatedDate.ToString("dd MMM yyyy")</td>
-                                @*  <td class="text-nowrap">
-                                    <div class="col-md-12 text-center"> *@
-                                <td class="text-nowrap">
-                                    <div>
-                                        <button class="btn btn-sm btn-icon"
-                                                data-bs-toggle="offcanvas"
-                                                data-bs-target="#editZoneOffcanvas"
-                                                onclick="editZone(@zone.ZoneID)">
-                                            <i class="ri-edit-box-line ri-20px"></i>
-                                        </button>
-                                        <div class="offcanvas offcanvas-end" tabindex="-1" id="editZoneOffcanvas" aria-labelledby="editZoneOffcanvasLabel">
-                                            <div class="offcanvas-header">
-                                                <h5 id="editZoneOffcanvasLabel" class="offcanvas-title">Edit Zone</h5>
-                                                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                                            </div>
-                                            <div class="offcanvas-body">
-                                                <div id="editFormContainer"></div>
-                                            </div>
-                                        </div>
-                                        <form method="post" id="deleteZoneForm-@zone.ZoneID" class="d-inline">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@zone.ZoneID" />
-                                            <button type="button" class="btn btn-sm btn-icon"
-                                                    onclick="showDeleteConfirmation('@zone.ZoneID')">
-                                                <i class="ri-delete-bin-7-line ri-20px"></i>
-                                            </button>
-                                        </form>
-                                        @*   <div class="btn-group d-inline">
-                                            <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown">
-                                                <i class="ri-more-2-line ri-20px"></i>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                <li><a class="dropdown-item" href="/Admin/ViewInstitution?id=@zone.InstitutionID">View</a></li>
-                                                <li><a class="dropdown-item" href="/Admin/SuspendInstitution?id=@zone.InstitutionID">Suspend</a></li>
-                                            </ul>
-                                        </div> *@
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
+<!-- DataTable -->
+<div class="card">
+    <div class="card-datatable table-responsive">
+
+        <div class="container-fluid">
+            <h2 class="mb-4">Zone Management</h2>
+            <div class="row mb-4 align-items-end">
+                <div class="col-md-6">
+                    <div class="form-floating form-floating-outline">
+                        <select name="Zone.InstitutionID" id="InstitutionID" class="form-select">
+                            @await Component.InvokeAsync("Master", new { viewname = "Institutions" })
+                        </select>
+                        <label for="InstitutionID">Institution</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button id="filterButton" class="btn btn-primary w-100" onclick="FilterZones()">Get</button>
+                </div>
+            </div>
+
         </div>
+
+        <table id="ZoneTable" class="table">
+
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Zone Name</th>
+                    <th>Institution</th>
+                    <th>Short Code</th>
+                    <th>Status</th>
+                    <th>Created Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @await Html.PartialAsync("_ZoneTablePartial", Model.Zones)
+            </tbody>
+        </table>
     </div>
+
 
     <!-- Create Offcanvas -->
     @await Html.PartialAsync("~/Pages/Zone/_Create.cshtml")

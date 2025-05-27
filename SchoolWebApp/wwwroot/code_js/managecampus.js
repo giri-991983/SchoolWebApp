@@ -324,9 +324,16 @@ $(function () { Seclect2Initilizer(); });
 function loadZones(institutionId, campusId = null) {
     const zoneSelectId = campusId ? `editZoneID_${campusId}` : 'ZoneID';
     if (!institutionId || institutionId <= 0) {
-        $(`#${zoneSelectId}`).html('');
+        $(`#${zoneSelectId}`).html('Select Zone');
         $(`#${zoneSelectId}`).val('').trigger('change');
-        return;
+        if (!campusId) { // Only redraw if this is the main filter dropdown (not an edit form)
+            const campusTable = $('#CampusTable').DataTable();
+            campusTable.draw();
+        }
+
+        if (!institutionId || institutionId <= 0) {
+            return; // No institution selected, keep the dropdown reset
+        }
     }
     $.ajax({
         url: '/Campus/Index?handler=LoadComponent',
@@ -335,6 +342,10 @@ function loadZones(institutionId, campusId = null) {
         success: function (response) {
             $(`#${zoneSelectId}`).html(response);
             $(`#${zoneSelectId}`).val('').trigger('change');
+            if (!campusId) {
+                const campusTable = $('#CampusTable').DataTable();
+                campusTable.draw();
+            }
         },
         error: function (xhr, status, error) {
             console.error('Error loading zones:', error);
@@ -403,45 +414,8 @@ function loadCities(stateId, campusId = null) {
     });
 }
 
-function initializeSelectPickers() {
-    //console.log(`[2025-05-15T15:08:00+05:30] Initializing selectpickers`);
-    $('select.selectpicker').each(function () {
-        const $select = $(this);
-        // Destroy existing selectpicker if initialized
-        if ($select.hasClass('selectpicker-initialized')) {
-            $select.selectpicker('destroy').removeClass('selectpicker-initialized');
-
-        }
-
-        const preSelectedValues = $select.find('option[selected]').map(function () {
-            return $(this).val();
-        }).get();
-
-
-        $select.selectpicker({
-            liveSearch: true,
-            selectedTextFormat: 'count > 2',
-            noneSelectedText: 'Select Boarding Types',
-            style: 'btn btn-outline-secondary form-control', // Consistent styling
-            // Full width
-            dropupAuto: false // Prevent dropdown direction issues
-        }).addClass('selectpicker-initialized');
-
-        // Explicitly set pre-selected values
-        if (preSelectedValues.length > 0) {
-            $select.selectpicker('val', preSelectedValues);
-            console.log(`[2025-05-15T15:08:00+05:30] Set pre-selected values for ${$select.attr('id')}:`, preSelectedValues);
-        }
-
-        $select.selectpicker('refresh');
-        console.log(`[2025-05-15T15:08:00+05:30] Selectpicker initialized for ${$select.attr('id')}, values:`, $select.val());
-    });
-}
-
 
 $(document).ready(function () {
-
-
 
     //  Zone DataTable Initialization
     $('#CampusTable').DataTable({
@@ -592,7 +566,6 @@ setTimeout(() => {
     $('div.dataTables_wrapper .dataTables_filter').addClass('mt-0 mt-md-5');
     $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
 }, 300);
-
 // Get the Create for validation
 const createNewCampusForm = document.getElementById('createCampusForm');
 if (createNewCampusForm) {
@@ -768,7 +741,7 @@ function showDeleteConfirmation(campusId) {
         else {
             Swal.fire({
                 title: 'Cancelled',
-                html: `<p><span class="fw-medium text-primary">${CampuseName}</span> is not deleted!</p>`,
+                html: `<p><span class="fw-medium text-primary">${CampusName}</span> is not deleted!</p>`,
                 icon: 'error',
                 confirmButtonText: 'Ok',
                 customClass: {
@@ -828,7 +801,7 @@ function DeleteCampusData(campusId) {
             Swal.fire({
                 icon: 'error',
                 title: 'Deletion Failed',
-                text: 'Failed to delete the Zone: ' + (xhr.responseText || error),
+                text: 'Failed to delete the Campus: ' + (xhr.responseText || error),
                 confirmButtonText: 'OK'
             });
         }

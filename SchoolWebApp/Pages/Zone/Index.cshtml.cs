@@ -16,15 +16,32 @@ namespace SchoolWebApp.Pages.Zone
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }       
-        public IList<SchoolWebApp.Models.Zone>? Zones { get; set; }       
-      
+        public IList<SchoolWebApp.Models.Zone>? Zones { get; set; }
+
 
         public async Task OnGetAsync()
         {
             Institutions = await _context.Institutions.OrderBy(a => a.InstitutionName).ToListAsync();
-            Zones = await _context.Zones.OrderBy(a => a.ZoneName).ToListAsync();          
-        }
+            Zones = await _context.Zones.OrderBy(a => a.ZoneName).ToListAsync();
 
+        }
+        public async Task<IActionResult> OnGetZonesByInstitutionAsync(int institutionId)
+        {
+            List<Models.Zone> zones;
+            if (institutionId == 0)
+            {
+                 zones = await _context.Zones.Include(z => z.Institution).OrderBy(a => a.ZoneName).ToListAsync();
+            }
+            else
+            {
+                 zones = await _context.Zones
+                    .Where(z => z.InstitutionID == institutionId)
+                    .Include(z => z.Institution)
+                    .ToListAsync();
+            }
+
+            return Partial("_ZoneTablePartial",zones);
+        }
         public async Task<IActionResult> OnPostDeleteZoneAsync(int id)
         {
             var zone = await _context.Zones.FindAsync(id);

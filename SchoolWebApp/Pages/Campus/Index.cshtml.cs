@@ -70,29 +70,53 @@ namespace SchoolWebApp.Pages.Campus
                   .Include(c => c.CampusBoardingTypes)
                 .ThenInclude(cbt => cbt.BoardingType)
                 .ToListAsync();
-            CampusBoardingTypes = await _context.CampusBoardingTypes
-              .Include(cbt => cbt.BoardingType)
-              .ToListAsync();
-            Institutions = await _context.Institutions.ToListAsync();
-            Zones = await _context.Zones.ToListAsync();
-            CampusTypes = await _context.CampusTypes.ToListAsync();
-            BoardingTypes = await _context.BoardingTypes.ToListAsync();
-            Countries = await _context.Countries.OrderBy(c => c.CountryName).ToListAsync();
-            States = await _context.States.OrderBy(s => s.StateName).ToListAsync();
-            Cities = await _context.Cities.OrderBy(c => c.CityName).ToListAsync();
+            //CampusBoardingTypes = await _context.CampusBoardingTypes
+            //  .Include(cbt => cbt.BoardingType)
+            //  .ToListAsync();
+            //Institutions = await _context.Institutions.ToListAsync();
+            //Zones = await _context.Zones.ToListAsync();
+            //CampusTypes = await _context.CampusTypes.ToListAsync();
+            //BoardingTypes = await _context.BoardingTypes.ToListAsync();
+            //Countries = await _context.Countries.OrderBy(c => c.CountryName).ToListAsync();
+            //States = await _context.States.OrderBy(s => s.StateName).ToListAsync();
+            //Cities = await _context.Cities.OrderBy(c => c.CityName).ToListAsync();
         }
 
-        // ? Handler to get Zones by InstitutionID
-        public async Task<JsonResult> OnGetZonesByInstitutionAsync(int institutionId)
+        public async Task<IActionResult> OnGetLoadCampusesAsync(int? institutionId, int? zoneId)
         {
-            var zones = await _context.Zones
-                .Where(z => z.InstitutionID == institutionId)
-                .Select(z => new { zoneID = z.ZoneID, zoneName = z.ZoneName })
+            var query = _context.Campuses
+                .Include(c => c.Institution)
+                .Include(c => c.Zone)
+                .Include(c => c.CampusType)
+                .AsQueryable();
+
+            if (institutionId.HasValue && institutionId.Value > 0)
+            {
+                query = query.Where(c => c.InstitutionID == institutionId.Value);
+            }
+
+            if (zoneId.HasValue && zoneId.Value > 0)
+            {
+                query = query.Where(c => c.ZoneID == zoneId.Value);
+            }
+
+            var campuses = await query
+                .OrderBy(c => c.CampuseName)
+                .Select(c => new
+                {
+                    campusID = c.CampusID,
+                    campuseName = c.CampuseName,
+                    zoneName = c.Zone != null ? c.Zone.ZoneName : "N/A",
+                    institutionName = c.Institution != null ? c.Institution.InstitutionName : "N/A",
+                    affiliationNo = c.AffiliationNo,
+                    schoolCode = c.SchoolCode,
+                    campusTypeName = c.CampusType != null ? c.CampusType.CampusTypeName : "N/A",
+                    status = c.Status
+                })
                 .ToListAsync();
 
-            return new JsonResult(zones);
+            return new JsonResult(new { data = campuses });
         }
-
         public async Task<IActionResult> OnPostCreateCampusAsync()
         {
             

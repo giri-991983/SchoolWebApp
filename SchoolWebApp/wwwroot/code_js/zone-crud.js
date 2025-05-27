@@ -114,6 +114,7 @@ $(document).ready(function () {
         ],
         responsive: true
     });
+   
 });
 
 // Filter Form styles to default size after DataTable initialization
@@ -122,7 +123,25 @@ setTimeout(() => {
     $('div.dataTables_wrapper .dataTables_filter').addClass('mt-0 mt-md-5');
     $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
 }, 300);
+function FilterZones() {
 
+    /*   $('#filterButton').on('click', function () {*/
+    var institutionId = $('#InstitutionID').val();
+
+   
+    $.ajax({
+        url: '/Zone/Index?handler=ZonesByInstitution',
+        type: 'GET',
+        data: { institutionId: institutionId },
+        success: function (partialView) {
+           
+            $('#ZoneTable tbody').html(partialView);
+        },
+        error: function () {
+            alert('Failed to load zone data.');
+        }
+    });
+}
 // Get the Create form for validation
 const createZoneForm = document.getElementById('createZoneForm');
 
@@ -145,7 +164,7 @@ const fv = FormValidation.formValidation(createZoneForm, {
                 stringLength: { max: 10, message: 'The Short Code must be less than 10 characters' }
             }
         }
-        
+
     },
     plugins: {
         trigger: new FormValidation.plugins.Trigger(),
@@ -238,7 +257,7 @@ function CreateNewZoneData(form) {
 }
 
 function showDeleteConfirmation(zoneId) {
- 
+
     const ZoneName = document.querySelector(`.zone-name-full-${zoneId}`).innerText;
     Swal.fire({
         title: 'Delete Zone Name',
