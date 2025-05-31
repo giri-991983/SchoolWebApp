@@ -318,39 +318,47 @@ $(function () { Seclect2Initilizer(); });
 ////    });
 ////}
 
-// Function to initialize boarding type checkboxes for both Create and Edit forms
 
-// Load Zones based on InstitutionID
-function loadZones(institutionId, campusId = null) {
-    const zoneSelectId = campusId ? `editZoneID_${campusId}` : 'ZoneID';
-    if (!institutionId || institutionId <= 0) {
-        $(`#${zoneSelectId}`).html('Select Zone');
-        $(`#${zoneSelectId}`).val('').trigger('change');
-        if (!campusId) { // Only redraw if this is the main filter dropdown (not an edit form)
-            const campusTable = $('#CampusTable').DataTable();
-            campusTable.draw();
-        }
-
-        if (!institutionId || institutionId <= 0) {
-            return; // No institution selected, keep the dropdown reset
-        }
+// Load Zones based on InstitutionID (used in both Filter and Add/Edit forms)
+function loadZones(institutionId, campusId = null, targetDropdownId = null) {
+   
+    let zoneSelectId;
+    if (targetDropdownId) {
+        zoneSelectId = targetDropdownId; 
+    } else {
+        zoneSelectId = campusId ? `editZoneID_${campusId}` : 'ZoneID'; // Default for Add/Edit forms
     }
+   
+
+    // Reset the Zone dropdown
+    $(`#${zoneSelectId}`).html('<option value="">Select Zone</option>').prop('disabled', true);
+
+    if (!institutionId || institutionId <= 0) {
+        console.log('No institution selected, resetting Zone dropdown.');
+        $(`#${zoneSelectId}`).val('').trigger('change');
+        return;
+    }
+
     $.ajax({
         url: '/Campus/Index?handler=LoadComponent',
         type: 'GET',
         data: { id: institutionId },
         success: function (response) {
+            console.log('Zones loaded successfully:', response);
             $(`#${zoneSelectId}`).html(response);
-            $(`#${zoneSelectId}`).val('').trigger('change');
-            if (!campusId) {
-                const campusTable = $('#CampusTable').DataTable();
-                campusTable.draw();
-            }
+            $(`#${zoneSelectId}`).prop('disabled', false).trigger('change');
+          
         },
         error: function (xhr, status, error) {
-            console.error('Error loading zones:', error);
+            console.error('Error loading zones:', { status, error, responseText: xhr.responseText });
             $(`#${zoneSelectId}`).html('<option value="">Error loading zones</option>');
-            $(`#${zoneSelectId}`).val('').trigger('change');
+            $(`#${zoneSelectId}`).prop('disabled', true).trigger('change');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load zones: ' + (xhr.responseText || error),
+                confirmButtonText: 'OK'
+            });
         }
     });
 }
@@ -413,8 +421,29 @@ function loadCities(stateId, campusId = null) {
         }
     });
 }
-
-
+function filterCampuses() {
+    var institutionId = $('#InstitutionFilterID').val() || 0;
+    var zoneId = $('#ZoneFilterID').val() || 0;
+   
+    $.ajax({
+        url: '/Campus/Index?handler=CampusesByInstitutionAndZone',
+        type: 'GET',
+        data: { institutionId: institutionId, zoneId: zoneId },
+       
+        success: function (partialView) {
+            $('#CampusTable tbody').html(partialView);
+          
+        },
+        error: function (xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load campus data: ' + (xhr.responseText || error),
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
 $(document).ready(function () {
 
     //  Zone DataTable Initialization
@@ -556,7 +585,7 @@ $(document).ready(function () {
         responsive: true,
 
     });
-
+   
 
 });
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using SchoolWebApp.Data;
@@ -82,41 +83,56 @@ namespace SchoolWebApp.Pages.Campus
             //Cities = await _context.Cities.OrderBy(c => c.CityName).ToListAsync();
         }
 
-        public async Task<IActionResult> OnGetLoadCampusesAsync(int? institutionId, int? zoneId)
+        public async Task<IActionResult> OnGetZonesByInstitutionAsync(int institutionId)
         {
-            var query = _context.Campuses
-                .Include(c => c.Institution)
-                .Include(c => c.Zone)
-                .Include(c => c.CampusType)
-                .AsQueryable();
-
-            if (institutionId.HasValue && institutionId.Value > 0)
+            if (institutionId <= 0)
             {
-                query = query.Where(c => c.InstitutionID == institutionId.Value);
+                return new JsonResult(new { success = false, message = "Invalid institutionId" });
             }
 
-            if (zoneId.HasValue && zoneId.Value > 0)
+            try
             {
-                query = query.Where(c => c.ZoneID == zoneId.Value);
+                var zones = await _context.Zones
+                    .Where(z => z.InstitutionID == institutionId)
+                    .OrderBy(z => z.ZoneName)
+                    .ToListAsync();
+
+             
+
+                var result = zones.Select(z => new { z.ZoneID, z.ZoneName }).ToList();
+                return new JsonResult(result);
             }
-
-            var campuses = await query
-                .OrderBy(c => c.CampuseName)
-                .Select(c => new
-                {
-                    campusID = c.CampusID,
-                    campuseName = c.CampuseName,
-                    zoneName = c.Zone != null ? c.Zone.ZoneName : "N/A",
-                    institutionName = c.Institution != null ? c.Institution.InstitutionName : "N/A",
-                    affiliationNo = c.AffiliationNo,
-                    schoolCode = c.SchoolCode,
-                    campusTypeName = c.CampusType != null ? c.CampusType.CampusTypeName : "N/A",
-                    status = c.Status
-                })
-                .ToListAsync();
-
-            return new JsonResult(new { data = campuses });
+            catch (Exception ex)
+            {
+                
+                return StatusCode(500, new { success = false, message = "Server error while fetching zones" });
+            }
         }
+
+        public async Task<IActionResult> OnGetCampusesByInstitutionAndZoneAsync(int institutionId, int zoneId)
+        {
+            List<Models.Campus> campuses;
+            campuses = await _context.Campuses
+               .Include(c => c.Institution)
+               .Include(c => c.CampusType)
+               .Include(c => c.Zone)
+               .OrderBy(c => c.CampuseName)
+               .ToListAsync();
+
+            if (institutionId > 0)
+            {
+                campuses = campuses.Where(c => c.InstitutionID == institutionId).ToList();
+            }
+
+            if (zoneId > 0)
+            {
+                campuses = campuses.Where(c => c.ZoneID == zoneId).ToList();
+            }
+
+            return Partial("_CampusTablePartial", campuses);
+        }
+
+
         public async Task<IActionResult> OnPostCreateCampusAsync()
         {
             
@@ -162,17 +178,7 @@ namespace SchoolWebApp.Pages.Campus
                 });
             }
             await _context.SaveChangesAsync();
-            //var campusBoardingType = new SchoolWebApp.Models.CampusBoardingType
-            //{
-            //    InstitutionID = campus.InstitutionID,
-            //    CampusID = campus.CampusID,
-            //    BoardingTypeID = CampusVM.CampusBoardingTypes.BoardingTypeID,
-            //    IsActive = true,
-            //    CreatedDate = DateTime.Now
-            //};
-            //_context.CampusBoardingTypes.Add(campusBoardingType);
-            await _context.SaveChangesAsync();
-
+           
             return new JsonResult(new { success = true, message = "Campus created successfully" });
         }
         public async Task<IActionResult> OnGetEditCampusFormAsync(int id)

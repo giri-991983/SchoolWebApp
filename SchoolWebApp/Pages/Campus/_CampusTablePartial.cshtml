@@ -1,0 +1,51 @@
+﻿@model IEnumerable<SchoolWebApp.Models.Campus>
+
+
+
+
+@if (Model != null && Model.Any())
+{
+    var serial = 0;
+
+    @foreach (var item in Model)
+    {
+        serial++; var tcc = "camp-name-full-" + item.CampusID;
+        <tr data-id="@item.CampusID">
+            <td>@serial</td>
+            <td class="@tcc">@item.CampuseName</td>
+            <td data-zone-id="@item.ZoneID">@item.Zone?.ZoneName</td>
+            <td data-institution-id="@item.InstitutionID">@item.Institution?.InstitutionName</td>
+            <td>@item.AffiliationNo</td>
+            <td>@item.SchoolCode</td>
+            <td>@item.CampusType?.CampusTypeName</td>
+            <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>
+            <td class="text-nowrap">
+                <div class="col-md-12">
+                    <!-- Edit Button -->
+                    <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editCampusOffcanvas" onclick="editCampus(@item.CampusID)">
+                        <i class="ri-edit-box-line ri-20px"></i>
+                    </button>
+
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="editCampusOffcanvas" aria-labelledby="editCampusOffcanvasLabel">
+                        <div class="offcanvas-header">
+                            <h5 id="editCampusOffcanvasLabel" class="offcanvas-title">Edit Campus</h5>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <div id="editFormContainer"></div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Button -->
+                    <form method="post" id="deleteCampusForm-@item.CampusID" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.CampusID" />
+                        <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteConfirmation('@item.CampusID')">
+                            <i class="ri-delete-bin-7-line ri-20px"></i>
+                        </button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    }
+}
