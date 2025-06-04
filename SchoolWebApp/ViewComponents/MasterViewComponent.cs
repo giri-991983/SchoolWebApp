@@ -24,8 +24,23 @@ namespace SchoolWebApp.ViewComponents
             //ViewBag.RenderMode = RenderMode; // Pass RenderMode to the view
             if (viewname == "Institutions")
             {
-                var Inst = await _context.Institutions.OrderBy(a => a.InstitutionName).ToListAsync();
-                ViewBag.Institutions = Inst;
+                var institutions = new List<Institution>();
+                if (!string.IsNullOrEmpty(FilterIds))
+                {
+                    var filterIds = FilterIds.Split(",").Select(int.Parse).ToArray();
+                    institutions = await _context.Institutions
+                        .Where(i => filterIds.Contains(i.InstitutionID))
+                        .OrderBy(i => i.InstitutionName)
+                        .ToListAsync();
+                }
+                else
+                {
+                    institutions = await _context.Institutions
+                        .OrderBy(i => i.InstitutionName)
+                        .ToListAsync();
+                }
+                ViewBag.Institutions = institutions ?? new List<Institution>();
+                
             }
             else if (viewname == "Zones")
             {
@@ -135,7 +150,16 @@ namespace SchoolWebApp.ViewComponents
                             .ToListAsync();
                 ViewBag.Items = boardingTypes ?? new List<BoardingTypes>();
             }
-    
+            else if (viewname == "Boards")
+            {
+
+                var boards = await _context.Boards
+                            .OrderBy(bt => bt.BoardName)
+
+                            .ToListAsync();
+                ViewBag.Boards = boards ?? new List<Board>();
+            }
+
             ViewBag.selectedIDs = SelectedIDs;
 
             return View(viewname);

@@ -1,0 +1,55 @@
+﻿@model IEnumerable<SchoolWebApp.Models.Class>
+
+@if (Model != null && Model.Any())
+{
+    var serial = 0;
+    @foreach (var item in Model)
+    {
+        serial++;
+        var tcc = "class-name-full-" + item.ClassID;
+        <tr data-id="@item.ClassID">
+            <td>@serial</td>
+            <td>@item.ClassStage?.StageName</td>
+            <td>@item.ClassStage?.StageNo</td>
+            <td class="@tcc">@item.ClassName</td>
+            <td>@item.SequenceNo</td>
+            <td data-institution-id="@item.InstitutionID">@item.Institution?.InstitutionName</td>
+            <td data-campus-id="@item.CampusID">@item.Campus?.CampuseName</td>
+            <td data-board-id="@item.BoardID">@item.Board?.BoardName</td>
+            <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>
+            <td class="text-nowrap">
+                <div class="col-md-12">
+                    <!-- Edit Button -->
+                    <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editClassOffcanvas" onclick="editClass(@item.ClassID)">
+                        <i class="ri-edit-box-line ri-20px"></i>
+                    </button>
+
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="editClassOffcanvas" aria-labelledby="editClassOffcanvasLabel">
+                        <div class="offcanvas-header">
+                            <h5 id="editClassOffcanvasLabel" class="offcanvas-title">Edit Class</h5>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <div id="editFormContainer"></div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Button -->
+                    <form method="post" id="deleteClassForm-@item.ClassID" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.ClassID" />
+                        <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteConfirmation('@item.ClassID')">
+                            <i class="ri-delete-bin-7-line ri-20px"></i>
+                        </button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    }
+}
+@*  else
+{
+    <tr>
+        <td colspan="9" class="text-center">No classes available</td>
+    </tr>
+}  *@

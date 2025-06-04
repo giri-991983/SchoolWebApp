@@ -1,0 +1,79 @@
+﻿@model IEnumerable<SchoolWebApp.Models.MasterClass>
+
+
+@if (Model != null && Model.Any())
+{
+    var stages = Model.GroupBy(mc => new { mc.StageNo, mc.StageName })
+                     .OrderBy(g => g.Key.StageNo);
+
+    <div class="col-xl-12"> <!-- Use full width for better spacing -->
+        <div class="card">
+            <h5 class="card-header">Select Stages and Classes</h5>
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var stage in stages)
+                    {
+                        <div class="col-md-6 mb-md-0 mb-5">
+                            <div class="form-check custom-option custom-option-basic">
+                                <label class="form-check-label custom-option-content" for="stage_@stage.Key.StageNo">
+                                    <input class="form-check-input stage-checkbox" type="checkbox" id="stage_@stage.Key.StageNo" name="SelectedMasterClassIDs"  value="@stage.First().MasterClassID"   onchange="toggleClasses(this)"   />
+                                    <span class="custom-option-header">
+                                        <span class="h6 mb-0">Stage @stage.Key.StageNo - @stage.Key.StageName</span>
+                                    </span>
+                                    <span class="custom-option-body">
+                                        <small class="text-body">
+                                            @foreach (var masterClass in stage.OrderBy(mc => mc.ClassSno))
+                                            {
+                                                <span>@masterClass.ClassName</span>
+                                                if (masterClass != stage.Last())
+                                                {
+                                                    <span>, </span>
+                                                }
+                                            }
+                                        </small>
+                                    </span>
+                                </label>
+                            </div>
+                            <!-- Child classes as nested checkboxes -->
+                            @foreach (var masterClass in stage.OrderBy(mc => mc.ClassSno))
+                            {
+                                <div class="form-check custom-option custom-option-basic ms-4 class-checkbox d-none">
+                                    <label class="form-check-label custom-option-content" for="masterClass_@masterClass.MasterClassID">
+                                        <input class="form-check-input" type="checkbox" id="masterClass_@masterClass.MasterClassID" name="SelectedMasterClassIDs" value="@masterClass.MasterClassID"  />
+                                        <span class="custom-option-header">
+                                            <span class="h6 mb-0">@masterClass.ClassName</span>
+                                        </span>
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleClasses(checkbox) {
+            var stageCheckboxes = $(checkbox).closest('.col-md-6').find('.class-checkbox');
+            if (checkbox.checked) {
+                stageCheckboxes.removeClass('d-none');
+                stageCheckboxes.find('input').prop('checked', true);
+            } else {
+                stageCheckboxes.addClass('d-none');
+                stageCheckboxes.find('input').prop('checked', false);
+            }
+        }
+    </script>
+}
+else
+{
+    <div class="col-xl-12">
+        <div class="card">
+            <h5 class="card-header">Select Stages and Classes</h5>
+            <div class="card-body">
+                <p class="text-muted">No stages and classes available for this board.</p>
+            </div>
+        </div>
+    </div>
+} 

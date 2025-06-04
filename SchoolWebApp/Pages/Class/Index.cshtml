@@ -1,0 +1,125 @@
+﻿@page
+@model SchoolWebApp.Pages.Class.IndexModel
+@{
+}
+
+
+@{
+    ViewData["Title"] = "List of Classes";
+}
+
+@section VendorStyles
+{
+    <link rel="stylesheet" href="~/vendor/libs/datatables-bs5/datatables.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.dist.css" />
+    <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
+    <link href="~/vendor/libs/select2/select2.dist.css" rel="stylesheet" />
+
+
+}
+
+@section VendorScripts {
+    <script src="~/vendor/libs/moment/moment.dist.js"></script>
+    <script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
+    <script src="~/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/popular.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/bootstrap5.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/auto-focus.dist.js"></script>
+    <script src="~/vendor/libs/cleavejs/cleave.dist.js"></script>
+    <script src="~/vendor/libs/cleavejs/cleave-phone.dist.js"></script>
+    <script src="~/vendor/libs/select2/select2.dist.js"></script>
+
+}
+@section PageScripts
+{
+@*  <script src="~/js/forms-selects.dist.js"></script> *@
+    <script src="~/code_js/manageclass.js"></script>
+
+}
+
+
+<div class="card">
+    <div class="card-datatable table-responsive">
+        <div class="container-fluid">
+            <h3 class="mb-4">Manage Classes</h3>
+
+            <!-- Filter Section -->
+            <div class="row mb-4">
+                
+
+                <!-- Campus Dropdown -->
+                <div class="col-md-3">
+                    <div class="form-floating form-floating-outline">
+                        <select name="CampusID" id="CampusID" class="form-select" onchange="loadInstitutions(this.value)">
+                            
+                            @await Component.InvokeAsync("Master", new { viewname = "Campuses" })
+                        </select>
+                        <label for="CampusFilterID">Campus</label>
+                    </div>
+                </div>
+                <!-- Institution Dropdown -->
+                <div class="col-md-3">
+                    <div class="form-floating form-floating-outline">
+                        <select name="InstitutionID" id="InstitutionID" class="form-select">
+                       
+                        </select>
+                        <label for="InstitutionFilterID">Institution</label>
+                    </div>
+                </div>
+                <!-- ClassStage Dropdown -->
+                <div class="col-md-3">
+                    <div class="form-floating form-floating-outline">
+                        <select name="BoardID" id="BoardID" class="form-select">
+                            <option value="">Select Board</option>
+                            @await Component.InvokeAsync("Master", new { viewname = "Boards" })
+                        </select>
+                        <label for="BoardFilterID">Class Stage</label>
+                    </div>
+                </div>
+
+                <!-- Get Button -->
+                <div class="col-md-2 d-flex align-items-center">
+                    <button id="filterButton" type="button" class="btn btn-primary w-75" onclick="filterClasses()">Get</button>
+                </div>
+            </div>
+          
+            <div class="modal fade" id="testModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Test</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">Test Modal</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classes Table -->
+            <table id="ClassTable" class="table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Stage Name</th>
+                        <th>Stage No</th>
+                        <th>Class Name</th>
+                        <th>Sequence No</th>
+                        <th>Institution</th>
+                        <th>Campus</th>
+                        <th>Board</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @await Html.PartialAsync("_ClassesTablePartial", Model.Classes)
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Create Class Partial Page -->
+    @await Html.PartialAsync("~/Pages/Class/_Create.cshtml") 
+</div>
