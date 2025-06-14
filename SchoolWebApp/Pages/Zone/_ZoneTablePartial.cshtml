@@ -1,5 +1,18 @@
 ﻿@model IEnumerable<SchoolWebApp.Models.Zone>
+<table id="ZoneTable" class="table">
 
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>Zone Name</th>
+            <th>Institution</th>
+            <th>Short Code</th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
         @if (Model != null && Model.Any())
         {
             var kk = 0;
@@ -45,5 +58,7 @@
                     </td>
                 </tr>
             }
-            }
+        }
+    </tbody>
+</table>
   

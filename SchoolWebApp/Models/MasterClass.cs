@@ -12,11 +12,11 @@ namespace SchoolWebApp.Models
 
         [Required]
         [StringLength(50)]
-        public string StageName { get; set; } = string.Empty;
+        public string StageName { get; set; } 
 
         [Required]
         [StringLength(50)]
-        public string ClassName { get; set; } = string.Empty;
+        public string ClassName { get; set; }
 
         [Required]
         public int ClassSno { get; set; }

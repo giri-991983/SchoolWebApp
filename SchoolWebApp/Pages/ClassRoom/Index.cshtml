@@ -1,8 +1,7 @@
 ﻿@page
-@model SchoolWebApp.Pages.Class.IndexModel
+@model SchoolWebApp.Pages.ClassRoom.IndexModel
 @{
 }
-
 
 @{
     ViewData["Title"] = "List of Classes";
@@ -34,8 +33,8 @@
 }
 @section PageScripts
 {
-@*  <script src="~/js/forms-selects.dist.js"></script> *@
-    <script src="~/code_js/manageclass.js"></script>
+
+    <script src="~/code_js/manageclassroom.js"></script>
 
 }
 
@@ -43,53 +42,51 @@
 <div class="card">
     <div class="card-datatable table-responsive">
         <div class="container-fluid">
-            <h3 class="mb-4">Manage Classes</h3>
-         <form id="filterForm">
-            <!-- Filter Section -->
+            <h3 class="mb-4">Manage ClassRoom</h3>
+            <form id="ClassRoomFilterForm">
+                <!-- Filter Section -->
                 <div class="row mb-4">
-                
-                <!-- Institution Dropdown -->
-                <div class="col-md-3">
-                    <div class="form-floating form-floating-outline">
+
+                    <!-- Institution Dropdown -->
+                    <div class="col-md-3">
+                        <div class="form-floating form-floating-outline">
                             <select name="InstitutionID" id="InstitutionID" onchange="loadCampuses(this.value)" class="form-select">
                                 @await Component.InvokeAsync("Master", new { viewname = "Institutions" })
-                        </select>
-                        <label for="InstitutionID">Institution</label>
+                            </select>
+                            <label for="InstitutionID">Institution</label>
+                        </div>
                     </div>
-                </div>
                     <!-- Campus Dropdown -->
                     <div class="col-md-3">
                         <div class="form-floating form-floating-outline">
                             <select name="CampusID" id="CampusID" class="form-select">
-
-                              
                             </select>
                             <label for="CampusID">Campus</label>
                         </div>
                     </div>
-                <!-- ClassStage Dropdown -->
-                <div class="col-md-3">
-                    <div class="form-floating form-floating-outline">
-                        <select name="BoardID" id="BoardID" class="form-select">
-                            <option value="">Select Board</option>
-                            @await Component.InvokeAsync("Master", new { viewname = "Boards" })
-                        </select>
-                        <label for="BoardFilterID">Board ID</label>
+                    <!-- ClassStage Dropdown -->
+                    <div class="col-md-3">
+                        <div class="form-floating form-floating-outline">
+                            <select name="BoardID" id="BoardID" class="form-select">
+                                <option value="">Select Board</option>
+                                @await Component.InvokeAsync("Master", new { viewname = "Boards" })
+                            </select>
+                            <label for="BoardID">Board ID</label>
+                        </div>
+                    </div>
+
+                    <!-- Get Button -->
+                    <div class="col-md-2 d-flex align-items-center">
+                        <button type="submit" class="btn btn-primary w-75">Get</button>
                     </div>
                 </div>
+            </form>
 
-                <!-- Get Button -->
-                <div class="col-md-2 d-flex align-items-center">
-                        <button type="submit" class="btn btn-primary w-75">Get</button>
-                </div>
-            </div>
-        </form>
-            
-       </div>
-        <div id="FilterTable"></div>
-      
-   
-    <!-- Create Class Partial Page -->
-    @await Html.PartialAsync("~/Pages/Class/_Create.cshtml") 
+        </div>
+        <div id="ClassRoomFilterTable"></div>
+       
+
+        <!-- Create Class Partial Page -->
+        @await Html.PartialAsync("~/Pages/ClassRoom/_Create.cshtml")
     </div>
 </div>

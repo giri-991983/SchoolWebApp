@@ -34,42 +34,25 @@
 
         <div class="container-fluid">
             <h2 class="mb-4">Zone Management</h2>
+                <form id="filterZoneForm">
             <div class="row mb-4">
                 <div class="col-md-6">
                     <div class="form-floating form-floating-outline">
-                        <select name="Zone.InstitutionID" id="InstitutionID" class="form-select">
+                        <select name="InstitutionID" id="InstitutionID" class="form-select">
                             @await Component.InvokeAsync("Master", new { viewname = "Institutions" })
                         </select>
                         <label for="InstitutionID">Institution</label>
                     </div>
                 </div>
                 <div class="col-md-2 d-flex align-items-center">
-                    <button id="filterButton" class="btn btn-primary w-100" onclick="FilterZones()">Get</button>
+                        <button type="submit" class="btn btn-primary w-75">Get</button>
                 </div>
             </div>
-
+            </form>
         </div>
-
-        <table id="ZoneTable" class="table">
-
-            <thead>
-                <tr>
-                    <th>S.No</th>
-                    <th>Zone Name</th>
-                    <th>Institution</th>
-                    <th>Short Code</th>
-                    <th>Status</th>
-                    <th>Created Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @await Html.PartialAsync("_ZoneTablePartial", Model.Zones)
-            </tbody>
-        </table>
+        <div id="FilterZoneTable">
+        </div>
     </div>
-
 
     <!-- Create Offcanvas -->
     @await Html.PartialAsync("~/Pages/Zone/_Create.cshtml")

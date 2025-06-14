@@ -1,0 +1,70 @@
+﻿@model IEnumerable<SchoolWebApp.Models.ClassRoom>
+<table id="ClassRoomTable" class="table">
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>Class Room Name</th>
+            <th>Campus Type</th>
+            <th>Grade</th>
+            <th>Course Batch</th>
+           @*  <th>Academic Year</th> *@
+            <th>Seating Capacity</th>
+            <th>Available Seats</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            var serial = 0;
+            @foreach (var item in Model)
+            {
+                serial++;
+                var tcc = "class-room-name-" + item.ClassRoomID;
+                <tr data-id="@item.ClassRoomID">
+                    <td>@serial</td>
+                    <td class="@tcc">@item.ClassRoomName</td>
+                
+                    <td>@item.CampusType?.CampusTypeName</td>
+                    <td>@item.Classes?.ClassName</td>
+                    <td>@item.CourseBatch?.BatchName</td>
+                  @*   <td>@item.AcademicYear?.YearName</td> *@
+                    <td>@item.SeatingCapacity</td>
+                    <td>@item.AvailableSeats</td>
+                    <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>
+                    <td class="text-nowrap">
+                        <div class="col-md-12">
+                            <!-- Edit Button -->
+                            <button class="btn btn-sm btn-icon edit-classroom-btn" onclick="classRoomEdit(@item.ClassRoomID)" data-classroom-id="@item.ClassRoomID">
+                                <i class="ri-edit-box-line ri-20px"></i>
+                            </button>
+                            <div class="modal fade" id="editClassRoomModal" tabindex="-1" aria-labelledby="editClassRoomModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editClassRoomModalLabel">Edit Class Room Details</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="editClassRoomFormContainer">
+                                            <!-- The _EditClassRoom.cshtml partial view will be loaded here dynamically -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Delete Button -->
+                            <form method="post" id="deleteClassRoomForm-@item.ClassRoomID" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.ClassRoomID" />
+                                <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteClassRoomConfirmation('@item.ClassRoomID')">
+                                    <i class="ri-delete-bin-7-line ri-20px"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

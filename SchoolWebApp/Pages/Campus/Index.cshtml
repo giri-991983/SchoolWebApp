@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.dist.css" />
     <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
     <link href="~/vendor/libs/select2/select2.dist.css" rel="stylesheet" />
-        
+
 
 }
 
@@ -34,42 +34,50 @@
 }
 @section PageScripts
 {
-   @*  <script src="~/js/forms-selects.dist.js"></script> *@
+@*  <script src="~/js/forms-selects.dist.js"></script> *@
     <script src="~/code_js/managecampus.js"></script>
 }
 
-    <div class="card">
+<div class="card">
     <div class="card-datatable table-responsive">
 
         <div class="container-fluid">
             <h3 class="mb-4">Manage Campus</h3>
-      
-    <div class="row mb-4" >
-        <!-- Institution Dropdown -->
-        <div class="col-md-4">
-            <div class="form-floating form-floating-outline">
-                        <select name="CampusVM.Campus.InstitutionID" id="InstitutionFilterID" onchange="loadZones(this.value, null, 'ZoneFilterID')" class="form-select">
-                    @await Component.InvokeAsync("Master", new { viewname = "Institutions" })
-                </select>
-                <label for="InstitutionID">Institution</label>
+            <form id="filterCampusForm">
+
+                <div class="row mb-4">
+                    <!-- Institution Dropdown -->
+                    <div class="col-md-4">
+                        <div class="form-floating form-floating-outline">
+                            <select name="InstitutionID" id="InstitutionFilterID" onchange="loadZones(this.value, null, 'ZoneFilterID')" class="form-select">
+                                @await Component.InvokeAsync("Master", new { viewname = "Institutions" })
+                            </select>
+                            <label for="InstitutionID">Institution</label>
+                        </div>
+                    </div>
+
+                    <!-- Zone Dropdown -->
+                    <div class="col-md-4">
+                        <div class="form-floating form-floating-outline">
+                            <select name="ZoneID" id="ZoneFilterID" class="form-select">
+                            </select>
+                            <label for="ZoneID">Zone</label>
+                        </div>
+                    </div>
+
+                    <!-- Get Button -->
+                    <div class="col-md-2 d-flex align-items-center">
+                        <button type="submit" class="btn btn-primary w-75">Get</button>
+                    </div>
+
+                </div>
+            </form>
+             <div id="FilterCampus">
+                
             </div>
         </div>
-
-        <!-- Zone Dropdown -->
-        <div class="col-md-4">
-            <div class="form-floating form-floating-outline">
-                        <select name="CampusVM.Campus.ZoneID" id="ZoneFilterID" class="form-select" >
-                   
-                </select>
-                <label for="ZoneID">Zone</label>
-            </div>
-        </div>
-
-        <!-- Get Button -->
-                <div class="col-md-2 d-flex align-items-center">
-                    <button id="filterButton" type="button" class="btn btn-primary w-75" onclick="filterCampuses()">Get</button>
-        </div>
-    </div>
+           
+@* 
             <table id="CampusTable" class="table">
                 <thead>
                     <tr>
@@ -85,14 +93,61 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @await Html.PartialAsync("_CampusTablePartial", Model.Campuses)
-            
+
+                    @if (Model.Campuses != null && Model.Campuses.Any())
+                    {
+                        var serial = 0;
+
+                        @foreach (var item in Model.Campuses)
+                        {
+                            serial++; var tcc = "camp-name-full-" + item.CampusID;
+                            <tr data-id="@item.CampusID">
+                                <td>@serial</td>
+                                <td class="@tcc">@item.CampuseName</td>
+                                <td data-zone-id="@item.ZoneID">@item.Zone?.ZoneName</td>
+                                <td data-institution-id="@item.InstitutionID">@item.Institution?.InstitutionName</td>
+                                <td>@item.AffiliationNo</td>
+                                <td>@item.SchoolCode</td>
+                                <td>@item.CampusType?.CampusTypeName</td>
+                                <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>
+                                <td class="text-nowrap">
+                                    <div class="col-md-12">
+                                        <!-- Edit Button -->
+                                        <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editCampusOffcanvas" onclick="editCampus(@item.CampusID)">
+                                            <i class="ri-edit-box-line ri-20px"></i>
+                                        </button>
+
+                                        <div class="offcanvas offcanvas-end" tabindex="-1" id="editCampusOffcanvas" aria-labelledby="editCampusOffcanvasLabel">
+                                            <div class="offcanvas-header">
+                                                <h5 id="editCampusOffcanvasLabel" class="offcanvas-title">Edit Campus</h5>
+                                                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                            </div>
+                                            <div class="offcanvas-body">
+                                                <div id="editFormContainer"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Delete Button -->
+                                        <form method="post" id="deleteCampusForm-@item.CampusID" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.CampusID" />
+                                            <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteConfirmation('@item.CampusID')">
+                                                <i class="ri-delete-bin-7-line ri-20px"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+
                 </tbody>
             </table>
-        </div>
-    </div>
+         *@</div>
 
-<!-- Create Campus Partial Page -->
-@await Html.PartialAsync("~/Pages/Campus/_Create.cshtml")
+
+    <!-- Create Campus Partial Page -->
+    @await Html.PartialAsync("~/Pages/Campus/_Create.cshtml")
 
 </div>

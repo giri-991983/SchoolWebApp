@@ -32,6 +32,7 @@ namespace SchoolWebApp.Pages.Class
             _configuration = configuration;
         }
         public IList<SchoolWebApp.Models.Class> Classes { get; set; } = new List<SchoolWebApp.Models.Class>();
+        public IList<SchoolWebApp.Models.ClassStage> ClassStages { get; set; } = new List<SchoolWebApp.Models.ClassStage>();
         [BindProperty]
         public int BoardID { get; set; }
         [BindProperty]
@@ -49,7 +50,9 @@ namespace SchoolWebApp.Pages.Class
                 .Include(c => c.ClassStage)
                 .Include(c => c.Board)
                 .ToListAsync();
+          
         }
+        // Filtering Classes with values Institution ,Campus and Boarding
         public async Task<IActionResult> OnGetClassesByCampusAddInstitutionAsync( int campusId, int institutionId, int boardId)
         {
             var classes = await _context.Classes
@@ -71,51 +74,15 @@ namespace SchoolWebApp.Pages.Class
             {
                 classes = classes.Where(c => c.BoardID == boardId).ToList();
             }
-
-
+           
 
             return Partial("_ClassesTablePartial",classes);
         }
 
-
-        public async Task<IActionResult> OnGetInstitutionsByCampusAsync(int campusId)
-        {
-            if (campusId <= 0)
-            {
-                return new JsonResult(new { success = false, message = "Invalid campusId" });
-            }
-
-            try
-            {
-                var campus = await _context.Campuses
-                    .Include(c => c.Institution)
-                    .FirstOrDefaultAsync(c => c.CampusID == campusId);
-
-                if (campus == null)
-                {
-                    return new JsonResult(new { success = false, message = "Campus not found" });
-                }
-
-                var institution = await _context.Institutions
-                    .Where(i => i.InstitutionID == campus.InstitutionID)
-                    .OrderBy(i => i.InstitutionName)
-                    .Select(i => new { i.InstitutionID, i.InstitutionName })
-                    .ToListAsync();
-
-                return new JsonResult(institution);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { success = false, message = "Server error while fetching institutions: " + ex.Message });
-            }
-        }
+        // Check box for  ClassStages with Selecting BoardId
         public async Task<IActionResult> OnGetMasterClassesAsync(int boardId)
         {
-            if (boardId <= 0)
-            {
-                return Partial("_MasterClassesPartial", new List<MasterClass>());
-            }
-
+          
             var masterClasses = await _context.MasterClasses
                 .Where(mc => mc.BoardID == boardId)
                 .OrderBy(mc => mc.StageNo)
@@ -124,44 +91,64 @@ namespace SchoolWebApp.Pages.Class
 
             return Partial("_MasterClassesPartial",masterClasses);
         }
-        
+        // Creating Classes
         public async Task<IActionResult> OnPostAddClassesAsync(int InstitutionID, int CampusID, int BoardID, List<int> SelectedMasterClassIDs)
         {
-            // Validate inputs
-            if (InstitutionID <= 0 || CampusID <= 0 || BoardID <= 0 || SelectedMasterClassIDs == null || !SelectedMasterClassIDs.Any())
+            // Validate inputs: Ensure all required fields are provided
+            if (InstitutionID <= 0)
             {
-                return new JsonResult(new { success = false, message = "Please select an Institution, Campus, Board, and at least one stage/class." });
+                return new JsonResult(new { success = false, message = "Please select an Institution." });
             }
+
+            if (CampusID <= 0)
+            {
+                return new JsonResult(new { success = false, message = "Please select a Campus." });
+            }
+
+            if (BoardID <= 0)
+            {
+                return new JsonResult(new { success = false, message = "Please select a Board." });
+            }
+
+            if (SelectedMasterClassIDs == null || !SelectedMasterClassIDs.Any())
+            {
+                return new JsonResult(new { success = false, message = "Please select at least one stage/class." });
+            }
+
 
             try
             {
-                // Fetch selected MasterClasses
+                // Fetch selected MasterClasses from the database
                 var masterClasses = await _context.MasterClasses
                     .Where(mc => mc.BoardID == BoardID && SelectedMasterClassIDs.Contains(mc.MasterClassID))
                     .ToListAsync();
 
+                // Check if any MasterClasses were found
                 if (!masterClasses.Any())
                 {
                     return new JsonResult(new { success = false, message = "No matching master classes found for the selected board and stages." });
                 }
 
-                // Use a transaction to ensure consistency
+                // Begin a transaction to ensure database consistency
                 using var transaction = await _context.Database.BeginTransactionAsync();
 
-                // Group MasterClasses by Stage
+                // Group MasterClasses by Stage for processing
                 var stages = masterClasses.GroupBy(mc => new { mc.StageNo, mc.StageName }).ToList();
 
-                // Step 1: Process ClassStages
+                // Step 1: Process ClassStages and check for duplicates
                 var stageDict = new Dictionary<string, int>(); // Maps stage key to ClassStageID
 
                 foreach (var stage in stages)
                 {
                     var stageKey = $"{stage.Key.StageNo}-{stage.Key.StageName}";
+                    // Check if the stage already exists for the given Institution, Campus, and Board
                     var existingStage = await _context.ClassStages
-                        .FirstOrDefaultAsync(cs => cs.StageNo == stage.Key.StageNo && cs.StageName == stage.Key.StageName && cs.BoardID == BoardID && cs.InstitutionID==InstitutionID && cs.CampusID==CampusID  );
+                        .FirstOrDefaultAsync(cs => cs.StageNo == stage.Key.StageNo && cs.StageName == stage.Key.StageName && cs.BoardID == BoardID && cs.InstitutionID == InstitutionID && cs.CampusID == CampusID);
 
+                    int classStageId;
                     if (existingStage == null)
                     {
+                        // Create a new ClassStage if it doesn't exist
                         var newStage = new ClassStage
                         {
                             InstitutionID = InstitutionID,
@@ -174,15 +161,44 @@ namespace SchoolWebApp.Pages.Class
                         };
                         _context.ClassStages.Add(newStage);
                         await _context.SaveChangesAsync(); // Save to get the ClassStageID
-                        stageDict[stageKey] = newStage.ClassStageID;
+                        classStageId = newStage.ClassStageID;
+                        stageDict[stageKey] = classStageId;
                     }
                     else
                     {
-                        stageDict[stageKey] = existingStage.ClassStageID;
+                        classStageId = existingStage.ClassStageID;
+                        stageDict[stageKey] = classStageId;
+
+                        // Check for duplicates: ClassName under the same ClassStageID, InstitutionID, CampusID, and BoardID
+                        var duplicateClasses = new List<string>();
+                        foreach (var masterClass in stage)
+                        {
+                            var classExists = await _context.Classes
+                                .AnyAsync(c => c.InstitutionID == InstitutionID && c.CampusID == CampusID && c.BoardID == BoardID && c.ClassStageID == classStageId && c.ClassName == masterClass.ClassName);
+
+                            if (classExists)
+                            {
+                                duplicateClasses.Add(masterClass.ClassName);
+                            }
+                        }
+
+                        // If duplicates are found, fetch all existing ClassNames for this stage and return a message
+                        if (duplicateClasses.Any())
+                        {
+                            var existingClassNames = await _context.Classes
+                                .Where(c => c.InstitutionID == InstitutionID && c.CampusID == CampusID && c.BoardID == BoardID && c.ClassStageID == classStageId)
+                                .Select(c => c.ClassName)
+                                .Distinct()
+                                .ToListAsync();
+
+                            await transaction.RollbackAsync();
+                            var message = $"Stage '{stage.Key.StageName}' already contains the following classes: {string.Join(", ", existingClassNames)}.";
+                            return new JsonResult(new { success = false, message = message });
+                        }
                     }
                 }
 
-                // Step 2: Process Classes
+                // Step 2: Process Classes (only if no duplicates were found)
                 var classesToAdd = new List<Models.Class>();
 
                 foreach (var stage in stages)
@@ -192,16 +208,7 @@ namespace SchoolWebApp.Pages.Class
 
                     foreach (var masterClass in stage)
                     {
-                        // Check for duplicates
-                        var classExists = await _context.Classes
-                            .AnyAsync(c => c.InstitutionID == InstitutionID && c.CampusID == CampusID && c.BoardID == BoardID && c.ClassName == masterClass.ClassName);
-
-                        if (classExists)
-                        {
-                            await transaction.RollbackAsync();
-                            return new JsonResult(new { success = false, message = $"Class '{masterClass.ClassName}' already exists for this Institution, Campus, and Board." });
-                        }
-
+                        // Create a new Class entry
                         var newClass = new Models.Class
                         {
                             InstitutionID = InstitutionID,
@@ -217,7 +224,7 @@ namespace SchoolWebApp.Pages.Class
                     }
                 }
 
-                // Save all Classes at once
+                // Save all Classes at once if there are any to add
                 if (classesToAdd.Any())
                 {
                     _context.Classes.AddRange(classesToAdd);
@@ -230,10 +237,11 @@ namespace SchoolWebApp.Pages.Class
             }
             catch (Exception ex)
             {
-                // Simplified error handling
+                // Handle any errors that occur during the operation
                 return new JsonResult(new { success = false, message = $"Failed to add classes: {ex.Message}" });
             }
         }
+       
 
         public async Task<IActionResult> OnPostDeleteClassAsync(int classId)
         {
@@ -282,8 +290,73 @@ namespace SchoolWebApp.Pages.Class
             }
         }
 
+        // Loading Edit  Class Form
+        public async Task<IActionResult> OnGetEditClassFormAsync(int classId)
+        {
+            try
+            {
+                var classDetails = await _context.Classes
+                    .Include(c => c.ClassStage)
+                    .FirstOrDefaultAsync(c => c.ClassID == classId);
 
-        public async Task<IActionResult> OnGetLoadComponentAsync(int id)
+                if (classDetails == null)
+                {
+                    return new JsonResult(new { success = false, message = "Class not found." });
+                }
+
+                return Partial("_Edit",classDetails);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { success = false, message = $"Error loading edit form: {ex.Message}" });
+            }
+        }
+
+    
+
+        public async Task<IActionResult> OnPostEditClassAsync(int classId, string className)
+        {
+            // Validate inputs
+            if (classId <= 0 || string.IsNullOrWhiteSpace(className))
+            {
+                return new JsonResult(new { success = false, message = "Invalid class ID or class name." });
+            }
+
+            try
+            {
+                // Fetch the class to update
+                var classToUpdate = await _context.Classes
+                    .Include(c => c.ClassStage)
+                    .FirstOrDefaultAsync(c => c.ClassID == classId);
+
+                if (classToUpdate == null)
+                {
+                    return new JsonResult(new { success = false, message = "Class not found." });
+                }
+
+                // Check for duplicates: ClassName under the same ClassStageID (excluding the current class)
+                var classExists = await _context.Classes
+                    .AnyAsync(c => c.ClassStageID == classToUpdate.ClassStageID && c.ClassName == className && c.ClassID != classId);
+
+                if (classExists)
+                {
+                    return new JsonResult(new { success = false, message = $"A class with the name '{className}' already exists in stage '{classToUpdate.ClassStage.StageName}'." });
+                }
+
+                // Update the ClassName
+                classToUpdate.ClassName = className;
+                await _context.SaveChangesAsync();
+
+                return new JsonResult(new { success = true, message = "Class updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { success = false, message = $"Error updating class: {ex.Message}" });
+            }
+        }
+
+        // Geting dropdown for Campus with Seletcing Institution
+        public async Task<IActionResult> OnGetLoadCampusesByInstitutionAsync(int institutionId)
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new PageActionDescriptor());
@@ -299,19 +372,19 @@ namespace SchoolWebApp.Pages.Class
 
             ((IViewContextAware)_viewComponentHelper).Contextualize(viewContext);
 
-            // Fetch InstitutionID(s) for the given CampusID
+            // Fetch CampusID(s) for the given InstitutionID
             string filterIds = "";
-            if (id > 0)
+            if (institutionId > 0)
             {
-                var institutionIds = await _context.Campuses
-                    .Where(c => c.CampusID == id)
-                    .Select(c => c.InstitutionID)
+                var campusIds = await _context.Campuses
+                    .Where(c => c.InstitutionID == institutionId)
+                    .Select(c => c.CampusID)
                     .Distinct()
                     .ToListAsync();
-                filterIds = string.Join(",", institutionIds);
+                filterIds = string.Join(",", campusIds);
             }
 
-            var html = await _viewComponentHelper.InvokeAsync("Master", new { viewname = "Institutions", FilterIds = filterIds, SelectedIDs = (int?)null });
+            var html = await _viewComponentHelper.InvokeAsync("Master", new { viewname = "Campuses", FilterIds = filterIds });
 
             using var writer = new StringWriter();
             html.WriteTo(writer, HtmlEncoder.Default);

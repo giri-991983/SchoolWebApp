@@ -1,0 +1,27 @@
+﻿@model SchoolWebApp.Models.Class
+
+<form id="editClassForm" method="post" enctype="multipart/form-data" data-id="@Model.ClassID">
+    @Html.AntiForgeryToken()
+    
+
+    <div class="modal-body">
+        <input type="hidden" name="ClassId" id="editClassId" value="@Model.ClassID" />
+
+        <div class="mb-3">
+            <label for="editStageName" class="form-label fw-medium text-primary">Stage Name</label>
+            <input type="text" id="editStageName" class="form-control" value="@Model.ClassStage?.StageName" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label for="editClassName" class="form-label fw-medium text-primary">Class Name</label>
+            <input type="text" id="editClassName" name="className" class="form-control" value="@Model.ClassName" required />
+            <div id="classNameValidationMessage" class="invalid-feedback d-block" ></div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+       @*  <button type="button" class="btn btn-success" id="saveClassBtn" onclick="submitEditClassForm()">Save</button> *@
+        <button type="submit" class="btn btn-success" id="saveClassBtn">Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form>

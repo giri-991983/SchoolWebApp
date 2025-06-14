@@ -421,6 +421,40 @@ function loadCities(stateId, campusId = null) {
         }
     });
 }
+
+
+    const campusfv = FormValidation.formValidation(filterCampusForm, {
+    fields: {
+        InstitutionID: {
+            validators: {
+                notEmpty: {
+                    message: 'Please select an Institution.'
+                }
+            }
+        },
+        ZoneID: {
+            validators: {
+                notEmpty: {
+                    message: 'Please select a Zone.'
+                }
+            }
+        }
+    },
+    plugins: {
+        trigger: new FormValidation.plugins.Trigger(),
+        bootstrap5: new FormValidation.plugins.Bootstrap5({
+            eleValidClass: 'is-valid',
+            eleInvalidClass: 'is-invalid',
+            rowSelector: '.form-floating'
+        }),
+        submitButton: new FormValidation.plugins.SubmitButton(),
+        autoFocus: new FormValidation.plugins.AutoFocus()
+    }
+}).on('core.form.valid', function () {
+    filterCampuses();
+}).on('core.form.invalid', function () {
+    return;
+});
 function filterCampuses() {
     var institutionId = $('#InstitutionFilterID').val() || 0;
     var zoneId = $('#ZoneFilterID').val() || 0;
@@ -431,9 +465,12 @@ function filterCampuses() {
         data: { institutionId: institutionId, zoneId: zoneId },
        
         success: function (partialView) {
-            $('#CampusTable tbody').html(partialView);
+            $('#FilterCampus').html(partialView);
+            if ($('#CampusTable').length) {
+                initializeDataTable(); // Reinitialize DataTable on the new table
+            }
           
-        },
+        }, 
         error: function (xhr, status, error) {
             Swal.fire({
                 icon: 'error',
@@ -444,8 +481,14 @@ function filterCampuses() {
         }
     });
 }
-$(document).ready(function () {
-
+function initializeDataTable() {
+    if (!$('#CampusTable').length) {
+        console.error('Error: #Campus Table element not found in the DOM');
+        return;
+    }
+    if ($.fn.DataTable.isDataTable('#CampusTable')) {
+        $('#CampusTable').DataTable().destroy();
+    }
     //  Zone DataTable Initialization
     $('#CampusTable').DataTable({
 
@@ -585,16 +628,17 @@ $(document).ready(function () {
         responsive: true,
 
     });
-   
 
-});
 
-//Filter Form styles to default size after DataTable initialization
-setTimeout(() => {
-    $('.dataTables_filter input').addClass('ms-0');
-    $('div.dataTables_wrapper .dataTables_filter').addClass('mt-0 mt-md-5');
-    $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
-}, 300);
+
+
+    //Filter Form styles to default size after DataTable initialization
+    setTimeout(() => {
+        $('.dataTables_filter input').addClass('ms-0');
+        $('div.dataTables_wrapper .dataTables_filter').addClass('mt-0 mt-md-5');
+        $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
+    }, 300);
+}
 // Get the Create for validation
 const createNewCampusForm = document.getElementById('createCampusForm');
 if (createNewCampusForm) {

@@ -1,7 +1,14 @@
 ﻿'use strict';
 
 // Zone DataTable initialization
-$(document).ready(function () {
+function initializeZoneDataTable() {
+    if (!$('#ZoneTable').length) {
+        console.error('Error: #Zone Table element not found in the DOM');
+        return;
+    }
+    if ($.fn.DataTable.isDataTable('#ZoneTable')) {
+        $('#ZoneTable').DataTable().destroy();
+    }
     $('#ZoneTable').DataTable({
         order: [[1, 'asc']],
         displayLength: 20,
@@ -115,7 +122,8 @@ $(document).ready(function () {
         responsive: true
     });
    
-});
+
+
 
 // Filter Form styles to default size after DataTable initialization
 setTimeout(() => {
@@ -123,6 +131,33 @@ setTimeout(() => {
     $('div.dataTables_wrapper .dataTables_filter').addClass('mt-0 mt-md-5');
     $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
 }, 300);
+}
+
+const zoneFv = FormValidation.formValidation(document.getElementById('filterZoneForm'), {
+    fields: {
+        InstitutionID: {
+            validators: {
+                notEmpty: {
+                    message: 'Please select an Institution.'
+                }
+            }
+        }
+    },
+    plugins: {
+        trigger: new FormValidation.plugins.Trigger(),
+        bootstrap5: new FormValidation.plugins.Bootstrap5({
+            eleValidClass: 'is-valid',
+            eleInvalidClass: 'is-invalid',
+            rowSelector: '.form-floating'
+        }),
+        submitButton: new FormValidation.plugins.SubmitButton(),
+        autoFocus: new FormValidation.plugins.AutoFocus()
+    }
+}).on('core.form.valid', function () {
+    FilterZones();
+}).on('core.form.invalid', function () {
+    return;
+});
 function FilterZones() {
 
     /*   $('#filterButton').on('click', function () {*/
@@ -135,7 +170,10 @@ function FilterZones() {
         data: { institutionId: institutionId },
         success: function (partialView) {
            
-            $('#ZoneTable tbody').html(partialView);
+            $('#FilterZoneTable').html(partialView);
+            if ($('#ZoneTable').length) {
+                initializeZoneDataTable(); // Reinitialize DataTable on the new table
+            }
         },
         error: function () {
             alert('Failed to load zone data.');

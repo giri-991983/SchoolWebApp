@@ -1,7 +1,21 @@
 ﻿@model IEnumerable<SchoolWebApp.Models.Campus>
 
 
-
+<table id="CampusTable" class="table">
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>Campus Name</th>
+            <th>Zone</th>
+            <th>Institution</th>
+            <th>Affiliation No</th>
+            <th>School Code</th>
+            <th>Campus Type</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
 
 @if (Model != null && Model.Any())
 {
@@ -48,4 +62,6 @@
             </td>
         </tr>
     }
-}
+        }
+    </tbody>
+</table>

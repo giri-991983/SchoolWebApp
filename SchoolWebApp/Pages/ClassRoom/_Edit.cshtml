@@ -1,0 +1,49 @@
+﻿@model SchoolWebApp.Models.ClassRoom
+
+<form id="editClassRoomForm" method="post" enctype="multipart/form-data" data-id="@Model.ClassRoomID">
+    @Html.AntiForgeryToken()
+    <div class="modal-body">
+
+    <input type="hidden" name="ClassRoom.ClassRoomID" value="@Model.ClassRoomID" />
+    <input type="hidden" name="ClassRoom.CreatedDate" value="@Model.CreatedDate" />
+    <input type="hidden" name="ClassRoom.InstitutionID" id="EditInstitutionID" value="@Model.InstitutionID" />
+    <input type="hidden" name="ClassRoom.CampusID" id="EditCampusID" value="@Model.CampusID" />
+
+
+    <input type="hidden" name="ClassRoom.BoardID" id="EditBoardID" value="@Model.Classes.BoardID" /> 
+    <input type="hidden" name="ClassRoom.TypeID" value="@Model.TypeID" />
+    <input type="hidden" name="ClassRoom.AcademicYearID" value="@Model.AcademicYearID" />
+
+    <!-- Class Room Name -->
+    <div class="form-floating form-floating-outline mb-5">
+        <input type="text" class="form-control" id="EditClassRoomName" name="ClassRoom.ClassRoomName"
+               value="@Model.ClassRoomName" autocomplete="off" />
+        <label for="EditClassRoomName">Class Room Name</label>
+        <span class="text-danger" data-fv-for="ClassRoom.ClassRoomName"></span>
+    </div>
+
+  
+
+    <!-- Seating Capacity -->
+    <div class="form-floating form-floating-outline mb-5">
+        <input type="number" class="form-control" id="EditSeatingCapacity" name="ClassRoom.SeatingCapacity"
+               value="@Model.SeatingCapacity" min="1" />
+        <label for="EditSeatingCapacity">Seating Capacity</label>
+        <span class="text-danger" data-fv-for="ClassRoom.SeatingCapacity"></span>
+    </div>
+
+    <!-- Available Seats -->
+    <div class="form-floating form-floating-outline mb-5">
+        <input type="number" class="form-control" id="EditAvailableSeats" name="ClassRoom.AvailableSeats"
+               value="@Model.AvailableSeats" min="0" />
+        <label for="EditAvailableSeats">Available Seats</label>
+        <span class="text-danger" data-fv-for="ClassRoom.AvailableSeats"></span>
+    </div>
+    </div>
+    <!-- Buttons -->
+    <div class="modal-footer">
+            <button type="submit" class="btn btn-primary me-3" id="submitEditClassRoomBtn">Save</button>
+            <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+    
+</form>

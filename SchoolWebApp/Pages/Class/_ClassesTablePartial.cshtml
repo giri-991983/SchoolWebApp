@@ -1,5 +1,18 @@
 ﻿@model IEnumerable<SchoolWebApp.Models.Class>
-
+<table id="ClassTable" class="table">
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>Stage Name</th>
+            <th>Stage No</th>
+            <th>Class Name</th>
+            <th>Sequence No</th>
+            <th>Board</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
 @if (Model != null && Model.Any())
 {
     var serial = 0;
@@ -13,26 +26,28 @@
             <td>@item.ClassStage?.StageNo</td>
             <td class="@tcc">@item.ClassName</td>
             <td>@item.SequenceNo</td>
-            <td data-institution-id="@item.InstitutionID">@item.Institution?.InstitutionName</td>
-            <td data-campus-id="@item.CampusID">@item.Campus?.CampuseName</td>
+          
             <td data-board-id="@item.BoardID">@item.Board?.BoardName</td>
             <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>
             <td class="text-nowrap">
                 <div class="col-md-12">
-                    <!-- Edit Button -->
-                    <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editClassOffcanvas" onclick="editClass(@item.ClassID)">
-                        <i class="ri-edit-box-line ri-20px"></i>
-                    </button>
-
-                    <div class="offcanvas offcanvas-end" tabindex="-1" id="editClassOffcanvas" aria-labelledby="editClassOffcanvasLabel">
-                        <div class="offcanvas-header">
-                            <h5 id="editClassOffcanvasLabel" class="offcanvas-title">Edit Class</h5>
-                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                        </div>
-                        <div class="offcanvas-body">
-                            <div id="editFormContainer"></div>
-                        </div>
-                    </div>
+                            <!-- Edit Button -->
+                            <button class="btn btn-sm btn-icon edit-class-btn" onclick=" classEdit(@item.ClassID)" data-class-id="@item.ClassID">
+                                <i class="ri-edit-box-line ri-20px"></i>
+                            </button>
+                            <div class="modal fade" id="editClassModal" tabindex="-1" aria-labelledby="editClassModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editClassModalLabel">Edit Class Details</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="editClassFormContainer">
+                                            <!-- The _Edit.cshtml partial view will be loaded here dynamically -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                     <!-- Delete Button -->
                     <form method="post" id="deleteClassForm-@item.ClassID" class="d-inline">
@@ -47,9 +62,71 @@
         </tr>
     }
 }
-@*  else
-{
-    <tr>
-        <td colspan="9" class="text-center">No classes available</td>
-    </tr>
-}  *@
+    </tbody>
+</table>
+@* 
+    
+@model IEnumerable<SchoolWebApp.Models.ClassStage>
+<table id="ClassStageTable" class="table">
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>Stage Name</th>
+            <th>Stage No</th>
+            <th>Institution</th>
+            <th>Campus</th>
+            <th>Board</th>
+            <th>Status</th>
+         
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            var serial = 0;
+            @foreach (var item in Model)
+            {
+                serial++;
+                var tcc = "class-stage-name-" + item.ClassStageID;
+                <tr data-id="@item.ClassStageID">
+                    <td>@serial</td>
+                    <td class="@tcc">@item.StageName</td>
+                    <td>@item.StageNo</td>
+                    <td data-institution-id="@item.InstitutionID">@item.Institution?.InstitutionName</td>
+                    <td data-campus-id="@item.CampusID">@item.Campus?.CampuseName</td>
+                    <td data-board-id="@item.BoardID">@item.Board?.BoardName</td>
+                    <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>
+                 
+                    <td class="text-nowrap">
+                        <div class="col-md-12">
+                            <!-- Edit Button -->
+                            <button class="btn btn-sm btn-icon" data-bs-toggle="offcanvas" data-bs-target="#editClassStageOffcanvas" onclick="editClassStage(@item.ClassStageID)">
+                                <i class="ri-edit-box-line ri-20px"></i>
+                            </button>
+
+                            <div class="offcanvas offcanvas-end" tabindex="-1" id="editClassStageOffcanvas" aria-labelledby="editClassStageOffcanvasLabel">
+                                <div class="offcanvas-header">
+                                    <h5 id="editClassStageOffcanvasLabel" class="offcanvas-title">Edit Class Stage</h5>
+                                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                </div>
+                                <div class="offcanvas-body">
+                                    <div id="editFormContainer"></div>
+                                </div>
+                            </div>
+
+                            <!-- Delete Button -->
+                            <form method="post" id="deleteClassStageForm-@item.ClassStageID" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.ClassStageID" />
+                                <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteStageConfirmation('@item.ClassStageID')">
+                                    <i class="ri-delete-bin-7-line ri-20px"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table> *@

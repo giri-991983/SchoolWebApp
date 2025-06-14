@@ -56,6 +56,12 @@
                 <div data-i18n="Manage Class"> Manage Classes</div>
             </a>
         </li>
+        <li class='menu-item@(currentPage == "/ClassRoom/Index" ? " active" : "")'>
+            <a asp-page="/ClassRoom/Index" class="menu-link">
+                <i class="menu-icon tf-icons ri-school-line"></i>
+                <div data-i18n="Manage ClassRoom"> Manage Class Room</div>
+            </a>
+        </li>
         <!-- Dashboards -->
         <li class='menu-item@(currentPage.StartsWith("/Dashboards/") ? " active open" : "")'>
             <a href="javascript:void(0);" class="menu-link menu-toggle">

@@ -40,7 +40,7 @@ namespace SchoolWebApp.ViewComponents
                         .ToListAsync();
                 }
                 ViewBag.Institutions = institutions ?? new List<Institution>();
-                
+
             }
             else if (viewname == "Zones")
             {
@@ -82,7 +82,7 @@ namespace SchoolWebApp.ViewComponents
                         .OrderBy(s => s.StateName)
                         .ToListAsync();
                 }
-              
+
                 ViewBag.States = states;
             }
             else if (viewname == "Cities")
@@ -123,13 +123,11 @@ namespace SchoolWebApp.ViewComponents
                 var campuses = new List<Campus>();
                 if (!string.IsNullOrEmpty(FilterIds))
                 {
-                    var filterids = FilterIds.Split(",").Select(int.Parse).ToArray();
+                    var filterIds = FilterIds.Split(",").Select(int.Parse).ToArray();
                     campuses = await _context.Campuses
-                   .Where(c => filterids.Contains(c.InstitutionID))
-
-                   .OrderBy(c => c.CampuseName)
-                   .ToListAsync();
-
+                        .Where(c => filterIds.Contains(c.CampusID)) // Filter by CampusID, not InstitutionID
+                        .OrderBy(c => c.CampuseName)
+                        .ToListAsync();
                 }
                 else
                 {
@@ -137,8 +135,7 @@ namespace SchoolWebApp.ViewComponents
                         .OrderBy(c => c.CampuseName)
                         .ToListAsync();
                 }
-                ViewBag.Campuses = campuses;
-
+                ViewBag.Campuses = campuses ?? new List<Campus>();
             }
 
             else if (viewname == "BoardingTypes")
@@ -146,7 +143,6 @@ namespace SchoolWebApp.ViewComponents
 
                 var boardingTypes = await _context.BoardingTypes
                             .OrderBy(bt => bt.BoardingType)
-                           
                             .ToListAsync();
                 ViewBag.Items = boardingTypes ?? new List<BoardingTypes>();
             }
@@ -155,11 +151,31 @@ namespace SchoolWebApp.ViewComponents
 
                 var boards = await _context.Boards
                             .OrderBy(bt => bt.BoardName)
-
                             .ToListAsync();
                 ViewBag.Boards = boards ?? new List<Board>();
             }
+            else if (viewname == "Classes")
+            {
+                var classes=new List<Class>();
+                if (!string.IsNullOrEmpty(FilterIds))
+                {
+                    var filterIds = FilterIds.Split(",").Select(int.Parse).ToArray();
 
+                    classes = await _context.Classes
+                        .Where(c => filterIds.Contains(c.ClassID))
+                        .OrderBy(c => c.SequenceNo)
+                        .ToListAsync();
+                   
+                }
+                //else
+                //{
+                //    classes = await _context.Classes
+                //                            .OrderBy(c => c.ClassName)
+                //                            .ToListAsync();
+                //}
+                ViewBag.Classes = classes ?? new List<Class>();
+
+            }
             ViewBag.selectedIDs = SelectedIDs;
 
             return View(viewname);

@@ -1,0 +1,14 @@
+﻿@using SchoolWebApp.Models
+
+@{
+    var selectedID = ViewBag.selectedIDs;
+    var classes = ViewBag.Classes as List<Class>;
+}
+
+<option value="">Select Class</option>
+@foreach (var cls in classes)
+{
+    <option value="@cls.ClassID" selected="@(cls.ClassID == selectedID)">
+        @cls.ClassName
+    </option>
+}

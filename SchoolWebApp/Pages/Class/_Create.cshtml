@@ -19,21 +19,26 @@
                     <!-- Board Dropdown -->
                     <div class="mb-3">
                         <label for="ModalBoardID" class="form-label fw-medium text-primary">Select Board</label>
-                        <select class="form-select select2" id="ModalBoardID" name="BoardID"  onchange="fetchMasterClasses(this.value)"  *@required>
+                        <select class="form-select" id="ModalBoardID" name="BoardID"  onchange="fetchMasterClasses(this.value)"  required>
                             <option value="">Select Board</option>
                             @await Component.InvokeAsync("Master", new { viewname = "Boards" })
                         </select>
+                       
                     </div>
 
                     <!-- Master Classes Section -->
                     <div id="masterClassesContainer" class="mt-3">
                         <p class="text-muted">Select a board to view associated stages and classes.</p>
                       
+                        
                     </div>
+                   
+                    <div class="fv-help-block invalid-feedback" id="selectedMasterClassIDsValidationMessage"></div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="submitAddClassesForm()">Save</button>
+                  @*   <button type="button" class="btn btn-success" onclick="submitAddClassesForm()">Save</button> *@
+                    <button type="submit" class="btn btn-success">Save</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>

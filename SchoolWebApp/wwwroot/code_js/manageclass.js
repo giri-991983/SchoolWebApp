@@ -1,6 +1,13 @@
-﻿$(document).ready(function () {
+﻿
 
-    //  Zone DataTable Initialization
+function initializeDataTable() {
+    if (!$('#ClassTable').length) {
+        console.error('Error: #ClassTable element not found in the DOM');
+        return;
+    }
+    if ($.fn.DataTable.isDataTable('#ClassTable')) {
+        $('#ClassTable').DataTable().destroy();
+    }
     $('#ClassTable').DataTable({
 
         order: [[7, 'asc']],
@@ -134,7 +141,7 @@
                     'data-bs-toggle': 'modal',
                     'data-bs-target': '#addClassModal'
                 },
-              action: function () {
+                action: function () {
                     // Validate InstitutionID and CampusID
                     var campusId = $('#CampusID').val();
                     var institutionId = $('#InstitutionID').val();
@@ -149,17 +156,15 @@
                         return;
                     }
 
-                    // Reset form
-                    $('#addClassForm')[0].reset();
-                    $('.select2').val('').trigger('change');
-                    $('#masterClassesContainer').html('<p class="text-muted">Select a board to view associated stages and classes.</p>');
-
+                   
+                  
+                  
                     // Populate hidden fields
                     $('#ModalCampusID').val(campusId);
                     $('#ModalInstitutionID').val(institutionId);
 
-                    // Open modal
-                    $('#addClassModal').modal('show');
+                    //// Open modal
+                    //$('#addClassModal').modal('show');
                 }
             }
         ],
@@ -168,18 +173,18 @@
     });
 
 
-});
 
-//Filter Form styles to default size after DataTable initialization
-setTimeout(() => {
-    $('.dataTables_filter input').addClass('ms-0');
-    $('div.dataTables_wrapper .dataTables_filter').addClass('mt-0 mt-md-5');
-    $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
-}, 300);
+    //Filter Form styles to default size after DataTable initialization
+    setTimeout(() => {
+        $('.dataTables_filter input').addClass('ms-0');
+        $('div.dataTables_wrapper .dataTables_filter').addClass('mt-0 mt-md-5');
+        $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
+    }, 300);
 
-
+}
+// Check box for Class Stages with Seecting BoardId
 function fetchMasterClasses(boardId) {
-    
+
 
     $.ajax({
         url: '/Class/Index?handler=MasterClasses',
@@ -190,6 +195,7 @@ function fetchMasterClasses(boardId) {
         },
         success: function (partialView) {
             $('#masterClassesContainer').html(partialView);
+           
         },
         error: function (xhr, status, error) {
             Swal.fire({
@@ -198,40 +204,96 @@ function fetchMasterClasses(boardId) {
                 text: 'Failed to load master classes: ' + (xhr.responseText || error),
                 confirmButtonText: 'OK'
             });
-           
+
         }
     });
 }
-function loadInstitutions(campusId) {
-    let institutionSelectId = 'InstitutionID';
-    $(`#${institutionSelectId}`).html('<option value="">Select Institution</option>').prop('disabled', true);
+// Geting dropdown for Campus with Seletcing Institution
+function loadCampuses(institutionId) {
+    let campusSelectId = 'CampusID';
+    $(`#${campusSelectId}`).html('<option value="">Select Campus</option>').prop('disabled', true);
 
-    if (!campusId || campusId <= 0) {
-        $(`#${institutionSelectId}`).val('').trigger('change');
-        $(`#${institutionSelectId}`).prop('disabled', false);
+    if (!institutionId || institutionId <= 0) {
+        $(`#${campusSelectId}`).val('').trigger('change');
+        $(`#${campusSelectId}`).prop('disabled', false);
         return;
     }
 
     $.ajax({
-        url: '/Class/Index?handler=LoadComponent',
+        url: '/Class/Index?handler=LoadCampusesByInstitution',
         type: 'GET',
-        data: { id: campusId },
+        data: { institutionId: institutionId },
         success: function (response) {
-            $(`#${institutionSelectId}`).html(response);
-            $(`#${institutionSelectId}`).prop('disabled', false).trigger('change');
+            $(`#${campusSelectId}`).html(response);
+            $(`#${campusSelectId}`).prop('disabled', false).trigger('change');
         },
         error: function (xhr, status, error) {
-            console.error('Error loading institutions:', { status, error, responseText: xhr.responseText });
+            console.error('Error loading campuses:', { status, error, responseText: xhr.responseText });
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Failed to load institutions: ' + (xhr.responseText || error),
+                text: 'Failed to load campuses: ' + (xhr.responseText || error),
                 confirmButtonText: 'OK'
             });
-            $(`#${institutionSelectId}`).prop('disabled', false);
+            $(`#${campusSelectId}`).prop('disabled', false);
         }
     });
-} 
+}
+
+function toggleStageSelection(checkbox) {
+    var stageNo = $(checkbox).closest('.form-check-label').find('.master-class-id').first().data('stage');
+    var masterClassInputs = $(checkbox).closest('.form-check-label').find(`.master-class-id[data-stage="${stageNo}"]`);
+
+    if (checkbox.checked) {
+        masterClassInputs.prop('disabled', false);
+    } else {
+        masterClassInputs.prop('disabled', true);
+    }
+   
+
+}
+// for Filter Table  and Validation
+const fv = FormValidation.formValidation(filterForm, {
+    fields: {
+        CampusID: {
+            validators: {
+                notEmpty: {
+                    message: 'Please select a Campus.'
+                }
+            }
+        },
+        InstitutionID: {
+            validators: {
+                notEmpty: {
+                    message: 'Please select a Institution.'
+                }
+            }
+        },
+        BoardID: {
+            validators: {
+                notEmpty: {
+                    message: 'Please select a Board.'
+                }
+            }
+        }
+    },
+    plugins: {
+        trigger: new FormValidation.plugins.Trigger(),
+        bootstrap5: new FormValidation.plugins.Bootstrap5({
+            eleValidClass: 'is-valid',
+            eleInvalidClass: 'is-invalid',
+            rowSelector: '.form-floating'
+        }),
+        submitButton: new FormValidation.plugins.SubmitButton(),
+        autoFocus: new FormValidation.plugins.AutoFocus()
+    }
+})
+    .on('core.form.valid', function () {
+        filterClasses();
+    })
+    .on('core.form.invalid', function () {
+        return;
+    });
 function filterClasses() {
     var campusId = $('#CampusID').val() || 0;
     var institutionId = $('#InstitutionID').val() || 0;
@@ -242,8 +304,10 @@ function filterClasses() {
         type: 'GET',
         data: { campusId: campusId, institutionId: institutionId, boardId: boardId },
         success: function (partialView) {
-            $('#ClassTable tbody').html(partialView);
-           
+            $('#FilterTable').html(partialView);
+            if ($('#ClassTable').length) {
+                initializeDataTable(); // Reinitialize DataTable on the new table
+            }
         },
         error: function (xhr, status, error) {
             Swal.fire({
@@ -255,32 +319,70 @@ function filterClasses() {
         }
     });
 }
-function submitAddClassesForm() {
-    var form = $('#addClassForm');
-    console.log('Submitting form:', form.serialize());
+// Validation and Add Classs
+const addclassForm = document.getElementById('addClassForm');
+if (addclassForm) {
+    console.log('FormValidation initializing for addClassForm...');
+    FormValidation.formValidation(addclassForm, {
+        fields: {
+
+            BoardID: {
+                validators: {
+                    notEmpty: { message: 'Please select a Board' }
+                }
+            }
+
+        },
+        plugins: {
+            trigger: new FormValidation.plugins.Trigger(),
+            bootstrap5: new FormValidation.plugins.Bootstrap5({
+                eleValidClass: 'is-valid',
+                rowSelector: function (field, ele) {
+                    return '.mb-3';
+                }
+            }),
+            submitButton: new FormValidation.plugins.SubmitButton(),
+            autoFocus: new FormValidation.plugins.AutoFocus()
+        }
+    })
+        .on('core.form.valid', function () {
+            console.log('Add class form valid, submitting...');
+            submitAddClassesForm(addclassForm);
+        })
+        .on('core.form.invalid', function () {
+            return;
+        });
+       
+} else {
+    console.error('addClassForm not found');
+}
+
+// Submit form via AJAX
+function submitAddClassesForm(form) {
+    const formData = new FormData(form);
+    console.log('Form data:', formData);
     $.ajax({
         url: '/Class/Index?handler=AddClasses',
         type: 'POST',
-        data: form.serialize(),
+        data: formData,
+        processData: false, // Required for FormData
+        contentType: false,
         headers: {
             'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
         },
         beforeSend: function () {
             console.log('Sending create AJAX request');
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    title: 'Processing...',
-                    text: 'Processing...',
-                    showConfirmButton: false,
-                    showCancelButton: false,
-                    allowOutsideClick: false,
-                    // allowEscapeKey: false,
-                    didOpen: () => Swal.showLoading()
-                });
-            }
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Processing...',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
         },
         success: function (response) {
             console.log('Form submission response:', response);
+            Swal.close();
             if (response.success) {
                 $('#addClassModal').modal('hide');
                 filterClasses();
@@ -302,6 +404,7 @@ function submitAddClassesForm() {
         },
         error: function (xhr, status, error) {
             console.error('Error submitting form:', { status, error, responseText: xhr.responseText });
+            Swal.close();
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -311,9 +414,178 @@ function submitAddClassesForm() {
         }
     });
 }
+
+
+function classEdit(classId) {
+    console.log('Edit button clicked for Class ID:', classId);
+    $.ajax({
+        url: '/Class/Index?handler=EditClassForm',
+        type: 'GET',
+        data: { classId: classId },
+        headers: {
+            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+        },
+        beforeSend: function () {
+            console.log('Loading edit class form...');
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Fetching class details...',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+        },
+        success: function (response) {
+            console.log('Edit class form loaded successfully');
+            Swal.close();
+          
+            if (typeof response === 'string') {
+                $('#editClassFormContainer').html(response);
+
+               
+                $('#editClassModal').modal('show');
+
+              //validation
+
+                const editClassForm = document.getElementById('editClassForm');
+
+                if (editClassForm) {
+                    FormValidation.formValidation(editClassForm, {
+                        fields: {
+
+                            className: {
+                                validators: {
+                                    notEmpty: {
+                                        message: 'Class name is required'
+                                    },
+                                    stringLength: {
+                                        max: 100,
+                                        message: 'Max 100 characters allowed'
+                                    }
+                                  }
+                            }
+                        },
+                        plugins: {
+                            trigger: new FormValidation.plugins.Trigger({
+                                event: {
+                                    className: 'blur keyup change'// You can also try 'blur change keyup'
+                                }
+                            }),
+
+                            bootstrap5: new FormValidation.plugins.Bootstrap5({
+                                eleValidClass: 'is-valid',
+                                rowSelector: function (field, ele) {
+                                    return '.mb-3';
+                                }
+                            }),
+                            submitButton: new FormValidation.plugins.SubmitButton({
+                                button: '[type="submit"]'
+                            }),
+                            autoFocus: new FormValidation.plugins.AutoFocus()
+                        }
+                    })
+                        .on('core.form.valid', function () {
+                            console.log('Edit class form valid, submitting');
+                            UpdateNewClassData(editClassForm, $('#editClassId').val());
+
+                        })
+                        .on('core.form.invalid', function () {
+                            const firstInvalidField = editClassForm.querySelector('.is-invalid');
+                            if (firstInvalidField) firstInvalidField.focus();
+                        })
+
+
+                } else {
+                    console.error('Edit class form not found');
+                }
+                // Delay to ensure DOM is updated
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message || 'Failed to load the edit form.'
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading edit class form:', { status, error, responseText: xhr.responseText });
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load the edit class form. Please try again.',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+// Function to handle the Editform submit
+function UpdateNewClassData(form, classId) {
+    console.log('Edit class form validated for Class ID:', classId);
+    var formData = new FormData(form);
+
+    console.log('Edit class form data:', Array.from(formData.entries()));
+
+    $.ajax({
+        url: '/Class/Index?handler=EditClass',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+        },
+        beforeSend: function () {
+            console.log('Sending edit class AJAX request');
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Processing...',
+                    text: 'Processing...',
+                    showConfirmButton: false,
+                    showCancelButton: false,
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+            }
+        },
+        success: function (response) {
+            Swal.close();
+
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: response.message || 'Class updated successfully!',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    $('#editClassModal').modal('hide');
+                    filterClasses(); // Refresh the class list
+                });
+            } else {
+                //   🔴 Field-level validation message for "Class name already exists"
+                if (response.message && response.message.includes('already exists')) {
+                    $('#editClassName').addClass('is-invalid');
+                    $('#classNameValidationMessage').text(response.message).show();
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Submission Failed',
+                text: 'Failed to update the class: ' + (xhr.responseText || error),
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+
 function showDeleteConfirmation(classId) {
     //  event.preventDefault(); // prevent form submit
-    debugger;
+   
     const ClassName = document.querySelector(`.class-name-full-${classId}`).innerText;
 
     Swal.fire({
@@ -346,7 +618,7 @@ function showDeleteConfirmation(classId) {
     });
 }
 function DeleteClassData(classId) {
-    debugger;
+
     $.ajax({
         url: '/Class/Index?handler=DeleteClass',
         type: 'POST',
@@ -378,7 +650,7 @@ function DeleteClassData(classId) {
                         $(this).remove();
                         if (typeof $.fn.DataTable === 'function') {
                             $('#ClassTable').DataTable().draw(false);
-                        } 
+                        }
                     });
                 });
             } else {

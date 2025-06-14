@@ -1,0 +1,91 @@
+﻿@model SchoolWebApp.Pages.ClassRoom.IndexModel
+<!-- Modal Form -->
+<div class="modal fade" id="addClassRoomModal" tabindex="-1" aria-labelledby="addClassRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="addClassRoomForm" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addClassRoomModalLabel">Add Class Room Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="hidden" name="ClassRoom.CreatedDate" />
+                    <input type="hidden" name="ClassRoom.InstitutionID" id="ModalInstitutionID" />
+                    <input type="hidden" name="ClassRoom.CampusID" id="ModalCampusID" />
+                    <input type="hidden" name="ClassRoom.BoardID" id="ModalBoardID" />
+                    <input type="hidden" name="ClassRoom.TypeID"  />
+                    <input type="hidden" name="ClassRoom.AcademicYearID" />
+
+                    <!-- Grade -->
+                    <div class="form-floating form-floating-outline mb-5">
+                        <select name="ClassRoom.GradeID" class="form-select" id="GradeID">
+                            <option value="">Select Grade</option>
+                            <!-- Populated via JS -->
+                        </select>
+                        <label for="GradeID">Grade</label>
+                    </div>
+                    <!-- ClassRoom Name -->
+                    <div class="form-floating form-floating-outline mb-5">
+                        <input name="ClassRoom.ClassRoomName" class="form-control" placeholder="Class Room Name" />
+                        <label for="ClassRoomName">Class Room Name</label>
+                    </div>
+                
+
+
+                    @*   <!-- Course Batch -->
+                    <div class="form-floating form-floating-outline mb-5">
+                        <select name="ClassRoom.CourseBatchID" class="form-select">
+                            <option value="">Select Course Batch</option>
+                            @await Component.InvokeAsync("Master", new { viewname = "CourseBatches" })
+                        </select>
+                        <label for="CourseBatchID">Course Batch</label>
+                    </div>
+
+                    <!-- Academic Year -->
+                    <div class="form-floating form-floating-outline mb-5">
+                        <select name="ClassRoom.AcademicYearID" class="form-select">
+                            <option value="">Select Academic Year</option>
+                            @await Component.InvokeAsync("Master", new { viewname = "AcademicYears" })
+                        </select>
+                        <label for="AcademicYearID">Academic Year</label>
+                    </div>
+ *@
+                    <!-- Seating Capacity -->
+                    <div class="form-floating form-floating-outline mb-5">
+                        <select name="ClassRoom.SeatingCapacity" class="form-select" id="SeatingCapacity">
+                            <option value="">Select Seating Capacity</option>
+                            @for (int i = 1; i <= 100; i++) // Adjust max value as needed
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                        <label for="SeatingCapacity">Seating Capacity</label>
+                    </div>
+
+                    <!-- Available Seats -->
+                    <div class="form-floating form-floating-outline mb-5">
+                        <select name="ClassRoom.AvailableSeats" class="form-select" id="AvailableSeats">
+                            <option value="">Select Available Seats</option>
+                            @for (int i = 1; i <= 100; i++) // Adjust max value as needed
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                        <label for="AvailableSeats">Available Seats</label>
+                    </div>
+
+                </div> <!-- modal-body -->
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
