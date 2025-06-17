@@ -71,7 +71,7 @@
                 <div class="col-md-3">
                     <div class="form-floating form-floating-outline">
                         <select name="BoardID" id="BoardID" class="form-select">
-                            <option value="">Select Board</option>
+                           
                             @await Component.InvokeAsync("Master", new { viewname = "Boards" })
                         </select>
                         <label for="BoardFilterID">Board ID</label>

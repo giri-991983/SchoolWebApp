@@ -1,4 +1,6 @@
-﻿function initializeClassRoomDataTable() {
+﻿
+
+function initializeClassRoomDataTable() {
     if (!$('#ClassRoomTable').length) {
         console.error('Error: #ClassRoomTable element not found in the DOM');
         return;
@@ -152,12 +154,9 @@
         responsive: true,
     });
 }
-// Call the function to initialize the DataTable
+
 $(document).ready(function () {
-    initializeClassRoomDataTable();
-});
-
-
+ 
 
 const classroomFilterForm = document.getElementById('ClassRoomFilterForm');
 
@@ -208,7 +207,27 @@ if (classroomFilterForm) {
 
 } else {
     console.error('ClassRoomFilterForm not found');
-}
+    }
+    // Hide table on InstitutionID change
+    $('#InstitutionID').on('change', function () {
+     
+        $('#ClassRoomFilterTable').hide();
+       
+    });
+
+    // Hide table on CampusID change
+    $('#CampusID').on('change', function () {
+       
+        $('#ClassRoomFilterTable').hide();
+      
+    });
+    // Hide table on BoardID change
+    $('#BoardID').on('change', function () {
+        $('#ClassRoomFilterTable').hide();
+    });
+});
+
+//Filteration of Table
 function filterClassRooms(form) {
     const campusId = form.querySelector('#CampusID').value;
     const institutionId = form.querySelector('#InstitutionID').value;
@@ -223,9 +242,9 @@ function filterClassRooms(form) {
             boardId: boardId
         },
         success: function (partialView) {
-            $('#ClassRoomFilterTable').html(partialView);
+            $('#ClassRoomFilterTable').html(partialView).show();
             if ($('#ClassRoomTable').length) {
-                initializeClassRoomDataTable(); // Optional: Your DataTable logic
+                initializeClassRoomDataTable(); 
             }
         },
         error: function (xhr, status, error) {
@@ -239,7 +258,7 @@ function filterClassRooms(form) {
     });
 }
        
-
+// DropDown Campus With Selecting Institution
 function loadCampuses(institutionId) {
     let campusSelectId = 'CampusID';
     $(`#${campusSelectId}`).html('<option value="">Select Campus</option>').prop('disabled', true);
@@ -270,45 +289,30 @@ function loadCampuses(institutionId) {
         }
     });
 }
-// Filer ClassDropDown with Boarding
-//function loadClasses(boardId) {
-//    let gradeSelectId = 'GradeID';
-//    const institutionId = $('#ModalInstitutionID').val() || 0;
-//    const campusId = $('#ModalCampusID').val() || 0;
 
-//    // Reset and disable dropdown before loading
-//    $(`#${gradeSelectId}`).html('<option value="">Select Grade</option>').prop('disabled', true);
+// DropDown Boarding With Selecting Institution and Campus
 
-//    if (!boardId || boardId <= 0) {
-//        $(`#${gradeSelectId}`).val('').trigger('change');
-//        $(`#${gradeSelectId}`).prop('disabled', false);
-//        return;
-//    }
+function loadBoards(institutionId, campusId) {
+    if (!institutionId || institutionId <= 0 || !campusId || campusId <= 0) {
+        $('#BoardID').html('<option value="">Select Board</option>').prop('disabled', true);
+        return;
+    }
 
-//    $.ajax({
-//        url: '/ClassRoom/Index?handler=LoadClassesByBoard',
-//        type: 'GET',
-//        data: {
-//            boardId: boardId,
-//            institutionId: institutionId,
-//            campusId: campusId
-//        },
-//        success: function (response) {
-//            $(`#${gradeSelectId}`).html(response);
-//            $(`#${gradeSelectId}`).prop('disabled', false).trigger('change');
-//        },
-//        error: function (xhr, status, error) {
-//            console.error('Error loading classes:', { status, error, responseText: xhr.responseText });
-//            Swal.fire({
-//                icon: 'error',
-//                title: 'Error',
-//                text: 'Failed to load classes: ' + (xhr.responseText || error),
-//                confirmButtonText: 'OK'
-//            });
-//            $(`#${gradeSelectId}`).prop('disabled', false);
-//        }
-//    });
-//}
+    $.ajax({
+        url: '/ClassRoom/Index?handler=LoadBoardsByInstitutionAndCampus',
+        type: 'GET',
+        data: { institutionId: institutionId, campusId: campusId },
+        success: function (html) {
+            $('#BoardID').html(html).prop('disabled', false);
+            $('#BoardID').trigger('change'); // Trigger change to load classes if needed
+        },
+        error: function () {
+            alert('Failed to load boards.');
+            $('#BoardID').html('<option value="">Select Board</option>').prop('disabled', true);
+        }
+    });
+}
+
 function loadClasses(boardId, institutionId, campusId) {
     const gradeSelectId = 'GradeID';
     const $gradeSelect = $(`#${gradeSelectId}`);
@@ -355,7 +359,7 @@ function loadClasses(boardId, institutionId, campusId) {
     });
 }
 
-// Initialize addClassRoomForm validation
+
 // Initialize ClassRoom form validation
 const addClassRoomForm = document.getElementById('addClassRoomForm');
 if (addClassRoomForm) {
@@ -455,7 +459,7 @@ function submitAddClassRoomForm(form) {
             if (response.success) {
                 $('#addClassRoomModal').modal('hide');
                 $('#addClassRoomForm')[0].reset();
-                filterClassRooms(classroomFilterForm); // Refresh the data
+                filterClassRooms(document.getElementById('ClassRoomFilterForm'));// Refresh the data
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
@@ -710,7 +714,7 @@ function submitEditClassRoomForm(form) {
             if (response.success) {
                 $('#editClassRoomModal').modal('hide');
                 $('#editClassRoomForm')[0].reset();
-                filterClassRooms(classroomFilterForm);
+                filterClassRooms(document.getElementById('ClassRoomFilterForm'));
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
@@ -718,13 +722,13 @@ function submitEditClassRoomForm(form) {
                     timer: 1500,
                     showConfirmButton: false
                 });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: response.message || 'Failed to update Class Room.',
-                    confirmButtonText: 'OK'
-                });
+            }
+            else {
+                //   🔴 Field-level validation message for "Class name already exists"
+                if (response.message && response.message.includes('already exists')) {
+                    $('#EditClassRoomName').addClass('is-invalid');
+                    $('#classRoomNameValidationMessage').text(response.message).show();
+                }
             }
         },
         error: function (xhr, status, error) {

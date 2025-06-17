@@ -335,8 +335,11 @@ namespace SchoolWebApp.Pages.Class
                 }
 
                 // Check for duplicates: ClassName under the same ClassStageID (excluding the current class)
+                //var classExists = await _context.Classes
+                //    .AnyAsync(c => c.ClassStageID == classToUpdate.ClassStageID && c.ClassName == className && c.ClassID != classId);
                 var classExists = await _context.Classes
-                    .AnyAsync(c => c.ClassStageID == classToUpdate.ClassStageID && c.ClassName == className && c.ClassID != classId);
+                 .AnyAsync(c => c.InstitutionID == classToUpdate.InstitutionID &&
+                               c.CampusID == classToUpdate.CampusID && c.ClassName == className && c.ClassID != classId);
 
                 if (classExists)
                 {

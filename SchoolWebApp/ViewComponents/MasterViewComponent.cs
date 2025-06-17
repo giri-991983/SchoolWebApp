@@ -148,11 +148,23 @@ namespace SchoolWebApp.ViewComponents
             }
             else if (viewname == "Boards")
             {
-
-                var boards = await _context.Boards
-                            .OrderBy(bt => bt.BoardName)
-                            .ToListAsync();
+                var boards = new List<Board>();
+                if (!string.IsNullOrEmpty(FilterIds))
+                {
+                    var filterIds = FilterIds.Split(",").Select(int.Parse).Where(id => id != 0).ToList();
+                    boards = await _context.Boards
+                        .Where(b => filterIds.Contains(b.BoardID))
+                        .OrderBy(b => b.BoardName)
+                        .ToListAsync();
+                }
+                else
+                {
+                    boards = await _context.Boards
+                        .OrderBy(b => b.BoardName)
+                        .ToListAsync();
+                }
                 ViewBag.Boards = boards ?? new List<Board>();
+              
             }
             else if (viewname == "Classes")
             {

@@ -158,7 +158,9 @@ function initializeDataTable() {
 
                    
                   
-                  
+                    $('#addClassForm')[0].reset();
+                    $('#masterClassesContainer').html('<p class="text-muted">Select a board to view associated stages and classes.</p>');
+
                     // Populate hidden fields
                     $('#ModalCampusID').val(campusId);
                     $('#ModalInstitutionID').val(institutionId);
@@ -252,59 +254,90 @@ function toggleStageSelection(checkbox) {
    
 
 }
-// for Filter Table  and Validation
-const fv = FormValidation.formValidation(filterForm, {
-    fields: {
-        CampusID: {
-            validators: {
-                notEmpty: {
-                    message: 'Please select a Campus.'
+
+$(document).ready(function () {
+
+    const classFilterForm = document.getElementById('filterForm');
+
+    if (classFilterForm) {
+
+
+        // for Filter Table  and Validation
+        FormValidation.formValidation(classFilterForm, {
+            fields: {
+                CampusID: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Please select a Campus.'
+                        }
+                    }
+                },
+                InstitutionID: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Please select a Institution.'
+                        }
+                    }
+                },
+                BoardID: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Please select a Board.'
+                        }
+                    }
                 }
+            },
+            plugins: {
+                trigger: new FormValidation.plugins.Trigger(),
+                bootstrap5: new FormValidation.plugins.Bootstrap5({
+                    eleValidClass: 'is-valid',
+                    eleInvalidClass: 'is-invalid',
+                    rowSelector: '.form-floating'
+                }),
+                submitButton: new FormValidation.plugins.SubmitButton(),
+                autoFocus: new FormValidation.plugins.AutoFocus()
             }
-        },
-        InstitutionID: {
-            validators: {
-                notEmpty: {
-                    message: 'Please select a Institution.'
-                }
-            }
-        },
-        BoardID: {
-            validators: {
-                notEmpty: {
-                    message: 'Please select a Board.'
-                }
-            }
-        }
-    },
-    plugins: {
-        trigger: new FormValidation.plugins.Trigger(),
-        bootstrap5: new FormValidation.plugins.Bootstrap5({
-            eleValidClass: 'is-valid',
-            eleInvalidClass: 'is-invalid',
-            rowSelector: '.form-floating'
-        }),
-        submitButton: new FormValidation.plugins.SubmitButton(),
-        autoFocus: new FormValidation.plugins.AutoFocus()
+        })
+            .on('core.form.valid', function () {
+                filterClasses(classFilterForm);
+            })
+            .on('core.form.invalid', function () {
+                return;
+            });
+    } else {
+        console.error('ClassFilterForm not found');
     }
-})
-    .on('core.form.valid', function () {
-        filterClasses();
-    })
-    .on('core.form.invalid', function () {
-        return;
+    // Hide table on InstitutionID change
+    $('#InstitutionID').on('change', function () {
+
+        $('#FilterTable').hide();
+
     });
-function filterClasses() {
-    var campusId = $('#CampusID').val() || 0;
-    var institutionId = $('#InstitutionID').val() || 0;
-    var boardId = $('#BoardID').val() || 0;
+
+    // Hide table on CampusID change
+    $('#CampusID').on('change', function () {
+
+        $('#FilterTable').hide();
+
+    });
+    // Hide table on BoardID change
+    $('#BoardID').on('change', function () {
+        $('#FilterTable').hide();
+    });
+});
+
+
+function filterClasses(form) {
+    const campusId = form.querySelector('#CampusID').value;
+    const institutionId = form.querySelector('#InstitutionID').value;
+    const boardId = form.querySelector('#BoardID').value;
 
     $.ajax({
         url: '/Class/Index?handler=ClassesByCampusAddInstitution',
         type: 'GET',
         data: { campusId: campusId, institutionId: institutionId, boardId: boardId },
         success: function (partialView) {
-            $('#FilterTable').html(partialView);
+            $('#FilterTable').html(partialView).show();
             if ($('#ClassTable').length) {
                 initializeDataTable(); // Reinitialize DataTable on the new table
             }
@@ -385,7 +418,8 @@ function submitAddClassesForm(form) {
             Swal.close();
             if (response.success) {
                 $('#addClassModal').modal('hide');
-                filterClasses();
+                filterClasses(document.getElementById('filterForm'));
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
@@ -560,7 +594,7 @@ function UpdateNewClassData(form, classId) {
                     showConfirmButton: false
                 }).then(() => {
                     $('#editClassModal').modal('hide');
-                    filterClasses(); // Refresh the class list
+                    filterClasses(document.getElementById('filterForm'));
                 });
             } else {
                 //   🔴 Field-level validation message for "Class name already exists"

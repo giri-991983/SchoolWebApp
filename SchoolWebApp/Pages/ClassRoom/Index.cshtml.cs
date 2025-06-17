@@ -163,8 +163,50 @@ namespace SchoolWebApp.Pages.ClassRoom
                 return StatusCode(500, "Failed to load classes.");
             }
         }
+        //DropDowm For Boards With Selecting Institution and Campus
+        public async Task<IActionResult> OnGetLoadBoardsByInstitutionAndCampusAsync(int institutionId, int campusId)
+        {
+            try
+            {
+                var httpContext = _httpContextAccessor.HttpContext;
+                var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new PageActionDescriptor());
+                var viewContext = new ViewContext(
+                    actionContext,
+                    new FakeView(),
+                    new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary()),
+                    _tempDataFactory.GetTempData(httpContext),
+                    TextWriter.Null,
+                    new HtmlHelperOptions()
+                );
 
+                ((IViewContextAware)_viewComponentHelper).Contextualize(viewContext);
 
+                string filterIds = "";
+                if (institutionId > 0 && campusId > 0)
+                {
+                    var query = _context.Classes
+                        .Where(c => c.InstitutionID == institutionId && c.CampusID == campusId);
+
+                    var boardIds = await query
+                        .Select(c => c.BoardID)
+                        .Distinct()
+                        .ToListAsync();
+
+                    filterIds = string.Join(",", boardIds);
+                }
+
+                var html = await _viewComponentHelper.InvokeAsync("Master", new { viewname = "Boards", FilterIds = filterIds });
+
+                using var writer = new StringWriter();
+                html.WriteTo(writer, HtmlEncoder.Default);
+
+                return Content(writer.ToString(), "text/html");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Failed to load boards.");
+            }
+        }
         public async Task<IActionResult> OnPostAddClassRoomAsync()
         {
             try
@@ -182,15 +224,17 @@ namespace SchoolWebApp.Pages.ClassRoom
 
                 // Check if a classroom with the same name already exists for this institution and campus
                 var existingClassRoom = await _context.ClassRooms
-                    .FirstOrDefaultAsync(cr => cr.ClassRoomName == ClassRoom.ClassRoomName &&
-                                              cr.InstitutionID == ClassRoom.InstitutionID &&
-                                              cr.CampusID == ClassRoom.CampusID);
+                                                     .FirstOrDefaultAsync(cr => cr.ClassRoomName.ToLower().Trim() == ClassRoom.ClassRoomName.ToLower().Trim() &&
+                                                     cr.InstitutionID == ClassRoom.InstitutionID &&
+                                                     cr.CampusID == ClassRoom.CampusID &&
+                                                    
+                                                     cr.ClassRoomID != ClassRoom.ClassRoomID);
                 if (existingClassRoom != null)
                 {
                     return new JsonResult(new { success = false, message = "A class room with this name already exists for the selected institution and campus." });
                 }
 
-                // Set additional properties
+              
                 ClassRoom.CreatedDate = DateTime.Now;
                 ClassRoom.Status = 1;
                 ClassRoom.TypeID = 1;
@@ -263,6 +307,7 @@ namespace SchoolWebApp.Pages.ClassRoom
                     .FirstOrDefaultAsync(cr => cr.ClassRoomName == ClassRoom.ClassRoomName &&
                                               cr.InstitutionID == ClassRoom.InstitutionID &&
                                               cr.CampusID == ClassRoom.CampusID &&
+
                                               cr.ClassRoomID != ClassRoom.ClassRoomID);
                 if (duplicateClassRoom != null)
                 {

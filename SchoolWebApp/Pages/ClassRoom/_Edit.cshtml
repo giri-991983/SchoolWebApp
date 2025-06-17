@@ -19,7 +19,9 @@
         <input type="text" class="form-control" id="EditClassRoomName" name="ClassRoom.ClassRoomName"
                value="@Model.ClassRoomName" autocomplete="off" />
         <label for="EditClassRoomName">Class Room Name</label>
-        <span class="text-danger" data-fv-for="ClassRoom.ClassRoomName"></span>
+            <span class="invalid-feedback" id="classRoomNameValidationMessage" style="display:none;"></span>
+
+      
     </div>
 
   
@@ -29,7 +31,7 @@
         <input type="number" class="form-control" id="EditSeatingCapacity" name="ClassRoom.SeatingCapacity"
                value="@Model.SeatingCapacity" min="1" />
         <label for="EditSeatingCapacity">Seating Capacity</label>
-        <span class="text-danger" data-fv-for="ClassRoom.SeatingCapacity"></span>
+      
     </div>
 
     <!-- Available Seats -->
@@ -37,7 +39,7 @@
         <input type="number" class="form-control" id="EditAvailableSeats" name="ClassRoom.AvailableSeats"
                value="@Model.AvailableSeats" min="0" />
         <label for="EditAvailableSeats">Available Seats</label>
-        <span class="text-danger" data-fv-for="ClassRoom.AvailableSeats"></span>
+      
     </div>
     </div>
     <!-- Buttons -->

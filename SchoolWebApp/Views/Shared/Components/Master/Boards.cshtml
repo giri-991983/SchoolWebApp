@@ -3,6 +3,7 @@
     var selectedID = ViewBag.selectedIDs;
     var boards = ViewBag.Boards as List<Board>;
 }
+<option value="">Select Board</option>
 @foreach (var b in boards)
 {
     <option value="@b.BoardID" selected="@(b.BoardID == selectedID)">@b.BoardName</option>
