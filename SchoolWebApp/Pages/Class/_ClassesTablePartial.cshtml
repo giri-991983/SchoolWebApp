@@ -7,7 +7,6 @@
             <th>Stage No</th>
             <th>Class Name</th>
             <th>Sequence No</th>
-            <th>Board</th>
             <th>Status</th>
             <th>Actions</th>
         </tr>
@@ -26,8 +25,7 @@
             <td>@item.ClassStage?.StageNo</td>
             <td class="@tcc">@item.ClassName</td>
             <td>@item.SequenceNo</td>
-          
-            <td data-board-id="@item.BoardID">@item.Board?.BoardName</td>
+        
             <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>
             <td class="text-nowrap">
                 <div class="col-md-12">

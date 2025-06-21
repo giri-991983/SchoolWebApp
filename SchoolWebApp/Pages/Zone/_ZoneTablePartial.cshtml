@@ -5,7 +5,6 @@
         <tr>
             <th>S.No</th>
             <th>Zone Name</th>
-            <th>Institution</th>
             <th>Short Code</th>
             <th>Status</th>
             <th>Created Date</th>
@@ -23,7 +22,7 @@
                 <tr data-id="@zone.ZoneID">
                     <td> @kk</td>
                     <td class="@tcc">@zone.ZoneName</td>
-                    <td data-institution-id="@zone.InstitutionID">@(zone.Institution?.InstitutionName ?? "N/A")</td>
+                  
                     <td>@zone.ShortCode</td>
                     <td>@Html.Raw(PageHelpers.GetStatusBadge(zone.Status))</td>
                     <td>@zone.CreatedDate.ToString("dd MMM yyyy")</td>

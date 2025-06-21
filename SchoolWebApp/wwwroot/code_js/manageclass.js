@@ -10,7 +10,7 @@ function initializeDataTable() {
     }
     $('#ClassTable').DataTable({
 
-        order: [[7, 'asc']],
+        order: [[5, 'asc']],
         displayLength: 20,
         dom:
             // Datatable DOM positioning

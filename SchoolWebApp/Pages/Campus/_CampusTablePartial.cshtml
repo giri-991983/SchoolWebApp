@@ -6,8 +6,6 @@
         <tr>
             <th>S.No</th>
             <th>Campus Name</th>
-            <th>Zone</th>
-            <th>Institution</th>
             <th>Affiliation No</th>
             <th>School Code</th>
             <th>Campus Type</th>
@@ -27,8 +25,7 @@
         <tr data-id="@item.CampusID">
             <td>@serial</td>
             <td class="@tcc">@item.CampuseName</td>
-            <td data-zone-id="@item.ZoneID">@item.Zone?.ZoneName</td>
-            <td data-institution-id="@item.InstitutionID">@item.Institution?.InstitutionName</td>
+         
             <td>@item.AffiliationNo</td>
             <td>@item.SchoolCode</td>
             <td>@item.CampusType?.CampusTypeName</td>
