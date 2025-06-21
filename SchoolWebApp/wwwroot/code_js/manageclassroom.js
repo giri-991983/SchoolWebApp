@@ -469,10 +469,17 @@ function submitAddClassRoomForm(form) {
                 });
             } else {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: response.message || 'Failed to add class room.',
-                    confirmButtonText: 'OK'
+                    icon: 'warning', // Change to warning for clarity
+                    title: 'Warning',
+                    text: response.message || 'Failed to add classes.',
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        confirmButton: 'btn btn-primary waves-effect waves-light me-3',
+                        cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+                    }
                 });
             }
         },

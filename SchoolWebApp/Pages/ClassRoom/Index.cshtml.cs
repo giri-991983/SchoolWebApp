@@ -304,7 +304,7 @@ namespace SchoolWebApp.Pages.ClassRoom
 
                 // Check for duplicate Class Room name (excluding the current Class Room)
                 var duplicateClassRoom = await _context.ClassRooms
-                    .FirstOrDefaultAsync(cr => cr.ClassRoomName == ClassRoom.ClassRoomName &&
+                    .FirstOrDefaultAsync(cr => cr.ClassRoomName.ToLower().Trim().Replace(" ", "") == ClassRoom.ClassRoomName.ToLower().Trim().Replace(" ", "") &&
                                               cr.InstitutionID == ClassRoom.InstitutionID &&
                                               cr.CampusID == ClassRoom.CampusID &&
 

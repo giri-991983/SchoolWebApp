@@ -339,11 +339,13 @@ namespace SchoolWebApp.Pages.Class
                 //    .AnyAsync(c => c.ClassStageID == classToUpdate.ClassStageID && c.ClassName == className && c.ClassID != classId);
                 var classExists = await _context.Classes
                  .AnyAsync(c => c.InstitutionID == classToUpdate.InstitutionID &&
-                               c.CampusID == classToUpdate.CampusID && c.ClassName == className && c.ClassID != classId);
-
-                if (classExists)
+                               c.CampusID == classToUpdate.CampusID &&  c.ClassName.ToLower().Trim().Replace(" ", "") == className.ToLower().Trim().Replace(" ", "") && c.ClassID != classId);
+      
+                 if (classExists)
                 {
-                    return new JsonResult(new { success = false, message = $"A class with the name '{className}' already exists in stage '{classToUpdate.ClassStage.StageName}'." });
+                    return new JsonResult(new { success = false, message = $"A class with the name '{className}' already exists in this " +
+                        $"" +
+                        $"institution and campus." });
                 }
 
                 // Update the ClassName

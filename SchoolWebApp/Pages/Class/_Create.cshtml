@@ -18,7 +18,7 @@
 
                     <!-- Board Dropdown -->
                     <div class="mb-3">
-                        <label for="ModalBoardID" class="form-label fw-medium text-primary">Select Board</label>
+                        <label for="ModalBoardID" class="form-label text-primary">Select Board</label>
                         <select class="form-select" id="ModalBoardID" name="BoardID"  onchange="fetchMasterClasses(this.value)"  required>
                            
                             @await Component.InvokeAsync("Master", new { viewname = "Boards" })

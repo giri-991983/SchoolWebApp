@@ -363,6 +363,23 @@ if (addclassForm) {
                 validators: {
                     notEmpty: { message: 'Please select a Board' }
                 }
+            },
+            SelectedMasterStageIDs: {
+                validators: {
+                    callback: {
+                        message: 'Please select at least one stage.',
+                        callback: function (input) {
+                            const checkboxes = addclassForm.querySelectorAll('input[name="SelectedMasterStageIDs"]:checked');
+                            const isValid = checkboxes.length > 0;
+                            console.log('SelectedMasterStageIDs validation:', {
+                                checkedCount: checkboxes.length,
+                                isValid: isValid,
+                                checkboxesFound: addclassForm.querySelectorAll('input[name="SelectedMasterStageIDs"]').length
+                            });
+                            return isValid;
+                        }
+                    }
+                }
             }
 
         },
@@ -429,10 +446,17 @@ function submitAddClassesForm(form) {
                 });
             } else {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
+                    icon: 'warning', // Change to warning for clarity
+                    title: 'Warning',
                     text: response.message || 'Failed to add classes.',
-                    confirmButtonText: 'OK'
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        confirmButton: 'btn btn-primary waves-effect waves-light me-3',
+                        cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+                    }
                 });
             }
         },
