@@ -60,7 +60,7 @@
                     <!-- Campus Dropdown -->
                     <div class="col-md-3">
                         <div class="form-floating form-floating-outline">
-                            <select name="CampusID" id="CampusID" class="form-select">
+                            <select name="CampusID" id="CampusID" class="form-select" onchange="loadBoards($('#InstitutionID').val(),this.value)">
 
                               
                             </select>
@@ -70,9 +70,9 @@
                  <!-- Class Board Dropdown -->
                 <div class="col-md-3">
                     <div class="form-floating form-floating-outline">
-                        <select name="BoardID" id="BoardID" class="form-select">
+                            <select name="BoardID" id="BoardID" class="form-select">
                            
-                            @await Component.InvokeAsync("Master", new { viewname = "Boards" })
+                          
                         </select>
                         <label for="BoardFilterID">Board ID</label>
                     </div>

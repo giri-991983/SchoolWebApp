@@ -188,6 +188,26 @@ namespace SchoolWebApp.ViewComponents
                 ViewBag.Classes = classes ?? new List<Class>();
 
             }
+
+            else if (viewname == "AcademicYears")
+            {
+                var academicYears = new List<AcademicYears>();
+                if (!string.IsNullOrEmpty(FilterIds))
+                {
+                    var filterIds = FilterIds.Split(",").Select(int.Parse).ToArray();
+                    academicYears = await _context.AcademicYears
+                        .Where(ay => filterIds.Contains(ay.AcademicYearID))
+                        .OrderByDescending(ay => ay.AcademicYear) // Order by year descending (e.g., 2025-2026 before 2024-2025)
+                        .ToListAsync();
+                }
+                else
+                {
+                    academicYears = await _context.AcademicYears
+                        .OrderByDescending(ay => ay.AcademicYear)
+                        .ToListAsync();
+                }
+                ViewBag.AcademicYears = academicYears ?? new List<AcademicYears>();
+            }
             ViewBag.selectedIDs = SelectedIDs;
 
             return View(viewname);

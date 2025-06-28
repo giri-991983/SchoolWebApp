@@ -29,9 +29,9 @@ namespace SchoolWebApp.Models
         public int CourseBatchID { get; set; }
 
         [Required]
-        [ForeignKey("AcademicYear")]
+        [ForeignKey("AcademicYears")]
         public int AcademicYearID { get; set; }
-
+    
         [Required]
         [StringLength(50)]
         public string ClassRoomName { get; set; }
@@ -56,6 +56,6 @@ namespace SchoolWebApp.Models
         public CampusType CampusType { get; set; }
         public Class Classes { get; set; }
         public CourseBatch CourseBatch { get; set; }
-        public AcademicYear AcademicYear { get; set; }
+        public AcademicYears AcademicYears { get; set; }
     }
 }

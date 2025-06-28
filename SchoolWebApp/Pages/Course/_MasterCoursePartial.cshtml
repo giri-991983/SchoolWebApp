@@ -1,0 +1,44 @@
+﻿<!-- Pages/Course/_MasterCoursesPartial.cshtml -->
+@model IEnumerable<SchoolWebApp.Models.MasterCourse>
+
+@if (Model != null && Model.Any())
+{
+    <div class="col-xl-12">
+        <div class="card">
+            <h5 class="card-header">Select Master Courses</h5>
+            <div class="card-body">
+                <div class="row" id="masterCourseCheckboxWrapper">
+                    @foreach (var course in Model.OrderBy(mc => mc.CourseName))
+                    {
+                        <div class="col-md-6 mb-md-0 mb-3">
+                            <div class="form-check custom-option custom-option-basic">
+                                <label class="form-check-label custom-option-content" for="course_@course.MasterCourseID">
+                                    <input class="form-check-input course-checkbox" type="checkbox" id="course_@course.MasterCourseID" name="SelectedMasterCourseIDs" value="@course.MasterCourseID" />
+                                    <span class="custom-option-header">
+                                        <span class="h6 mb-0">@course.CourseName</span>
+                                    </span>
+                                    <span class="custom-option-body">
+                                        <small class="text-body">
+                                            Years: @course.NoOfYears, Semesters: @course.NoOfSemesters
+                                        </small>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="col-xl-12">
+        <div class="card">
+            <h5 class="card-header">Select Master Courses</h5>
+            <div class="card-body">
+                <p class="text-muted">No master courses available for this board.</p>
+            </div>
+        </div>
+    </div>
+}

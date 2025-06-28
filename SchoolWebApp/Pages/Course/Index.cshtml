@@ -1,5 +1,5 @@
 ﻿@page
-@model SchoolWebApp.Pages.ClassRoom.IndexModel
+@model SchoolWebApp.Pages.Course.IndexModel
 @{
 }
 
@@ -33,8 +33,8 @@
 }
 @section PageScripts
 {
-
-    <script src="~/code_js/manageclassroom.js"></script>
+ 
+    <script src="~/code_js/managecourse.js"></script>
 
 }
 
@@ -42,8 +42,8 @@
 <div class="card">
     <div class="card-datatable table-responsive">
         <div class="container-fluid">
-            <h3 class="mb-4">Manage ClassRoom</h3>
-            <form id="ClassRoomFilterForm">
+            <h3 class="mb-4">Manage Courses</h3>
+            <form id="filterCourseForm">
                 <!-- Filter Section -->
                 <div class="row mb-4">
 
@@ -68,13 +68,10 @@
                     <div class="col-md-3">
                         <div class="form-floating form-floating-outline">
                             <select name="BoardID" id="BoardID" class="form-select">
-                               
-                              
                             </select>
                             <label for="BoardID">Board ID</label>
                         </div>
                     </div>
-
                     <!-- Get Button -->
                     <div class="col-md-2 d-flex align-items-center">
                         <button type="submit" class="btn btn-primary w-75">Get</button>
@@ -83,10 +80,10 @@
             </form>
 
         </div>
-        <div id="ClassRoomFilterTable"></div>
-       
+        <div id="CourseFilterTable"></div>
 
-        <!-- Create Class Partial Page -->
-        @await Html.PartialAsync("~/Pages/ClassRoom/_Create.cshtml")
+
+  
+        @await Html.PartialAsync("~/Pages/Course/_Create.cshtml")
     </div>
 </div>

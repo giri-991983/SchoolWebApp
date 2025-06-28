@@ -17,8 +17,8 @@
                     <input type="hidden" name="ClassRoom.InstitutionID" id="ModalInstitutionID" />
                     <input type="hidden" name="ClassRoom.CampusID" id="ModalCampusID" />
                     <input type="hidden" name="ClassRoom.BoardID" id="ModalBoardID" />
-                    <input type="hidden" name="ClassRoom.TypeID"  />
-                    <input type="hidden" name="ClassRoom.AcademicYearID" />
+                    <input type="hidden" name="ClassRoom.TypeID" />
+
 
                     <!-- Grade -->
                     <div class="form-floating form-floating-outline mb-5">
@@ -33,7 +33,7 @@
                         <input name="ClassRoom.ClassRoomName" class="form-control" placeholder="Class Room Name" />
                         <label for="ClassRoomName">Class Room Name</label>
                     </div>
-                
+
 
 
                     @*   <!-- Course Batch -->
@@ -54,6 +54,57 @@
                         <label for="AcademicYearID">Academic Year</label>
                     </div>
  *@
+                    <div class="row">
+                        <!-- Academic Year Dropdown -->
+                        <div class="col mb-4">
+                            <div class="form-floating form-floating-outline">
+                                <select name="ClassRoom.AcademicYearID" id="AcademicYearID" class="form-select">
+
+                                    @await Component.InvokeAsync("Master", new { viewname = "AcademicYears" })
+                                </select>
+                                <label for="AcademicYearID">Academic Year</label>
+                            </div>
+                        </div>
+
+                        <!-- Seating Capacity -->
+                        <div class="col mb-4">
+                            <div class="form-floating form-floating-outline">
+                                <select name="ClassRoom.SeatingCapacity" class="form-select" id="SeatingCapacity">
+                                    <option value="">Select Seating Capacity</option>
+                                    @for (int i = 1; i <= 100; i++)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                </select>
+                                <label for="SeatingCapacity">Seating Capacity</label>
+                            </div>
+                        </div>
+
+                        <!-- Available Seats -->
+                        <div class="col mb-4">
+                            <div class="form-floating form-floating-outline">
+                                <select name="ClassRoom.AvailableSeats" class="form-select" id="AvailableSeats">
+                                    <option value="">Select Available Seats</option>
+                                    @for (int i = 1; i <= 100; i++)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                </select>
+                                <label for="AvailableSeats">Available Seats</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    @*    <!-- Academic Year Dropdown -->
+                    <div class="col-md-3">
+                        <div class="form-floating form-floating-outline">
+                            <select name="AcademicYearID" id="AcademicYearID" class="form-select">
+                                @await Component.InvokeAsync("Master", new { viewname = "AcademicYears" })
+                            </select>
+                            <label for="AcademicYearID">Academic Year</label>
+                        </div>
+                    </div>
+
                     <!-- Seating Capacity -->
                     <div class="form-floating form-floating-outline mb-5">
                         <select name="ClassRoom.SeatingCapacity" class="form-select" id="SeatingCapacity">
@@ -77,7 +128,7 @@
                         </select>
                         <label for="AvailableSeats">Available Seats</label>
                     </div>
-
+ *@
                 </div> <!-- modal-body -->
 
                 <div class="modal-footer">

@@ -7,7 +7,7 @@
             <th>Campus Type</th>
             <th>Grade</th>
             <th>Course Batch</th>
-           @*  <th>Academic Year</th> *@
+            <th>Academic Year</th>
             <th>Seating Capacity</th>
             <th>Available Seats</th>
             <th>Status</th>
@@ -29,7 +29,7 @@
                     <td>@item.CampusType?.CampusTypeName</td>
                     <td>@item.Classes?.ClassName</td>
                     <td>@item.CourseBatch?.BatchName</td>
-                  @*   <td>@item.AcademicYear?.YearName</td> *@
+                    <td>@item.AcademicYears?.AcademicYear</td>
                     <td>@item.SeatingCapacity</td>
                     <td>@item.AvailableSeats</td>
                     <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>

@@ -366,7 +366,7 @@ const fv = FormValidation.formValidation(createNewrForm, {
         return;
     });
 function CreateNewInstituionDtaa(form) {
-    debugger;
+
     console.log('Create form validated');
     var formData = new FormData(form);
     console.log('Create form data:', Array.from(formData.entries()));

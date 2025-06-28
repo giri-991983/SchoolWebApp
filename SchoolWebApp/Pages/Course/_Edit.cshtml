@@ -1,0 +1,21 @@
+﻿<!-- Partial View (_EditCourse.cshtml) -->
+@model SchoolWebApp.Models.Course
+
+<form id="editCourseForm" method="post" enctype="multipart/form-data" data-id="@Model.CourseID">
+    @Html.AntiForgeryToken()
+
+    <div class="modal-body">
+        <input type="hidden" name="CourseId" id="editCourseId" value="@Model.CourseID" />
+
+        <div class="mb-3">
+            <label for="editCourseName" class="form-label fw-medium text-primary">Course Name</label>
+            <input type="text" id="editCourseName" name="CourseName" class="form-control" value="@Model.CourseName"  />
+            <div id="courseNameValidationMessage" class="invalid-feedback d-block"></div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success" id="saveCourseBtn">Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form>

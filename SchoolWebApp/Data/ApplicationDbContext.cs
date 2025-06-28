@@ -21,6 +21,10 @@ namespace SchoolWebApp.Data
         public DbSet<Class> Classes { get; set; }
         public DbSet<ClassRoom> ClassRooms { get; set; }
         public DbSet<CourseBatch> CourseBatches { get; set; }
-        public DbSet<AcademicYear> AcademicYears { get; set; }
+        public DbSet<AcademicYears> AcademicYears { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<CourseYear> CourseYears { get; set; }
+        public DbSet<MasterCourse> MasterCourses { get; set; }
+
     }
 }

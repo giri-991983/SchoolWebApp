@@ -377,6 +377,11 @@ if (addClassRoomForm) {
                     notEmpty: { message: 'Please select a grade.' }
                 }
             },
+            'ClassRoom.AcademicYearID': {
+                validators: {
+                    notEmpty: { message: 'Please select a Academic Year.' }
+                }
+            },
             'ClassRoom.SeatingCapacity': {
                 validators: {
                     notEmpty: { message: 'Please enter a seating capacity.' },
@@ -632,6 +637,11 @@ function classRoomEdit(classroomId) {
                                     notEmpty: { message: 'Please select a grade.' }
                                 }
                             },
+                            'ClassRoom.AcademicYearID': {
+                                validators: {
+                                    notEmpty: { message: 'Please select a Academic Year.' }
+                                }
+                            },
                             'ClassRoom.SeatingCapacity': {
                                 validators: {
                                     notEmpty: { message: 'Please enter a seating capacity.' },
@@ -750,3 +760,4 @@ function submitEditClassRoomForm(form) {
         }
     });
 }
+

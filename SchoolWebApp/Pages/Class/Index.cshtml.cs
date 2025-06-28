@@ -386,6 +386,10 @@ namespace SchoolWebApp.Pages.Class
                     .Select(c => c.CampusID)
                     .Distinct()
                     .ToListAsync();
+                if (campusIds == null || !campusIds.Any())
+                {
+                    return Content("<option value=''>No Campuses Available</option>", "text/html");
+                }
                 filterIds = string.Join(",", campusIds);
             }
 
@@ -395,6 +399,70 @@ namespace SchoolWebApp.Pages.Class
             html.WriteTo(writer, HtmlEncoder.Default);
 
             return Content(writer.ToString(), "text/html");
+        }
+        //DropDowm For Boards With Selecting Institution and Campus
+        public async Task<IActionResult> OnGetLoadBoardsByInstitutionAndCampusAsync(int institutionId, int campusId)
+        {
+            try
+            {
+                var httpContext = _httpContextAccessor.HttpContext;
+                var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new PageActionDescriptor());
+                var viewContext = new ViewContext(
+                    actionContext,
+                    new FakeView(),
+                    new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary()),
+                    _tempDataFactory.GetTempData(httpContext),
+                    TextWriter.Null,
+                    new HtmlHelperOptions()
+                );
+
+                ((IViewContextAware)_viewComponentHelper).Contextualize(viewContext);
+
+                string filterIds = "";
+                if (institutionId > 0 && campusId > 0)
+                {
+                    var campus = await _context.Campuses
+                 .Where(c => c.CampusID == campusId && c.InstitutionID == institutionId)
+                 .Select(c => c.CampusTypeID)
+                 .FirstOrDefaultAsync();
+
+                    if (campus == 0)
+                    {
+                        // No valid campus found for the institution
+                        return Content("<option value=''>No Boards Available</option>", "text/html");
+                    }
+
+                    // Get BoardIDs associated with the CampusTypeID
+                    var boardIds = await _context.Boards
+                        .Where(b => b.CampusTypeID == campus)
+                        .Select(b => b.BoardID)
+                        .Distinct()
+                        .ToListAsync();
+                    filterIds = string.Join(",", boardIds);
+                }
+                //{
+                //var query = _context.Classes
+                //        .Where(c => c.InstitutionID == institutionId && c.CampusID == campusId);
+
+                //    var boardIds = await query
+                //        .Select(c => c.BoardID)
+                //        .Distinct()
+                //        .ToListAsync();
+
+                //    filterIds = string.Join(",", boardIds);
+                //}
+
+                var html = await _viewComponentHelper.InvokeAsync("Master", new { viewname = "Boards", FilterIds = filterIds });
+
+                using var writer = new StringWriter();
+                html.WriteTo(writer, HtmlEncoder.Default);
+
+                return Content(writer.ToString(), "text/html");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Failed to load boards.");
+            }
         }
 
     }

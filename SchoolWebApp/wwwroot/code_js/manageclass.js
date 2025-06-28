@@ -145,6 +145,7 @@ function initializeDataTable() {
                     // Validate InstitutionID and CampusID
                     var campusId = $('#CampusID').val();
                     var institutionId = $('#InstitutionID').val();
+                    const boardId = $('#BoardID').val();
 
                     if (!institutionId || institutionId <= 0 || !campusId || campusId <= 0) {
                         Swal.fire({
@@ -164,7 +165,8 @@ function initializeDataTable() {
                     // Populate hidden fields
                     $('#ModalCampusID').val(campusId);
                     $('#ModalInstitutionID').val(institutionId);
-
+                    $('#ModalBoardID').val(boardId);
+                    loadBoards(institutionId, campusId, 'ModalBoardID');
                     //// Open modal
                     //$('#addClassModal').modal('show');
                 }
@@ -241,7 +243,36 @@ function loadCampuses(institutionId) {
         }
     });
 }
+// Load Boards
+window.loadBoards=function(institutionId, campusId, targetDropdownId = 'BoardID') {
+    if (!institutionId || institutionId <= 0 || !campusId || campusId <= 0) {
+        $('#BoardID').html('<option value="">Select Board</option>').prop('disabled', true);
+        $('#CourseID').html('<option value="">Select Course</option>').prop('disabled', true);
+        return;
+    }
 
+    $.ajax({
+        url: '/Class/Index?handler=LoadBoardsByInstitutionAndCampus',
+        type: 'GET',
+        data: { institutionId: institutionId, campusId: campusId },
+        success: function (html) {
+            const $dropdown = $(`#${targetDropdownId}`);
+            $dropdown.html(html).prop('disabled', false);
+            $dropdown.trigger('change'); // Trigger change if needed by the caller
+
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading boards:', { status, error, responseText: xhr.responseText });
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load boards: ' + (xhr.responseText || error),
+                confirmButtonText: 'OK'
+            });
+            $('#BoardID').prop('disabled', false);
+        }
+    });
+}
 function toggleStageSelection(checkbox) {
     var stageNo = $(checkbox).closest('.form-check-label').find('.master-class-id').first().data('stage');
     var masterClassInputs = $(checkbox).closest('.form-check-label').find(`.master-class-id[data-stage="${stageNo}"]`);
@@ -307,22 +338,9 @@ $(document).ready(function () {
     } else {
         console.error('ClassFilterForm not found');
     }
-    // Hide table on InstitutionID change
-    $('#InstitutionID').on('change', function () {
-
-        $('#FilterTable').hide();
-
-    });
-
-    // Hide table on CampusID change
-    $('#CampusID').on('change', function () {
-
-        $('#FilterTable').hide();
-
-    });
-    // Hide table on BoardID change
-    $('#BoardID').on('change', function () {
-        $('#FilterTable').hide();
+    // Hide course table on InstitutionID, CampusID, or BoardID change
+    $('#InstitutionID, #CampusID, #BoardID').on('change', function () {
+        $('#CourseFilterTable').hide();
     });
 });
 

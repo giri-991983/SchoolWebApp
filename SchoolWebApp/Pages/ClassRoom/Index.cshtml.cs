@@ -54,7 +54,7 @@ namespace SchoolWebApp.Pages.ClassRoom
                     .Include(c => c.CampusType)
                     .Include(c => c.Classes)
                     //.Include(c => c.CourseBatch)
-                    //.Include(c => c.AcademicYear)
+                    .Include(c => c.AcademicYears)
                     .Where(c => (campusId == 0 || c.CampusID == campusId) &&
                                 (institutionId == 0 || c.InstitutionID == institutionId) &&
                                 (boardId == 0 || c.Classes.BoardID == boardId))
@@ -95,6 +95,10 @@ namespace SchoolWebApp.Pages.ClassRoom
                     .Select(c => c.CampusID)
                     .Distinct()
                     .ToListAsync();
+                if (campusIds == null || !campusIds.Any())
+                {
+                    return Content("<option value=''>No Campuses Available</option>", "text/html");
+                }
                 filterIds = string.Join(",", campusIds);
             }
 
@@ -191,6 +195,10 @@ namespace SchoolWebApp.Pages.ClassRoom
                         .Select(c => c.BoardID)
                         .Distinct()
                         .ToListAsync();
+                    if (boardIds == null || !boardIds.Any())
+                    {
+                        return Content("<option value=''>No Boards Available</option>", "text/html");
+                    }
 
                     filterIds = string.Join(",", boardIds);
                 }
@@ -238,8 +246,8 @@ namespace SchoolWebApp.Pages.ClassRoom
                 ClassRoom.CreatedDate = DateTime.Now;
                 ClassRoom.Status = 1;
                 ClassRoom.TypeID = 1;
-                ClassRoom.AcademicYearID = 1;
-
+                
+               
                 // Add to database
                 _context.ClassRooms.Add(ClassRoom);
                 await _context.SaveChangesAsync();
@@ -280,6 +288,7 @@ namespace SchoolWebApp.Pages.ClassRoom
         {
             var classRoom = await _context.ClassRooms
                 .Include(cr => cr.Classes)
+                .Include(c => c.AcademicYears)
                 .FirstOrDefaultAsync(cr => cr.ClassRoomID == classRoomId);
 
             if (classRoom == null)
@@ -293,6 +302,7 @@ namespace SchoolWebApp.Pages.ClassRoom
         // Handle Class Room update
         public async Task<IActionResult> OnPostEditClassRoomAsync()
         {
+          
             try
             {
                
@@ -316,7 +326,7 @@ namespace SchoolWebApp.Pages.ClassRoom
 
                 // Update fields
                 classRoom.ClassRoomName = ClassRoom.ClassRoomName;
-              
+                classRoom.AcademicYearID = ClassRoom.AcademicYearID;
                 classRoom.SeatingCapacity = ClassRoom.SeatingCapacity;
                 classRoom.AvailableSeats = ClassRoom.AvailableSeats;
 

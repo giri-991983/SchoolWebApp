@@ -24,7 +24,7 @@
     @* ! Full version menu-items *@
     <ul class="menu-inner py-1">
 
-
+@* 
         <!-- Institution List -->
         <li class='menu-item@(currentPage == "/Institution/Index" ? " active" : "")'>
             <a asp-page="/Institution/Index" class="menu-link">
@@ -56,8 +56,67 @@
                 <i class="menu-icon tf-icons ri-school-line"></i>
                 <div data-i18n="Manage ClassRoom"> Manage Class Room</div>
             </a>
+        </li> *@
+        <!-- Organisation -->
+        <li class='menu-item@(currentPage.StartsWith("/Pages/") ? " active open" : "")'>
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ri-building-4-line"></i>
+                <div data-i18n="Organisation">Organisation</div>
+                <div class="badge bg-danger rounded-pill ms-auto">3</div>
+            </a>
+            <ul class="menu-sub">
+
+                <!-- Institution List -->
+                <li class='menu-item@(currentPage == "/Institution/Index" ? " active" : "")'>
+                    <a asp-page="/Institution/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-database-2-line"></i>
+                        <div data-i18n="Manage Institution"> Manage Institution </div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/Zone/Index" ? " active" : "")'>
+                    <a asp-page="/Zone/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-map-pin-line"></i>
+                        <div data-i18n="Manage Zones"> Manage Zones </div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/Campus/Index" ? " active" : "")'>
+                    <a asp-page="/Campus/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-school-line"></i>
+                        <div data-i18n="Manage Campus"> Manage Campus </div>
+                    </a>
+                </li>
+            </ul>
         </li>
-      
+        <!-- Classes -->
+        <li class='menu-item@(currentPage.StartsWith("/Pages/") ? " active open" : "")'>
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ri-book-2-line"></i>
+                <div data-i18n="Class"> Class</div>
+                <div class="badge bg-danger rounded-pill ms-auto">2</div>
+            </a>
+            <ul class="menu-sub">
+
+                <li class='menu-item@(currentPage == "/Class/Index" ? " active" : "")'>
+                    <a asp-page="/Class/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-book-2-line"></i> 
+                        <div data-i18n="Manage Class"> Manage Classes</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/ClassRoom/Index" ? " active" : "")'>
+                    <a asp-page="/ClassRoom/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-door-open-line"></i>
+                        <div data-i18n="Manage ClassRoom"> Manage Class Room</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class='menu-item@(currentPage == "/Course/Index" ? " active" : "")'>
+            <a asp-page="/Course/Index" class="menu-link">
+                <i class="menu-icon tf-icons ri-door-open-line"></i>
+                <div data-i18n="Manage Course"> Manage Course</div>
+            </a>
+        </li>
+    
     </ul>
 
 </aside>

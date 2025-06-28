@@ -16,7 +16,7 @@
                     <input type="hidden" name="InstitutionID" id="ModalInstitutionID" />
                     <input type="hidden" name="CampusID" id="ModalCampusID" />
 
-                    <!-- Board Dropdown -->
+                  @*   <!-- Board Dropdown -->
                     <div class="mb-3">
                         <label for="ModalBoardID" class="form-label text-primary">Select Board</label>
                         <select class="form-select" id="ModalBoardID" name="BoardID"  onchange="fetchMasterClasses(this.value)"  required>
@@ -24,6 +24,15 @@
                             @await Component.InvokeAsync("Master", new { viewname = "Boards" })
                         </select>
                        
+                    </div> *@
+                    <div class="mb-3">
+                        <div class="form-floating form-floating-outline">
+                            <select class="form-select" id="ModalBoardID" name="BoardID" onchange="fetchMasterClasses(this.value)" required>
+                                @*   <option value="">Select Board</option>
+                                @await Component.InvokeAsync("Master", new { viewname = "Boards" }) *@
+                            </select>
+                            <label for="ModalBoardID">Select Board</label>
+                        </div>
                     </div>
 
                     <!-- Master Classes Section -->

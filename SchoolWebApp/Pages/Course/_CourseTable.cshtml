@@ -1,0 +1,80 @@
+﻿@model IEnumerable<SchoolWebApp.Models.Course>
+
+<table id="courseTable" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>Course Name</th>
+            <th>Course Year Name</th>
+            <th>No. of Years</th>
+            <th>No. of Semesters</th>
+            <th>Status</th>
+          
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            var serial = 0;
+            @foreach (var course in Model)
+            { 
+                serial++;
+                var tcc = "course-name-" + course.CourseID;
+                <tr data-id="@course.CourseID">
+                    <td>@serial</td>
+
+                    <td class="@tcc">@course.CourseName</td>
+                    <td>
+                        @if (course.CourseYears != null && course.CourseYears.Any())
+                        {
+                            @string.Join(", ", course.CourseYears.Select(y => y.CourseYearName))
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Course Years</span>
+                        }
+                    </td>
+
+                    <td>@course.NoOfYears</td>
+                    <td>@course.NoOfSemesters</td>
+                 
+                    <td>@Html.Raw(PageHelpers.GetStatusBadge(course.Status))</td>
+                    <td class="text-nowrap">
+                        <div class="col-md-12">
+                            <!-- Edit Button -->
+                            <button class="btn btn-sm btn-icon edit-course-btn" onclick="courseEdit(@course.CourseID)" data-course-id="@course.CourseID">
+                                <i class="ri-edit-box-line ri-20px"></i>
+                            </button>
+
+                           
+                            <div class="modal fade" id="editCourseModal" tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editCourseModalLabel">Edit Course Details</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="editCourseFormContainer">
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Delete Button -->
+                            <form method="post" id="deleteCourseForm-@course.CourseID" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@course.CourseID" />
+                                <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteCourseConfirmation('@course.CourseID')">
+                                    <i class="ri-delete-bin-7-line ri-20px"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+       
+    </tbody>
+</table>

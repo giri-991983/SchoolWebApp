@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchoolWebApp.Models
 {
@@ -10,5 +11,9 @@ namespace SchoolWebApp.Models
         [Required]
         [StringLength(200)]
         public string BoardName { get; set; } 
+        [Required]
+        [ForeignKey("CampusType")]
+        public int CampusTypeID { get; set; }
+        public CampusType CampusType { get; set; }
     }
 }

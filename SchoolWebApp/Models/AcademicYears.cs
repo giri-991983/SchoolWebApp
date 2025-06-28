@@ -2,13 +2,13 @@
 
 namespace SchoolWebApp.Models
 {
-    public class AcademicYear
+    public class AcademicYears
     {
         [Key]
         public int AcademicYearID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string YearName { get; set; } // e.
+        public string AcademicYear { get; set; } 
     }
 }

@@ -1,0 +1,11 @@
+﻿@using SchoolWebApp.Models
+@{
+    var selectedID = ViewBag.selectedIDs;
+    var academicYears = ViewBag.AcademicYears as List<AcademicYears>;
+}
+
+<option value="">Select Academic Year</option>
+@foreach (var year in academicYears)
+{
+    <option value="@year.AcademicYearID" selected="@(year.AcademicYearID == selectedID)">@year.AcademicYear</option>
+}
