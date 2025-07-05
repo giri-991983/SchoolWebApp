@@ -1,0 +1,17 @@
+﻿@model SchoolWebApp.Pages.MasterPages.AcademicYears.IndexModel
+
+<form id="editAcademicYearForm" method="post" asp-page-handler="EditAcademicYear" data-id="@Model.AcademicYear.AcademicYearID">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="AcademicYear.AcademicYearID" value="@Model.AcademicYear.AcademicYearID" />
+    <div class="modal-body">
+        <div class="mb-3">
+            <label for="editAcademicYear" class="form-label fw-medium text-primary">Academic Year</label>
+            <input type="text" id="editAcademicYear" name="AcademicYear.AcademicYear" class="form-control" value="@Model.AcademicYear.AcademicYear" required maxlength="50" placeholder="Enter Academic Year (e.g., 2025-2026)" />
+            <div id="editacademicYearValidationMessage" class="invalid-feedback d-block"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success" id="saveAcademicYearBtn">Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form>

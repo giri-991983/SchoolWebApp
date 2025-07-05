@@ -51,7 +51,7 @@
                     <div class="col-md-3">
                         <div class="form-floating form-floating-outline">
                             <select name="InstitutionID" id="InstitutionID" onchange="loadCampuses(this.value)" class="form-select">
-                                @await Component.InvokeAsync("Master", new { viewname = "Institutions" })
+                                @await Component.InvokeAsync("Master", new { viewname = "Institutions", FilterIds = Model.GetInstitutionIdsFromClasses() })
                             </select>
                             <label for="InstitutionID">Institution</label>
                         </div>

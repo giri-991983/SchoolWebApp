@@ -202,8 +202,8 @@ $(document).ready(function () {
     $('#InstitutionID, #CampusID, #BoardID').on('change', function () {
         $('#CourseFilterTable').hide();
     });
-
-   
+    loadInstitutionsByCampusType($('#CampusTypeID').val() );
+  
 });
 
 // Load Campuses
@@ -211,10 +211,9 @@ function loadCampuses(institutionId) {
     let campusSelectId = 'CampusID';
     $(`#${campusSelectId}`).html('<option value="">Select Campus</option>').prop('disabled', true);
     $('#BoardID').html('<option value="">Select Board</option>').prop('disabled', true);
-    $('#CourseID').html('<option value="">Select Course</option>').prop('disabled', true);
-
+   
     if (!institutionId || institutionId <= 0) {
-        $(`#${campusSelectId}`).val('').trigger('change').prop('disabled', false);
+        $(`#${campusSelectId}`).val('').trigger('change').prop('disabled', true);
         return;
     }
 
@@ -242,7 +241,7 @@ function loadCampuses(institutionId) {
 function loadBoards(institutionId, campusId, targetDropdownId = 'BoardID') {
     if (!institutionId || institutionId <= 0 || !campusId || campusId <= 0) {
         $('#BoardID').html('<option value="">Select Board</option>').prop('disabled', true);
-        $('#CourseID').html('<option value="">Select Course</option>').prop('disabled', true);
+       
         return;
     }
 
@@ -319,15 +318,14 @@ function fetchMasterCourses(boardId) {
         data: { boardId: boardId },
         success: function (response) {
             masterCoursesContainer.html(response);
-            // Revalidate the checkbox field
             fv.addField('SelectedMasterCourseIDs', {
                 selector: 'input[name="SelectedMasterCourseIDs"]',
                 validators: {
                     callback: {
-                        message: 'Please select at least one master course.',
+                        message: ' ',
                         callback: function (input) {
-                            const checked = document.querySelectorAll('input[name="SelectedMasterCourseIDs"]:checked').length;
-                            return checked > 0;
+                            const checkboxes = document.querySelectorAll('input[name="SelectedMasterCourseIDs"]:checked');
+                            return checkboxes.length > 0;
                         }
                     }
                 }
@@ -355,7 +353,7 @@ if (addCourseForm) {
     fv= FormValidation.formValidation(addCourseForm, {
         fields: {
 
-            BoardID: {
+            'Course.BoardID': {
                 validators: {
                     notEmpty: { message: 'Board is required.' },
 
@@ -364,14 +362,12 @@ if (addCourseForm) {
         
         },
         plugins: {
-            trigger: new FormValidation.plugins.Trigger({
-                event: 'submit' // Only validate on submit, no blur/change/input validation
-            }),
+            trigger: new FormValidation.plugins.Trigger(),
             bootstrap5: new FormValidation.plugins.Bootstrap5({
                 eleValidClass: 'is-valid',
-                eleInvalidClass: 'is-invalid',
+               
                 rowSelector: function (field, ele) {
-                    return field === 'SelectedMasterCourseIDs' ? '#masterCoursesContainer' : '.form-floating';
+                    return field === 'SelectedMasterCourseIDs' ? '#masterCourseCheckboxWrapper' : '.form-floating';
                 }
             }),
             submitButton: new FormValidation.plugins.SubmitButton(),
@@ -381,8 +377,25 @@ if (addCourseForm) {
         .on('core.form.valid', function () {
             submitAddCourseForm(addCourseForm);
         })
-        .on('core.form.invalid', function () {
-            console.warn('addCourseForm validation failed.');
+        .on('core.form.invalid', function (e) {
+
+            const validationMessageDiv = document.getElementById('selectedMasterCourseIDsValidationMessage');
+            const boardId = document.getElementById('ModalBoardID').value;
+            const checkboxes = document.querySelectorAll('input[name="SelectedMasterCourseIDs"]:checked');
+
+            if (boardId && boardId > 0) {
+                if (checkboxes.length === 0) {
+                    validationMessageDiv.textContent = 'Please select at least one course.';
+                    validationMessageDiv.style.display = 'block';
+
+                } else {
+                    validationMessageDiv.textContent = '';
+                    validationMessageDiv.style.display = 'none';
+                }
+            } else {
+                validationMessageDiv.textContent = '';
+                validationMessageDiv.style.display = 'none';
+            }
         });
 
     
@@ -458,12 +471,23 @@ function submitAddCourseForm(form) {
     });
 }
 
-function showDeleteCourseConfirmation(courseId) {
-    const courseName = document.querySelector(`.course-name-${courseId}`).innerText;
+
+// Show confirmation to delete CourseYear
+function showDeleteCourseYearConfirmation(courseYearId) {
+    // Find the row based on CourseYearID
+    const row = $(`tr[data-courseyear-id="${courseYearId}"]`);
+
+    // Get Course Name (2nd column)
+    const courseName = row.find('td:nth-child(2)').text().trim();
+
+    // Get Course Year Name (3rd column)
+    const courseYearName = row.find('td:nth-child(3)').text().trim();
 
     Swal.fire({
         title: 'Delete Course',
-        html: `<p>Are you sure you want to delete this Course?<br><br><span class="fw-medium text-danger">${courseName}</span></p>`,
+        html: `<p>Are you sure you want to delete this?<br><br>
+               <span class="fw-medium text-danger">Course:</span> <span class="fw-medium text-primary">${courseName}</span><br>
+               <span class="fw-medium text-danger">Year:</span> <span class="fw-medium text-primary">${courseYearName}</span></p>`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Delete',
@@ -474,11 +498,11 @@ function showDeleteCourseConfirmation(courseId) {
         }
     }).then(result => {
         if (result.isConfirmed) {
-            DeleteCourseData(courseId);
+            deleteCourseYearData(courseYearId);
         } else {
             Swal.fire({
                 title: 'Cancelled',
-                html: `<p><span class="fw-medium text-primary">${courseName}</span> is not deleted!</p>`,
+                html: `<p><span class="fw-medium text-primary">${courseName} - ${courseYearName}</span> is not deleted!</p>`,
                 icon: 'error',
                 confirmButtonText: 'OK',
                 customClass: {
@@ -488,15 +512,14 @@ function showDeleteCourseConfirmation(courseId) {
         }
     });
 }
-
-function DeleteCourseData(courseId) {
+// Perform AJAX deletion of CourseYear
+function deleteCourseYearData(courseYearId) {
     $.ajax({
-        url: '/Course/Index?handler=DeleteCourse',
+        url: '/Course/Index?handler=DeleteCourseYear', 
         type: 'POST',
-        data: { courseId: courseId },
+        data: { courseYearId: courseYearId },
         headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
         beforeSend: function () {
-            console.log('Sending delete AJAX request for Course ID:', courseId);
             Swal.fire({
                 title: 'Processing...',
                 text: '',
@@ -508,16 +531,16 @@ function DeleteCourseData(courseId) {
             });
         },
         success: function (response) {
-            console.log('Delete Course AJAX success:', response);
             if (response.success) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Deletion Successful',
-                    text: response.message || 'Course deleted successfully!',
+                    text: response.message || 'Course Year deleted successfully!',
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    $(`tr[data-id="${courseId}"]`).fadeOut(500, function () {
+                    // Remove the deleted row
+                    $(`tr[data-courseyear-id="${courseYearId}"]`).fadeOut(500, function () {
                         $(this).remove();
                         if (typeof $.fn.DataTable === 'function' && $('#courseTable').length) {
                             $('#courseTable').DataTable().draw(false);
@@ -528,37 +551,33 @@ function DeleteCourseData(courseId) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Deletion Failed',
-                    text: response.message || 'Failed to delete the Course.',
+                    text: response.message || 'Failed to delete the Course Year.',
                     confirmButtonText: 'OK'
                 });
             }
         },
         error: function (xhr, status, error) {
-            console.error('Delete Course AJAX error:', { status, error, responseText: xhr.responseText });
+            console.error('Delete CourseYear AJAX error:', { status, error, responseText: xhr.responseText });
             Swal.fire({
                 icon: 'error',
                 title: 'Deletion Failed',
-                text: 'Failed to delete the Course: ' + (xhr.responseText || error),
+                text: 'Failed to delete the Course Year: ' + (xhr.responseText || error),
                 confirmButtonText: 'OK'
             });
         }
     });
 }
 
-
-//Edit
-
-function courseEdit(courseId) {
-    console.log('Edit button clicked for Course ID:', courseId);
+// Edit Course
+function courseEdit(courseId, courseYearId) {
     $.ajax({
         url: '/Course/Index?handler=EditCourseForm',
         type: 'GET',
-        data: { courseId: courseId },
+        data: { courseId: courseId, courseYearId: courseYearId },
         headers: {
             'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
         },
         beforeSend: function () {
-            console.log('Loading edit course form...');
             Swal.fire({
                 title: 'Loading...',
                 text: 'Fetching course details...',
@@ -568,27 +587,25 @@ function courseEdit(courseId) {
             });
         },
         success: function (response) {
-            console.log('Edit course form loaded successfully');
             Swal.close();
-
             if (typeof response === 'string') {
                 $('#editCourseFormContainer').html(response);
-
                 $('#editCourseModal').modal('show');
 
                 const editCourseForm = document.getElementById('editCourseForm');
                 if (editCourseForm) {
                     FormValidation.formValidation(editCourseForm, {
                         fields: {
-                            CourseName: {
+                            'Course.CourseName': {
                                 validators: {
-                                    notEmpty: {
-                                        message: 'Course name is required'
-                                    },
-                                    stringLength: {
-                                        max: 100,
-                                        message: 'Max 100 characters allowed'
-                                    }
+                                    notEmpty: { message: 'Course name is required' },
+                                    stringLength: { max: 100, message: 'Max 100 characters allowed' }
+                                }
+                            },
+                            'CourseYearName': {
+                                validators: {
+                                    notEmpty: { message: 'Course year name is required' },
+                                    stringLength: { max: 100, message: 'Max 100 characters allowed' }
                                 }
                             }
                         },
@@ -596,9 +613,7 @@ function courseEdit(courseId) {
                             trigger: new FormValidation.plugins.Trigger(),
                             bootstrap5: new FormValidation.plugins.Bootstrap5({
                                 eleValidClass: 'is-valid',
-                                rowSelector: function (field, ele) {
-                                    return '.mb-3';
-                                }
+                                rowSelector: '.mb-3'
                             }),
                             submitButton: new FormValidation.plugins.SubmitButton({
                                 button: '[type="submit"]'
@@ -607,14 +622,13 @@ function courseEdit(courseId) {
                         }
                     })
                         .on('core.form.valid', function () {
-                            console.log('Edit course form valid, submitting');
-                            updateCourseData(editCourseForm, $('#editCourseId').val());
+                            console.log('Form validated successfully');
+                            updateCourseData(editCourseForm);
+                        }).on('core.form.invalid', function () {
+                            const firstInvalidField = editCourseForm.querySelector('.is-invalid');
+                            if (firstInvalidField) firstInvalidField.focus();
                         })
-                        .on('core.form.invalid', function () {
-                            return;
-                        });
-                } else {
-                    console.error('Edit course form not found');
+
                 }
             } else {
                 Swal.fire({
@@ -625,22 +639,17 @@ function courseEdit(courseId) {
             }
         },
         error: function (xhr, status, error) {
-            console.error('Error loading edit course form:', { status, error, responseText: xhr.responseText });
+            Swal.close();
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Failed to load the edit course form. Please try again.',
-                confirmButtonText: 'OK'
+                text: 'Failed to load the edit course form. Please try again.'
             });
         }
     });
 }
-
-function updateCourseData(form, courseId) {
-    console.log('Edit course form validated for Course ID:', courseId);
+function updateCourseData(form) {
     var formData = new FormData(form);
-
-    console.log('Edit course form data:', Array.from(formData.entries()));
 
     $.ajax({
         url: '/Course/Index?handler=EditCourse',
@@ -652,17 +661,13 @@ function updateCourseData(form, courseId) {
             'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
         },
         beforeSend: function () {
-            console.log('Sending edit course AJAX request');
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    title: 'Processing...',
-                    text: 'Processing...',
-                    showConfirmButton: false,
-                    showCancelButton: false,
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading()
-                });
-            }
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Updating course details...',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
         },
         success: function (response) {
             Swal.close();
@@ -679,10 +684,14 @@ function updateCourseData(form, courseId) {
                     filterCourses(document.getElementById('filterCourseForm'));
                 });
             } else {
-                if (response.message && response.message.includes('already exists')) {
-                    $('#editCourseName').addClass('is-invalid');
-                    $('#courseNameValidationMessage').text(response.message).show();
+                if (response.field === "CourseName") {
+                    $('#courseNameValidationMessage').text(response.message).addClass('text-danger');
+                    $('#editCourseName').addClass('is-invalid').focus();
+                } else if (response.field === "CourseYearName") {
+                    $('#courseYearNameValidationMessage').text(response.message).addClass('text-danger');
+                    $('#editCourseYearName').addClass('is-invalid').focus();
                 }
+
             }
         },
         error: function (xhr, status, error) {
@@ -693,6 +702,36 @@ function updateCourseData(form, courseId) {
                 text: 'Failed to update the course: ' + (xhr.responseText || error),
                 confirmButtonText: 'OK'
             });
+        }
+    });
+}
+// DropDown Institutions by Campus Type
+function loadInstitutionsByCampusType(campusTypeId) {
+    $('#InstitutionID').html('<option value="">Select Institution</option>').prop('disabled', true);
+    $('#CampusID').html('<option value="">Select Campus</option>').prop('disabled', true);
+    $('#BoardID').html('<option value="">Select Board</option>').prop('disabled', true);
+  
+    if (!campusTypeId || campusTypeId <= 0) {
+        $('#InstitutionID').prop('disabled', false);
+        return;
+    }
+
+    $.ajax({
+        url: '/Class/Index?handler=LoadInstitutionsByCampusType',
+        type: 'GET',
+        data: { campusTypeId: campusTypeId },
+        success: function (response) {
+            $('#InstitutionID').html(response).prop('disabled', false).trigger('change');
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading institutions:', { status, error, responseText: xhr.responseText });
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load institutions: ' + (xhr.responseText || error),
+                confirmButtonText: 'OK'
+            });
+            $('#InstitutionID').prop('disabled', false);
         }
     });
 }

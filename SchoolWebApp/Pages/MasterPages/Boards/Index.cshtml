@@ -1,12 +1,10 @@
 ﻿@page
-@model SchoolWebApp.Pages.Course.IndexModel
-@{
-}
+@model SchoolWebApp.Pages.MasterPages.Boards.IndexModel
 
 @{
-    ViewData["Title"] = "List of Classes";
+    ViewData["Title"] = "Manage Boards";
 }
-
+  
 @section VendorStyles
 {
     <link rel="stylesheet" href="~/vendor/libs/datatables-bs5/datatables.bootstrap5.dist.css">
@@ -31,45 +29,26 @@
     <script src="~/vendor/libs/select2/select2.dist.js"></script>
 
 }
-@section PageScripts
-{
- 
-    <script src="~/code_js/managecourse.js"></script>
 
+@section PageScripts
+{  
+    <script src="~/code_js/manageboard.js"></script>
 }
 
 
 <div class="card">
     <div class="card-datatable table-responsive">
         <div class="container-fluid">
-            <h3 class="mb-4">Manage Courses</h3>
-            <form id="filterCourseForm">
-                <!-- Filter Section -->
+            <h3 class="mb-4">Manage Boards</h3>
+            <form id="filterForm">
                 <div class="row mb-4">
-                    <input type="hidden" name="CampusTypeID" id="CampusTypeID" value="2" />
-                    <!-- Institution Dropdown -->
+                    <!-- Campus Type Dropdown -->
                     <div class="col-md-3">
                         <div class="form-floating form-floating-outline">
-                            <select name="InstitutionID" id="InstitutionID" onchange="loadCampuses(this.value)" class="form-select">
-                           
+                            <select name="CampusTypeID" id="CampusTypeID" class="form-select">
+                                @await Component.InvokeAsync("Master", new { viewname = "CampusTypes" })
                             </select>
-                            <label for="InstitutionID">Institution</label>
-                        </div>
-                    </div>
-                    <!-- Campus Dropdown -->
-                    <div class="col-md-3">
-                        <div class="form-floating form-floating-outline">
-                            <select name="CampusID" id="CampusID" class="form-select" onchange="loadBoards($('#InstitutionID').val(), this.value)">
-                            </select>
-                            <label for="CampusID">Campus</label>
-                        </div>
-                    </div>
-                    <!-- Board Dropdown -->
-                    <div class="col-md-3">
-                        <div class="form-floating form-floating-outline">
-                            <select name="BoardID" id="BoardID" class="form-select">
-                            </select>
-                            <label for="BoardID">Board ID</label>
+                            <label for="CampusTypeID">Campus Type</label>
                         </div>
                     </div>
                     <!-- Get Button -->
@@ -78,12 +57,9 @@
                     </div>
                 </div>
             </form>
-
         </div>
-        <div id="CourseFilterTable"></div>
-
-
-  
-        @await Html.PartialAsync("~/Pages/Course/_Create.cshtml")
+        <div id="FilterTable"></div>
+        <!-- Create Board Partial Page -->
+        @await Html.PartialAsync("~/Pages/MasterPages/Boards/_Create.cshtml")
     </div>
 </div>

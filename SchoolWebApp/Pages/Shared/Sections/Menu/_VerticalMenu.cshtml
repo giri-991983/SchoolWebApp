@@ -110,13 +110,62 @@
                 </li>
             </ul>
         </li>
-        <li class='menu-item@(currentPage == "/Course/Index" ? " active" : "")'>
-            <a asp-page="/Course/Index" class="menu-link">
-                <i class="menu-icon tf-icons ri-door-open-line"></i>
-                <div data-i18n="Manage Course"> Manage Course</div>
+
+        <!-- Courses -->
+        <li class='menu-item@(currentPage.StartsWith("/Pages/") ? " active open" : "")'>
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ri-book-open-line"></i>
+                <div data-i18n="Courses">Courses</div>
+                <div class="badge bg-danger rounded-pill ms-auto">2</div>
             </a>
+            <ul class="menu-sub">
+
+                <!-- Manage Course -->
+                <li class='menu-item@(currentPage == "/Course/Index" ? " active" : "")'>
+                    <a asp-page="/Course/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-book-open-line"></i>
+                        <div data-i18n="Manage Course"> Manage Course</div>
+                    </a>
+                </li>
+
+                <!-- Manage Course Batch -->
+                <li class='menu-item@(currentPage == "/CourseBatch/Index" ? " active" : "")'>
+                    <a asp-page="/CourseBatch/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-group-line"></i>
+                        <div data-i18n="Manage Course Batch"> Manage Course Batch</div>
+                    </a>
+                </li>
+
+            </ul>
         </li>
-    
+        <li class='menu-item@(currentPage.StartsWith("/MasterPages/") ? " active open" : "")'>
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <i class="menu-icon tf-icons ri-book-2-line"></i>
+          <div data-i18n="MasterPages"> MasterPages</div>
+        
+      </a>
+      <ul class="menu-sub">
+
+          <li class='menu-item@((currentPage == "/MasterPages/CampusType" || currentPage == "/MasterPages/CampusType/Index") ? " active" : "")'>
+              <a asp-page="/MasterPages/CampusType/Index" class="menu-link">
+                  <i class="menu-icon tf-icons ri-book-2-line"></i>
+                  <div data-i18n="Manage CampusType"> Manage CampusType</div>
+              </a>
+          </li>
+          <li class='menu-item@((currentPage == "/MasterPages/AcademicYears" || currentPage == "/MasterPages/AcademicYears/Index") ? " active" : "")'>
+              <a asp-page="/MasterPages/AcademicYears/Index" class="menu-link">
+                  <i class="menu-icon tf-icons ri-door-open-line"></i>
+                  <div data-i18n="Manage AcademicYears"> Manage AcademicYear</div>
+              </a>
+          </li>
+          <li class='menu-item@((currentPage == "/MasterPages/Boards" || currentPage == "/MasterPages/Boards/Index") ? " active" : "")'>
+              <a asp-page="/MasterPages/Boards/Index" class="menu-link">
+                  <i class="menu-icon tf-icons ri-door-open-line"></i>
+                  <div data-i18n="Manage Boards"> Manage Boards</div>
+              </a>
+          </li>
+
+
     </ul>
 
 </aside>

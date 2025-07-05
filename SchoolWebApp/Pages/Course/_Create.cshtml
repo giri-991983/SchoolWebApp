@@ -5,45 +5,51 @@
         <div class="modal-content">
             <form id="addCourseForm" method="post" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
+
                 <div class="modal-header">
                     <h5 class="modal-title" id="addCourseModalLabel">Add Course</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
 
                     <!-- Hidden Fields -->
                     <div class="mb-3">
                         <div class="form-floating form-floating-outline">
-                            <input type="hidden" id="ModalInstitutionID" name="InstitutionID" class="form-control" />
-
+                            <input asp-for="Course.InstitutionID" type="hidden" class="form-control" id="ModalInstitutionID" />
                         </div>
                     </div>
+
                     <div class="mb-3">
                         <div class="form-floating form-floating-outline">
-                            <input type="hidden" id="ModalCampusID" name="CampusID" class="form-control" />
-
+                            <input asp-for="Course.CampusID" type="hidden" class="form-control" id="ModalCampusID" />
                         </div>
                     </div>
+
                     <!-- Board Dropdown -->
                     <div class="mb-3">
                         <div class="form-floating form-floating-outline">
-                            <select class="form-select" id="ModalBoardID" name="BoardID" onchange="fetchMasterCourses(this.value)" required>
-                              @*   <option value="">Select Board</option>
-                                @await Component.InvokeAsync("Master", new { viewname = "Boards" }) *@
+                            <select asp-for="Course.BoardID" class="form-select" id="ModalBoardID" onchange="fetchMasterCourses(this.value)" required>
+
                             </select>
-                            <label for="ModalBoardID">Select Board</label>
+                            <label asp-for="Course.BoardID">Select Board</label>
                         </div>
                     </div>
+
                     <!-- Master Courses Section -->
                     <div class="mt-3" id="masterCoursesContainer">
                         <p class="text-muted">Select a board to view associated master courses.</p>
                     </div>
                     <div class="fv-help-block invalid-feedback" id="selectedMasterCourseIDsValidationMessage"></div>
+
+
                 </div>
+
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Save</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
+
             </form>
         </div>
     </div>

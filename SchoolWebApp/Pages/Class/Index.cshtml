@@ -47,12 +47,12 @@
          <form id="filterForm">
             <!-- Filter Section -->
                 <div class="row mb-4">
-                
+                    <input type="hidden" name="CampusTypeID" id="CampusTypeID" value="1" />
                 <!-- Institution Dropdown -->
                 <div class="col-md-3">
                     <div class="form-floating form-floating-outline">
                             <select name="InstitutionID" id="InstitutionID" onchange="loadCampuses(this.value)" class="form-select">
-                                @await Component.InvokeAsync("Master", new { viewname = "Institutions" })
+                              
                         </select>
                         <label for="InstitutionID">Institution</label>
                     </div>
@@ -86,7 +86,7 @@
         </form>
             
        </div>
-        <div id="FilterTable"></div>
+        <div id="ClassFilterTable"></div>
       
    
     <!-- Create Class Partial Page -->

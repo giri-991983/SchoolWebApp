@@ -1,0 +1,45 @@
+﻿@model IEnumerable<SchoolWebApp.Models.CourseBatch>
+
+<table id="courseBatchTable" class="table">
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>Batch Name</th>
+            <th>Course Name</th>
+            <th>Academic Year</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            var serial = 0;
+            foreach (var item in Model)
+            {
+                serial++;
+                var tcc = "course-batch-name-" + item.CourseBatchID;
+                <tr data-id="@item.CourseBatchID">
+                    <td>@serial</td>
+                    <td class="@tcc">@item.BatchName</td>
+                    <td>@item.Course?.CourseName</td>
+                    <td>@item.AcademicYears?.AcademicYear</td>
+                    <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>
+                    <td class="text-nowrap">
+                        <div class="col-md-12">
+                         
+                            <!-- Delete Button -->
+                            <form method="post" id="deleteCourseBatchForm-@item.CourseBatchID" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.CourseBatchID" />
+                                <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteCourseBatchConfirmation('@item.CourseBatchID')">
+                                    <i class="ri-delete-bin-7-line ri-20px"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

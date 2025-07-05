@@ -53,19 +53,18 @@ namespace SchoolWebApp.Pages.ClassRoom
                     .Include(c => c.Campus)
                     .Include(c => c.CampusType)
                     .Include(c => c.Classes)
-                    //.Include(c => c.CourseBatch)
                     .Include(c => c.AcademicYears)
                     .Where(c => (campusId == 0 || c.CampusID == campusId) &&
                                 (institutionId == 0 || c.InstitutionID == institutionId) &&
                                 (boardId == 0 || c.Classes.BoardID == boardId))
-                    .OrderBy(c => c.ClassRoomName) 
+                    .OrderBy(c => c.ClassRoomName)
                     .ToListAsync();
 
                 return Partial("_ClassRoomTable", classRooms);
             }
             catch (Exception ex)
             {
-               
+
                 return StatusCode(500, "An error occurred while fetching class room data.");
             }
         }
@@ -133,7 +132,7 @@ namespace SchoolWebApp.Pages.ClassRoom
                 if (boardId > 0)
                 {
                     var query = _context.Classes
-                       
+
                         .Where(cr => cr.BoardID == boardId);
 
                     if (institutionId > 0)
@@ -163,7 +162,7 @@ namespace SchoolWebApp.Pages.ClassRoom
             }
             catch (Exception ex)
             {
-              
+
                 return StatusCode(500, "Failed to load classes.");
             }
         }
@@ -218,9 +217,9 @@ namespace SchoolWebApp.Pages.ClassRoom
         public async Task<IActionResult> OnPostAddClassRoomAsync()
         {
             try
-            { 
+            {
 
-               
+
                 if (ClassRoom.SeatingCapacity < 1)
                 {
                     return new JsonResult(new { success = false, message = "Seating capacity must be at least 1." });
@@ -235,19 +234,20 @@ namespace SchoolWebApp.Pages.ClassRoom
                                                      .FirstOrDefaultAsync(cr => cr.ClassRoomName.ToLower().Trim() == ClassRoom.ClassRoomName.ToLower().Trim() &&
                                                      cr.InstitutionID == ClassRoom.InstitutionID &&
                                                      cr.CampusID == ClassRoom.CampusID &&
-                                                    
+                                                     cr.AcademicYearID == ClassRoom.AcademicYearID &&
+
                                                      cr.ClassRoomID != ClassRoom.ClassRoomID);
                 if (existingClassRoom != null)
                 {
                     return new JsonResult(new { success = false, message = "A class room with this name already exists for the selected institution and campus." });
                 }
 
-              
+
                 ClassRoom.CreatedDate = DateTime.Now;
                 ClassRoom.Status = 1;
                 ClassRoom.TypeID = 1;
-                
-               
+
+
                 // Add to database
                 _context.ClassRooms.Add(ClassRoom);
                 await _context.SaveChangesAsync();
@@ -256,7 +256,7 @@ namespace SchoolWebApp.Pages.ClassRoom
             }
             catch (Exception ex)
             {
-                
+
                 return new JsonResult(new { success = false, message = "An error occurred while adding the class room: " + ex.Message });
             }
         }
@@ -271,7 +271,7 @@ namespace SchoolWebApp.Pages.ClassRoom
                     return new JsonResult(new { success = false, message = "Class Room not found." });
                 }
 
-              
+
 
                 _context.ClassRooms.Remove(classRoom);
                 await _context.SaveChangesAsync();
@@ -296,16 +296,16 @@ namespace SchoolWebApp.Pages.ClassRoom
                 return new JsonResult(new { success = false, message = "Class Room not found." });
             }
 
-            return Partial("_Edit", classRoom); 
+            return Partial("_Edit", classRoom);
         }
 
         // Handle Class Room update
         public async Task<IActionResult> OnPostEditClassRoomAsync()
         {
-          
+
             try
             {
-               
+
                 var classRoom = await _context.ClassRooms.FindAsync(ClassRoom.ClassRoomID);
                 if (classRoom == null)
                 {
@@ -317,6 +317,7 @@ namespace SchoolWebApp.Pages.ClassRoom
                     .FirstOrDefaultAsync(cr => cr.ClassRoomName.ToLower().Trim().Replace(" ", "") == ClassRoom.ClassRoomName.ToLower().Trim().Replace(" ", "") &&
                                               cr.InstitutionID == ClassRoom.InstitutionID &&
                                               cr.CampusID == ClassRoom.CampusID &&
+                                cr.AcademicYearID == ClassRoom.AcademicYearID &&
 
                                               cr.ClassRoomID != ClassRoom.ClassRoomID);
                 if (duplicateClassRoom != null)
@@ -336,8 +337,25 @@ namespace SchoolWebApp.Pages.ClassRoom
             }
             catch (Exception ex)
             {
-              
+
                 return new JsonResult(new { success = false, message = "An error occurred while updating the Class Room: " + ex.Message });
+            }
+        }
+
+        public string GetInstitutionIdsFromClasses()
+        {
+            try
+            {
+                var institutionIds = _context.Classes
+                    .Select(c => c.InstitutionID)
+                    .Distinct()
+                    .ToList();
+
+                return string.Join(",", institutionIds);
+            }
+            catch (Exception ex)
+            {
+                return string.Empty;
             }
         }
     }

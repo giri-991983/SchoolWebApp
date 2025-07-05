@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SchoolWebApp.Models.Course>
+﻿@model IEnumerable<SchoolWebApp.Models.CourseYear>
 
 <table id="courseTable" class="table table-bordered table-hover">
     <thead>
@@ -9,7 +9,6 @@
             <th>No. of Years</th>
             <th>No. of Semesters</th>
             <th>Status</th>
-          
             <th>Actions</th>
         </tr>
     </thead>
@@ -17,37 +16,28 @@
         @if (Model != null && Model.Any())
         {
             var serial = 0;
-            @foreach (var course in Model)
-            { 
+            foreach (var courseYear in Model)
+            {
                 serial++;
-                var tcc = "course-name-" + course.CourseID;
-                <tr data-id="@course.CourseID">
+                var tcc = "course-name-" + courseYear.CourseID;
+
+                <tr data-courseyear-id="@courseYear.CourseYearID" data-id="@courseYear.CourseID">
                     <td>@serial</td>
 
-                    <td class="@tcc">@course.CourseName</td>
-                    <td>
-                        @if (course.CourseYears != null && course.CourseYears.Any())
-                        {
-                            @string.Join(", ", course.CourseYears.Select(y => y.CourseYearName))
-                        }
-                        else
-                        {
-                            <span class="text-muted">No Course Years</span>
-                        }
-                    </td>
+                    <td class="@tcc">@courseYear.Course?.CourseName</td>
+                    <td>@courseYear.CourseYearName</td>
+                    <td>@courseYear.Course?.NoOfYears</td>
+                    <td>@courseYear.Course?.NoOfSemesters</td>
+                    <td>@Html.Raw(PageHelpers.GetStatusBadge(courseYear.Course?.Status ?? 0))</td>
 
-                    <td>@course.NoOfYears</td>
-                    <td>@course.NoOfSemesters</td>
-                 
-                    <td>@Html.Raw(PageHelpers.GetStatusBadge(course.Status))</td>
                     <td class="text-nowrap">
                         <div class="col-md-12">
                             <!-- Edit Button -->
-                            <button class="btn btn-sm btn-icon edit-course-btn" onclick="courseEdit(@course.CourseID)" data-course-id="@course.CourseID">
+                            <button class="btn btn-sm btn-icon edit-course-btn" onclick="courseEdit(@courseYear.CourseID, @courseYear.CourseYearID)" data-course-id="@courseYear.CourseID">
                                 <i class="ri-edit-box-line ri-20px"></i>
                             </button>
 
-                           
+                            <!-- Modal -->
                             <div class="modal fade" id="editCourseModal" tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -56,17 +46,17 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body" id="editCourseFormContainer">
-                                           
+                                            <!-- Edit form will load here via AJAX -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Delete Button -->
-                            <form method="post" id="deleteCourseForm-@course.CourseID" class="d-inline">
+                            <!-- Delete Course Year -->
+                            <form method="post" id="deleteCourseYearForm-@courseYear.CourseYearID" class="d-inline">
                                 @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@course.CourseID" />
-                                <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteCourseConfirmation('@course.CourseID')">
+                                <input type="hidden" name="courseYearId" value="@courseYear.CourseYearID" />
+                                <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteCourseYearConfirmation('@courseYear.CourseYearID', '@courseYear.Course?.CourseName', '@courseYear.CourseYearName')">
                                     <i class="ri-delete-bin-7-line ri-20px"></i>
                                 </button>
                             </form>
@@ -75,6 +65,5 @@
                 </tr>
             }
         }
-       
     </tbody>
 </table>

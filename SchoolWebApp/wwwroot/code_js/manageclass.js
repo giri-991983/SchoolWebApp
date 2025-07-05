@@ -134,7 +134,7 @@ function initializeDataTable() {
                 ]
             },
             {
-                // For Create User Button (Add New )
+               
                 text: '<i class="ri-add-line ri-16px me-0 me-sm-1_5"></i><span class="d-none d-sm-inline-block">Add Class</span>',
                 className: 'add-new btn btn-primary waves-effect waves-light',
                 attr: {
@@ -157,11 +157,11 @@ function initializeDataTable() {
                         return;
                     }
 
-                   
-                  
+
+
                     $('#addClassForm')[0].reset();
                     $('#masterClassesContainer').html('<p class="text-muted">Select a board to view associated stages and classes.</p>');
-
+                    $('#selectedMasterStageIDsValidationMessage').text('').hide();
                     // Populate hidden fields
                     $('#ModalCampusID').val(campusId);
                     $('#ModalInstitutionID').val(institutionId);
@@ -197,9 +197,21 @@ function fetchMasterClasses(boardId) {
         beforeSend: function () {
             $('#masterClassesContainer').html('<p class="text-muted">Loading...</p>');
         },
-        success: function (partialView) {
-            $('#masterClassesContainer').html(partialView);
-           
+        success: function (response) {
+            $('#masterClassesContainer').html(response);
+            fv.addField('SelectedMasterStageIDs', {
+                selector: 'input[name="SelectedMasterStageIDs"]',
+                validators: {
+                    callback: {
+                        message: ' ',
+                        callback: function (input) {
+                            const checkboxes = document.querySelectorAll('input[name="SelectedMasterStageIDs"]:checked');
+                            return checkboxes.length > 0;
+                        }
+                    }
+                }
+            });
+
         },
         error: function (xhr, status, error) {
             Swal.fire({
@@ -216,10 +228,11 @@ function fetchMasterClasses(boardId) {
 function loadCampuses(institutionId) {
     let campusSelectId = 'CampusID';
     $(`#${campusSelectId}`).html('<option value="">Select Campus</option>').prop('disabled', true);
+    $('#BoardID').html('<option value="">Select Board</option>').prop('disabled', true);
 
     if (!institutionId || institutionId <= 0) {
         $(`#${campusSelectId}`).val('').trigger('change');
-        $(`#${campusSelectId}`).prop('disabled', false);
+        $(`#${campusSelectId}`).prop('disabled', true);
         return;
     }
 
@@ -243,11 +256,39 @@ function loadCampuses(institutionId) {
         }
     });
 }
-// Load Boards
-window.loadBoards=function(institutionId, campusId, targetDropdownId = 'BoardID') {
+// DropDown Institutions by Campus Type
+function loadInstitutionsByCampusType(campusTypeId) {
+    $('#InstitutionID').html('<option value="">Select Institution</option>').prop('disabled', true);
+    $('#CampusID').html('<option value="">Select Campus</option>').prop('disabled', true);
+    $('#BoardID').html('<option value="">Select Board</option>').prop('disabled', true);
+    if (!campusTypeId || campusTypeId <= 0) {
+        $('#InstitutionID').prop('disabled', false);
+        return;
+    }
+
+    $.ajax({
+        url: '/Class/Index?handler=LoadInstitutionsByCampusType',
+        type: 'GET',
+        data: { campusTypeId: campusTypeId },
+        success: function (response) {
+            $('#InstitutionID').html(response).prop('disabled', false).trigger('change');
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading institutions:', { status, error, responseText: xhr.responseText });
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load institutions: ' + (xhr.responseText || error),
+                confirmButtonText: 'OK'
+            });
+            $('#InstitutionID').prop('disabled', false);
+        }
+    });
+}
+// DropDown Boards
+window.loadBoards = function (institutionId, campusId, targetDropdownId = 'BoardID') {
     if (!institutionId || institutionId <= 0 || !campusId || campusId <= 0) {
         $('#BoardID').html('<option value="">Select Board</option>').prop('disabled', true);
-        $('#CourseID').html('<option value="">Select Course</option>').prop('disabled', true);
         return;
     }
 
@@ -282,7 +323,7 @@ function toggleStageSelection(checkbox) {
     } else {
         masterClassInputs.prop('disabled', true);
     }
-   
+
 
 }
 
@@ -340,8 +381,10 @@ $(document).ready(function () {
     }
     // Hide course table on InstitutionID, CampusID, or BoardID change
     $('#InstitutionID, #CampusID, #BoardID').on('change', function () {
-        $('#CourseFilterTable').hide();
+        $('#ClassFilterTable').hide();
     });
+    loadInstitutionsByCampusType($('#CampusTypeID').val());
+
 });
 
 
@@ -355,9 +398,9 @@ function filterClasses(form) {
         type: 'GET',
         data: { campusId: campusId, institutionId: institutionId, boardId: boardId },
         success: function (partialView) {
-            $('#FilterTable').html(partialView).show();
+            $('#ClassFilterTable').html(partialView).show();
             if ($('#ClassTable').length) {
-                initializeDataTable(); // Reinitialize DataTable on the new table
+                initializeDataTable();
             }
         },
         error: function (xhr, status, error) {
@@ -370,43 +413,30 @@ function filterClasses(form) {
         }
     });
 }
+let fv;
 // Validation and Add Classs
 const addclassForm = document.getElementById('addClassForm');
 if (addclassForm) {
     console.log('FormValidation initializing for addClassForm...');
-    FormValidation.formValidation(addclassForm, {
+    fv = FormValidation.formValidation(addclassForm, {
         fields: {
 
             BoardID: {
                 validators: {
                     notEmpty: { message: 'Please select a Board' }
                 }
-            },
-            SelectedMasterStageIDs: {
-                validators: {
-                    callback: {
-                        message: 'Please select at least one stage.',
-                        callback: function (input) {
-                            const checkboxes = addclassForm.querySelectorAll('input[name="SelectedMasterStageIDs"]:checked');
-                            const isValid = checkboxes.length > 0;
-                            console.log('SelectedMasterStageIDs validation:', {
-                                checkedCount: checkboxes.length,
-                                isValid: isValid,
-                                checkboxesFound: addclassForm.querySelectorAll('input[name="SelectedMasterStageIDs"]').length
-                            });
-                            return isValid;
-                        }
-                    }
-                }
             }
+
 
         },
         plugins: {
             trigger: new FormValidation.plugins.Trigger(),
             bootstrap5: new FormValidation.plugins.Bootstrap5({
                 eleValidClass: 'is-valid',
+
                 rowSelector: function (field, ele) {
-                    return '.mb-3';
+                    return field === 'SelectedMasterStageIDs' ? '#masterClassesContainer' : '.form-floating';
+
                 }
             }),
             submitButton: new FormValidation.plugins.SubmitButton(),
@@ -417,10 +447,34 @@ if (addclassForm) {
             console.log('Add class form valid, submitting...');
             submitAddClassesForm(addclassForm);
         })
-        .on('core.form.invalid', function () {
-            return;
+        .on('core.form.invalid', function (e) {
+            console.log('Add class form invalid');
+
+            const validationMessageDiv = document.getElementById('selectedMasterStageIDsValidationMessage');
+            const boardId = document.getElementById('ModalBoardID').value;
+            const checkboxes = document.querySelectorAll('input[name="SelectedMasterStageIDs"]:checked');
+
+
+            if (boardId && boardId > 0) {
+                if (checkboxes.length === 0) {
+
+                    validationMessageDiv.textContent = 'Please select at least one stage.';
+                    validationMessageDiv.style.display = 'block';
+
+
+                } else {
+                    validationMessageDiv.textContent = '';
+                    validationMessageDiv.style.display = 'none';
+
+
+                }
+            } else {
+                validationMessageDiv.textContent = '';
+                validationMessageDiv.style.display = 'none';
+            }
+
         });
-       
+
 } else {
     console.error('addClassForm not found');
 }
@@ -454,7 +508,7 @@ function submitAddClassesForm(form) {
             if (response.success) {
                 $('#addClassModal').modal('hide');
                 filterClasses(document.getElementById('filterForm'));
-                
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
@@ -464,7 +518,7 @@ function submitAddClassesForm(form) {
                 });
             } else {
                 Swal.fire({
-                    icon: 'warning', // Change to warning for clarity
+                    icon: 'warning', 
                     title: 'Warning',
                     text: response.message || 'Failed to add classes.',
                     showConfirmButton: true,
@@ -514,14 +568,14 @@ function classEdit(classId) {
         success: function (response) {
             console.log('Edit class form loaded successfully');
             Swal.close();
-          
+
             if (typeof response === 'string') {
                 $('#editClassFormContainer').html(response);
 
-               
+
                 $('#editClassModal').modal('show');
 
-              //validation
+                //validation
 
                 const editClassForm = document.getElementById('editClassForm');
 
@@ -538,7 +592,7 @@ function classEdit(classId) {
                                         max: 100,
                                         message: 'Max 100 characters allowed'
                                     }
-                                  }
+                                }
                             }
                         },
                         plugins: {
@@ -639,7 +693,7 @@ function UpdateNewClassData(form, classId) {
                     filterClasses(document.getElementById('filterForm'));
                 });
             } else {
-                //   🔴 Field-level validation message for "Class name already exists"
+                //   Field-level validation message for "Class name already exists"
                 if (response.message && response.message.includes('already exists')) {
                     $('#editClassName').addClass('is-invalid');
                     $('#classNameValidationMessage').text(response.message).show();
@@ -661,7 +715,7 @@ function UpdateNewClassData(form, classId) {
 
 function showDeleteConfirmation(classId) {
     //  event.preventDefault(); // prevent form submit
-   
+
     const ClassName = document.querySelector(`.class-name-full-${classId}`).innerText;
 
     Swal.fire({

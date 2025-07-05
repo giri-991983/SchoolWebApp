@@ -1,0 +1,21 @@
+﻿@model SchoolWebApp.Models.Board
+<form id="editBoardForm" method="post" enctype="multipart/form-data" data-id="@Model.BoardID">
+    @Html.AntiForgeryToken()
+    <div class="modal-body">
+        <input type="hidden" name="boardId" id="editBoardId" value="@Model.BoardID" />
+        <div class="mb-3">
+            <label class="form-label fw-medium text-primary">Campus Type</label>
+            <p id="editCampusTypeName" class="form-control-static"></p>
+            <input type="hidden" id="editCampusTypeID" name="campusTypeId" value="@Model.CampusTypeID" />
+        </div>
+        <div class="mb-3">
+            <label for="editBoardName" class="form-label fw-medium text-primary">Board Name</label>
+            <input type="text" id="editBoardName" name="boardName" class="form-control" value="@Model.BoardName" required />
+            <div id="boardNameValidationMessage" class="invalid-feedback d-block"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success" id="saveBoardBtn">Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form>

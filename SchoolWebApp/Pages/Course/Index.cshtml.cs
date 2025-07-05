@@ -32,11 +32,13 @@ namespace SchoolWebApp.Pages.Course
             _configuration = configuration;
         }
         [BindProperty]
-        public int InstitutionID { get; set; }
-        [BindProperty]
-        public int CampusID { get; set; }
-        [BindProperty]
-        public int BoardID { get; set; }
+        public Models.Course Course { get; set; }
+        //[BindProperty]
+        //public int InstitutionID { get; set; }
+        //[BindProperty]
+        //public int CampusID { get; set; }
+        //[BindProperty]
+        //public int BoardID { get; set; }
         [BindProperty]
         public List<int> SelectedMasterCourseIDs { get; set; } = new List<int>();
        
@@ -46,18 +48,35 @@ namespace SchoolWebApp.Pages.Course
         }
         public async Task<IActionResult> OnGetFilterCoursesAsync(int institutionId, int campusId, int boardId)
         {
-            var courses = await _context.Courses
-                .Include(c => c.Institution)
-                .Include(c => c.Campus)
-                .Include(c => c.Board)
-                .Include(c => c.CourseYears)
-                .Where(c => (institutionId == 0 || c.InstitutionID == institutionId) &&
-                            (campusId == 0 || c.CampusID == campusId) &&
-                            (boardId == 0 || c.BoardID == boardId))
+            var courseYears = await _context.CourseYears
+                .Include(cy => cy.Course)
+                    .ThenInclude(c => c.Institution)
+                .Include(cy => cy.Course)
+                    .ThenInclude(c => c.Campus)
+                .Include(cy => cy.Course)
+                    .ThenInclude(c => c.Board)
+                .Where(cy => (institutionId == 0 || cy.Course.InstitutionID == institutionId) &&
+                             (campusId == 0 || cy.Course.CampusID == campusId) &&
+                             (boardId == 0 || cy.Course.BoardID == boardId))
                 .ToListAsync();
 
-            return Partial("_CourseTable", courses);
+            return Partial("_CourseTable", courseYears);
         }
+
+        //public async Task<IActionResult> OnGetFilterCoursesAsync(int institutionId, int campusId, int boardId)
+        //{
+        //    var courses = await _context.Courses
+        //        .Include(c => c.Institution)
+        //        .Include(c => c.Campus)
+        //        .Include(c => c.Board)
+        //        .Include(c => c.CourseYears)
+        //        .Where(c => (institutionId == 0 || c.InstitutionID == institutionId) &&
+        //                    (campusId == 0 || c.CampusID == campusId) &&
+        //                    (boardId == 0 || c.BoardID == boardId))
+        //        .ToListAsync();
+
+        //    return Partial("_CourseTable", courses);
+        //}
         // Load Campuses Dropdown by Selecting Institution
         public async Task<IActionResult> OnGetLoadCampusesByInstitutionAsync(int institutionId)
         {
@@ -161,8 +180,7 @@ namespace SchoolWebApp.Pages.Course
                 return StatusCode(500, "Failed to load boards.");
             }
         }
-      
-
+       
         public async Task<IActionResult> OnGetMasterCoursesAsync(int boardId)
         {
             try
@@ -184,17 +202,17 @@ namespace SchoolWebApp.Pages.Course
         public async Task<IActionResult> OnPostAddCourseAsync()
         {
             // Validate inputs
-            if (InstitutionID <= 0)
+            if (Course.InstitutionID <= 0)
             {
                 return new JsonResult(new { success = false, message = "Please select an Institution." });
             }
 
-            if (CampusID <= 0)
+            if (Course.CampusID <= 0)
             {
                 return new JsonResult(new { success = false, message = "Please select a Campus." });
             }
 
-            if (BoardID <= 0)
+            if (Course.BoardID <= 0)
             {
                 return new JsonResult(new { success = false, message = "Please select a Board." });
             }
@@ -208,7 +226,7 @@ namespace SchoolWebApp.Pages.Course
             {
                 // Fetch selected MasterCourses
                 var masterCourses = await _context.MasterCourses
-                    .Where(mc => mc.BoardID == BoardID && SelectedMasterCourseIDs.Contains(mc.MasterCourseID))
+                    .Where(mc => mc.BoardID == Course.BoardID && SelectedMasterCourseIDs.Contains(mc.MasterCourseID))
                     .ToListAsync();
 
                 if (!masterCourses.Any())
@@ -226,9 +244,9 @@ namespace SchoolWebApp.Pages.Course
                 {
                     // Check for duplicate course
                     var existingCourse = await _context.Courses
-                        .AnyAsync(c => c.InstitutionID == InstitutionID &&
-                                       c.CampusID == CampusID &&
-                                       c.BoardID == BoardID &&
+                        .AnyAsync(c => c.InstitutionID == Course.InstitutionID &&
+                                       c.CampusID == Course.CampusID &&
+                                       c.BoardID == Course.BoardID &&
                                        c.CourseName.ToLower().Trim().Replace(" ", "") == masterCourse.CourseName.ToLower().Trim().Replace(" ", ""));
 
                     if (existingCourse)
@@ -240,9 +258,9 @@ namespace SchoolWebApp.Pages.Course
                     // Create a new Course
                     var newCourse = new Models.Course
                     {
-                        InstitutionID = InstitutionID,
-                        CampusID = CampusID,
-                        BoardID = BoardID,
+                        InstitutionID = Course.InstitutionID,
+                        CampusID = Course.CampusID,
+                        BoardID = Course.BoardID,
                         CourseName = masterCourse.CourseName,
                         NoOfYears = masterCourse.NoOfYears,
                         NoOfSemesters = masterCourse.NoOfSemesters,
@@ -313,99 +331,200 @@ namespace SchoolWebApp.Pages.Course
             }
        }
 
-        public async Task<IActionResult> OnPostDeleteCourseAsync(int courseId)
+       
+
+        public async Task<IActionResult> OnPostDeleteCourseYearAsync(int courseYearId)
         {
-            if (courseId <= 0)
+            if (courseYearId <= 0)
             {
-                return new JsonResult(new { success = false, message = "Invalid Course ID." });
+                return new JsonResult(new { success = false, message = "Invalid Course Year ID." });
             }
 
             try
             {
+                // Fetch the CourseYear including the related Course
+                var courseYear = await _context.CourseYears
+                    .Include(cy => cy.Course)
+                    .FirstOrDefaultAsync(cy => cy.CourseYearID == courseYearId);
 
-
-                var course = await _context.Courses
-                    .Include(c => c.CourseYears)
-                    .FirstOrDefaultAsync(c => c.CourseID == courseId);
-
-                if (course == null)
+                if (courseYear == null)
                 {
-
-                    return new JsonResult(new { success = false, message = "Course not found." });
+                    return new JsonResult(new { success = false, message = "Course Year not found." });
                 }
 
-                // Remove related CourseYear records
-                _context.CourseYears.RemoveRange(course.CourseYears);
+                var courseId = courseYear.CourseID;
 
-                // Remove the course
-                _context.Courses.Remove(course);
-
+                // Delete the selected CourseYear
+                _context.CourseYears.Remove(courseYear);
                 await _context.SaveChangesAsync();
 
-                return new JsonResult(new { success = true, message = "Course and associated years deleted successfully!" });
+                // Check if the course has any remaining years
+                var remainingYears = await _context.CourseYears
+                    .AnyAsync(cy => cy.CourseID == courseId);
+
+                if (!remainingYears)
+                {
+                    // No more years, delete the course
+                    var course = await _context.Courses.FindAsync(courseId);
+                    if (course != null)
+                    {
+                        _context.Courses.Remove(course);
+                        await _context.SaveChangesAsync();
+
+                        return new JsonResult(new { success = true, message = "Course year and course deleted successfully!" });
+                    }
+                }
+
+                return new JsonResult(new { success = true, message = "Course year deleted successfully!" });
             }
             catch (Exception ex)
             {
-                return new JsonResult(new { success = false, message = $"Failed to delete course: {ex.Message}" });
+                return new JsonResult(new { success = false, message = $"Failed to delete course year: {ex.Message}" });
             }
         }
-        public async Task<IActionResult> OnGetEditCourseFormAsync(int courseId)
+        public async Task<IActionResult> OnGetEditCourseFormAsync(int courseId, int courseYearId)
         {
             try
             {
-                var courseDetails = await _context.Courses
-                    .FirstOrDefaultAsync(c => c.CourseID == courseId);
+                // Get the CourseYear along with the Course (eager load Course navigation property)
+                var courseYearDetails = await _context.CourseYears
+                    .Include(cy => cy.Course)
+                    .FirstOrDefaultAsync(cy => cy.CourseYearID == courseYearId && cy.CourseID == courseId);
 
-                if (courseDetails == null)
+                if (courseYearDetails == null)
                 {
-                    return new JsonResult(new { success = false, message = "Course not found." });
+                    return new JsonResult(new { success = false, message = "Course or Course Year not found." });
                 }
 
-                return Partial("_Edit", courseDetails);
+                // Return the partial view with the CourseYear model (Course will be available via navigation property)
+                return Partial("_Edit", courseYearDetails);
             }
             catch (Exception ex)
             {
                 return new JsonResult(new { success = false, message = $"Error loading edit form: {ex.Message}" });
             }
         }
-
-        public async Task<IActionResult> OnPostEditCourseAsync(int courseId, string courseName)
+        public async Task<IActionResult> OnPostEditCourseAsync(CourseYear courseYearInput)
         {
-            if (courseId <= 0 || string.IsNullOrWhiteSpace(courseName))
-            {
-                return new JsonResult(new { success = false, message = "Invalid course ID or course name." });
-            }
-
             try
             {
-                var courseToUpdate = await _context.Courses
-                    .FirstOrDefaultAsync(c => c.CourseID == courseId);
+                // Fetch Course Year with its Course
+                var courseYear = await _context.CourseYears
+                    .Include(cy => cy.Course)
+                    .FirstOrDefaultAsync(cy => cy.CourseYearID == courseYearInput.CourseYearID);
 
-                if (courseToUpdate == null)
+                if (courseYear == null)
                 {
-                    return new JsonResult(new { success = false, message = "Course not found." });
+                    return new JsonResult(new { success = false, message = "Course Year not found." });
                 }
 
-                var courseExists = await _context.Courses
+                var courseToUpdate = courseYear.Course;
+
+                if (string.IsNullOrWhiteSpace(courseYearInput.Course.CourseName))
+                {
+                    return new JsonResult(new { success = false, message = "Course name cannot be empty." });
+                }
+
+                if (string.IsNullOrWhiteSpace(courseYearInput.CourseYearName))
+                {
+                    return new JsonResult(new { success = false, message = "Course Year name cannot be empty." });
+                }
+
+                string newCourseName = courseYearInput.Course.CourseName.Trim().ToLower().Replace(" ", "");
+                string newCourseYearName = courseYearInput.CourseYearName.Trim().ToLower().Replace(" ", "");
+
+                // Check for Duplicate Course Name
+                var isCourseDuplicate = await _context.Courses
                     .AnyAsync(c => c.InstitutionID == courseToUpdate.InstitutionID &&
-                                  c.CampusID == courseToUpdate.CampusID &&
-                                  c.CourseName.ToLower().Trim().Replace(" ", "") == courseName.ToLower().Trim().Replace(" ", "") &&
-                                  c.CourseID != courseId);
+                                   c.CampusID == courseToUpdate.CampusID &&
+                                   c.BoardID == courseToUpdate.BoardID &&
+                                   c.CourseName.Trim().ToLower().Replace(" ", "") == newCourseName &&
+                                   c.CourseID != courseToUpdate.CourseID);
 
-                if (courseExists)
+                if (isCourseDuplicate)
                 {
-                    return new JsonResult(new { success = false, message = $"A course with the name '{courseName}' already exists in this institution and campus." });
+                    return new JsonResult(new { success = false, field = "CourseName", message = $"A course with the name '{courseYearInput.Course.CourseName}' already exists in this institution and campus." });
+                 
                 }
 
-                courseToUpdate.CourseName = courseName;
+                // Check for Duplicate Course Year Name within the same Course
+                var isCourseYearDuplicate = await _context.CourseYears
+                    .AnyAsync(cy => cy.CourseID == courseToUpdate.CourseID &&
+                                    cy.CourseYearName.Trim().ToLower().Replace(" ", "") == newCourseYearName &&
+                                    cy.CourseYearID != courseYear.CourseYearID);
+
+                if (isCourseYearDuplicate)
+                {
+                    return new JsonResult(new { success = false, field = "CourseYearName", message = $"A course year with the name '{courseYearInput.CourseYearName}' already exists in this course." });
+                }
+
+                // Update Course Name
+                courseToUpdate.CourseName = courseYearInput.Course.CourseName;
+
+                // Update Course Year Name
+                courseYear.CourseYearName = courseYearInput.CourseYearName;
+
                 await _context.SaveChangesAsync();
 
-                return new JsonResult(new { success = true, message = "Course updated successfully!" });
+                return new JsonResult(new { success = true, message = "Course and Course Year updated successfully!" });
             }
             catch (Exception ex)
             {
                 return new JsonResult(new { success = false, message = $"Error updating course: {ex.Message}" });
             }
         }
+
+
+     
+
+        // Load Institutions by Campus Type
+        public async Task<IActionResult> OnGetLoadInstitutionsByCampusTypeAsync(int campusTypeId)
+        {
+            try
+            {
+                var httpContext = _httpContextAccessor.HttpContext;
+                var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new PageActionDescriptor());
+                var viewContext = new ViewContext(
+                    actionContext,
+                    new FakeView(),
+                    new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary()),
+                    _tempDataFactory.GetTempData(httpContext),
+                    TextWriter.Null,
+                    new HtmlHelperOptions()
+                );
+
+                ((IViewContextAware)_viewComponentHelper).Contextualize(viewContext);
+
+                string filterIds = "";
+                if (campusTypeId > 0)
+                {
+                    // Filter institutions based on Campuses with the selected CampusTypeID
+                    var institutionIds = await _context.Campuses
+                        .Where(c => c.CampusTypeID == campusTypeId) // Filter for Intermediate (CampusTypeID = 1)
+                        .Select(c => c.InstitutionID)
+                        .Distinct()
+                        .ToListAsync();
+
+                    if (institutionIds == null || !institutionIds.Any())
+                    {
+                        return Content("<option value=''>No Institutions Available</option>", "text/html");
+                    }
+                    filterIds = string.Join(",", institutionIds);
+                }
+
+                var html = await _viewComponentHelper.InvokeAsync("Master", new { viewname = "Institutions", FilterIds = filterIds });
+
+                using var writer = new StringWriter();
+                html.WriteTo(writer, HtmlEncoder.Default);
+
+                return Content(writer.ToString(), "text/html");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Failed to load institutions: " + ex.Message);
+            }
+        }
+       
+
     }
 }

@@ -95,41 +95,8 @@
                         </div>
 
                     </div>
-                    @*    <!-- Academic Year Dropdown -->
-                    <div class="col-md-3">
-                        <div class="form-floating form-floating-outline">
-                            <select name="AcademicYearID" id="AcademicYearID" class="form-select">
-                                @await Component.InvokeAsync("Master", new { viewname = "AcademicYears" })
-                            </select>
-                            <label for="AcademicYearID">Academic Year</label>
-                        </div>
-                    </div>
 
-                    <!-- Seating Capacity -->
-                    <div class="form-floating form-floating-outline mb-5">
-                        <select name="ClassRoom.SeatingCapacity" class="form-select" id="SeatingCapacity">
-                            <option value="">Select Seating Capacity</option>
-                            @for (int i = 1; i <= 100; i++) // Adjust max value as needed
-                            {
-                                <option value="@i">@i</option>
-                            }
-                        </select>
-                        <label for="SeatingCapacity">Seating Capacity</label>
-                    </div>
-
-                    <!-- Available Seats -->
-                    <div class="form-floating form-floating-outline mb-5">
-                        <select name="ClassRoom.AvailableSeats" class="form-select" id="AvailableSeats">
-                            <option value="">Select Available Seats</option>
-                            @for (int i = 1; i <= 100; i++) // Adjust max value as needed
-                            {
-                                <option value="@i">@i</option>
-                            }
-                        </select>
-                        <label for="AvailableSeats">Available Seats</label>
-                    </div>
- *@
-                </div> <!-- modal-body -->
+                </div>
 
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Save</button>

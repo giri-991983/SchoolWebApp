@@ -1,0 +1,41 @@
+﻿ @model SchoolWebApp.Pages.MasterPages.Boards.IndexModel
+
+<div class="modal fade" id="addBoardModal" tabindex="-1" aria-labelledby="addBoardModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="addBoardForm" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBoardModalLabel">Add Board Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @* <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Campus Type</label>
+                        <p id="ModalCampusTypeName" class="form-control-static"></p>
+                        <input type="hidden" id="ModalCampusTypeID" name="campusTypeId" />
+                    </div> *@
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="ModalCampusTypeID" class="form-label text-primary">Campus Type</label>
+                        <select class="form-select" id="ModalCampusTypeID" name="campusTypeId" required>
+                          
+                            @await Component.InvokeAsync("Master", new { viewname = "CampusTypes" })
+                        </select>
+                        <div class="fv-help-block invalid-feedback" id="campusTypeValidationMessage"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ModalBoardName" class="form-label text-primary">Board Name</label>
+                        <input type="text" class="form-control" id="ModalBoardName" name="boardName" required />
+                        <div class="fv-help-block invalid-feedback" id="boardNameValidationMessage"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 
+

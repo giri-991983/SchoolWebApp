@@ -1,0 +1,62 @@
+﻿
+@model SchoolWebApp.Pages.CourseBatch.IndexModel
+
+<div class="modal fade" id="addCourseBatchModal" tabindex="-1" aria-labelledby="addCourseBatchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="addCourseBatchForm" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCourseBatchModalLabel">Add Course Batch</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Hidden Fields -->
+                    <input asp-for="CourseBatch.CreatedDate" type="hidden" id="CreatedDate" />
+                    <input asp-for="CourseBatch.Status" type="hidden" id="Status" />
+                    <!-- Course Dropdown -->
+                    <div class="form-floating form-floating-outline mb-5">
+                        <select asp-for="CourseBatch.CourseID" class="form-select" id="ModalCourseID"  onchange="fetchCourseYears(this.value)"  required>
+                            <option value="">Select Course</option>
+
+                        </select>
+                        <label for="CourseID">Select Course</label>
+                    </div>
+
+                    <!-- Course Year Dropdown -->
+                    <div class="form-floating form-floating-outline mb-5">
+                        <select asp-for="CourseBatch.CourseYearID" class="form-select" id="CourseYearID" required>
+                            <option value="">Select Course Year</option>
+                        </select>
+                        <label for="CourseYearID">Select Course Year</label>
+                    </div>
+
+                    <!-- Academic Year Dropdown -->
+                    <div class="form-floating form-floating-outline mb-5">
+                        <select asp-for="CourseBatch.AcademicYearID" class="form-select" id="AcademicYearID" required>
+                            @await Component.InvokeAsync("Master", new { viewname = "AcademicYears" })
+
+                        </select>
+                        <label for="AcademicYearID">Select Academic Year</label>
+                    </div>
+
+                    <!-- Batch Name -->
+                    <div class="form-floating form-floating-outline mb-5">
+                        <input asp-for="CourseBatch.BatchName" class="form-control" id="BatchName" placeholder="Batch Name" required />
+                        <label for="BatchName">Batch Name</label>
+                    </div>
+
+                    <!-- Validation Message Div -->
+                    <div class="fv-help-block invalid-feedback" id="courseBatchValidationMessage"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

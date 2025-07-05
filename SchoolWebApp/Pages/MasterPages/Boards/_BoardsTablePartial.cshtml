@@ -1,0 +1,53 @@
+﻿@model IEnumerable<SchoolWebApp.Models.Board>
+<table id="BoardTable" class="table">
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>Board Name</th>          
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            var serial = 0;
+            @foreach (var item in Model)
+            {
+                serial++;
+                <tr data-id="@item.BoardID">
+                    <td>@serial</td>
+                    <td>@item.BoardName</td>                   
+                    <td class="text-nowrap">
+                        <div class="col-md-12">
+                            <!-- Edit Button -->
+                            <button class="btn btn-sm btn-icon edit-board-btn" onclick="boardEdit(@item.BoardID)" data-board-id="@item.BoardID">
+                                <i class="ri-edit-box-line ri-20px"></i>
+                            </button>
+                            <div class="modal fade" id="editBoardModal" tabindex="-1" aria-labelledby="editBoardModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editBoardModalLabel">Edit Board Details</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="editBoardFormContainer">
+                                            <!-- The _Edit.cshtml partial view will be loaded here dynamically -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Delete Button -->
+                            <form method="post" id="deleteBoardForm-@item.BoardID" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="boardId" value="@item.BoardID" />
+                                <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteConfirmation('@item.BoardID', '@item.BoardName')">
+                                    <i class="ri-delete-bin-7-line ri-20px"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

@@ -464,6 +464,53 @@ namespace SchoolWebApp.Pages.Class
                 return StatusCode(500, "Failed to load boards.");
             }
         }
+        // DropDown Institutions by Campus Type
+        public async Task<IActionResult> OnGetLoadInstitutionsByCampusTypeAsync(int campusTypeId)
+        {
+            try
+            {
+                var httpContext = _httpContextAccessor.HttpContext;
+                var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new PageActionDescriptor());
+                var viewContext = new ViewContext(
+                    actionContext,
+                    new FakeView(),
+                    new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary()),
+                    _tempDataFactory.GetTempData(httpContext),
+                    TextWriter.Null,
+                    new HtmlHelperOptions()
+                );
+
+                ((IViewContextAware)_viewComponentHelper).Contextualize(viewContext);
+
+                string filterIds = "";
+                if (campusTypeId > 0)
+                {
+                    // Filter institutions based on Campuses with the selected CampusTypeID
+                    var institutionIds = await _context.Campuses
+                        .Where(c => c.CampusTypeID == campusTypeId) // Filter for Intermediate (CampusTypeID = 1)
+                        .Select(c => c.InstitutionID)
+                        .Distinct()
+                        .ToListAsync();
+
+                    if (institutionIds == null || !institutionIds.Any())
+                    {
+                        return Content("<option value=''>No Institutions Available</option>", "text/html");
+                    }
+                    filterIds = string.Join(",", institutionIds);
+                }
+
+                var html = await _viewComponentHelper.InvokeAsync("Master", new { viewname = "Institutions", FilterIds = filterIds });
+
+                using var writer = new StringWriter();
+                html.WriteTo(writer, HtmlEncoder.Default);
+
+                return Content(writer.ToString(), "text/html");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Failed to load institutions: " + ex.Message);
+            }
+        }
 
     }
 }

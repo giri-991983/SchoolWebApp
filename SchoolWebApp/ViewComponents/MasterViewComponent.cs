@@ -179,12 +179,12 @@ namespace SchoolWebApp.ViewComponents
                         .ToListAsync();
                    
                 }
-                //else
-                //{
-                //    classes = await _context.Classes
-                //                            .OrderBy(c => c.ClassName)
-                //                            .ToListAsync();
-                //}
+                else
+                {
+                    classes = await _context.Classes
+                                            .OrderBy(c => c.ClassName)
+                                            .ToListAsync();
+                }
                 ViewBag.Classes = classes ?? new List<Class>();
 
             }
@@ -208,6 +208,52 @@ namespace SchoolWebApp.ViewComponents
                 }
                 ViewBag.AcademicYears = academicYears ?? new List<AcademicYears>();
             }
+            else if (viewname == "Courses")
+            {
+                var courses = new List<Course>();
+
+                if (!string.IsNullOrEmpty(FilterIds))
+                {
+                    var filterIds = FilterIds.Split(",").Select(int.Parse).ToArray();
+
+                    courses = await _context.Courses
+                        .Where(c => filterIds.Contains(c.CourseID))
+                        .OrderBy(c => c.CourseName)
+                        .ToListAsync();
+                }
+                else
+                {
+                    courses = await _context.Courses
+                        .OrderBy(c => c.CourseName)
+                        .ToListAsync();
+                }
+
+                ViewBag.Courses = courses ?? new List<Course>();
+            }
+            else if (viewname == "CourseYears")
+            {
+                var courseYears = new List<CourseYear>();
+
+                if (!string.IsNullOrEmpty(FilterIds))
+                {
+                    var filterIds = FilterIds.Split(",").Select(int.Parse).ToArray();
+
+                    courseYears = await _context.CourseYears
+                        .Where(cy => filterIds.Contains(cy.CourseYearID))
+                        .OrderBy(cy => cy.CourseYearName)
+                        .ToListAsync();
+                }
+                else
+                {
+                    courseYears = await _context.CourseYears
+                        .OrderBy(cy => cy.CourseYearName)
+                        .ToListAsync();
+                }
+
+                ViewBag.CourseYears = courseYears ?? new List<CourseYear>();
+            }
+
+
             ViewBag.selectedIDs = SelectedIDs;
 
             return View(viewname);

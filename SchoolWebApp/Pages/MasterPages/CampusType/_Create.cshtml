@@ -1,0 +1,54 @@
+﻿@* 
+@model SchoolWebApp.Models.CampusType
+<!-- Modal Form -->
+<div class="modal fade" id="addCampusTypeModal" tabindex="-1" aria-labelledby="addCampusTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="addCampusTypeForm" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCampusTypeModalLabel">Add Campus Type Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="campusTypeName" class="form-label text-primary">Campus Type Name</label>
+                        <input type="text" id="campusTypeName" name="campusTypeName" class="form-control" maxlength="50" required placeholder="Enter Campus Type Name" />
+                        <div class="invalid-feedback" id="campusTypeNameValidationMessage"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> *@
+
+@model SchoolWebApp.Models.CampusType
+
+<div class="modal fade" id="addCampusTypeModal" tabindex="-1" aria-labelledby="addCampusTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="addCampusTypeForm" method="post" asp-page-handler="CreateCampusType">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCampusTypeModalLabel">Add Campus Type Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="campusTypeName" class="form-label text-primary">Campus Type Name</label>
+                        <input type="text" id="campusTypeName" class="form-control" maxlength="50" required placeholder="Enter Campus Type Name" asp-for="CampusTypeName" />
+                        <div class="invalid-feedback" id="campusTypeNameValidationMessage"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
