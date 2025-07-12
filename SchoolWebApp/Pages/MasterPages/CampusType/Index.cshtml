@@ -35,84 +35,6 @@
     <script src="~/code_js/managecampustype.js"></script>
 }
  
-@* <div class="card">
-    <div class="card-datatable table-responsive">
-        <div class="container-fluid">
-            <h3 class="mb-4">Manage Campus Types</h3>
-            <table id="CampusTypeTable" class="table">
-                <thead>
-                    <tr>
-                        <th>S.No</th>
-                        <th>Campus Type Name</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model?.CampusTypes != null && Model.CampusTypes.Any())
-                    {
-                        var serial = 0;
-                        foreach (var item in Model.CampusTypes)
-                        {
-                            serial++;
-                            var tcc = "campustype-name-full-" + item.CampusTypeID;
-                            <tr data-id="@item.CampusTypeID">
-                                <td>@serial</td>
-                                <td class="@tcc">@item.CampusTypeName</td>
-                                <td class="text-nowrap">
-                                    <div class="col-md-12 d-flex gap-1">
-                                        <!-- Edit Button -->
-                                        <button type="button"
-                                                class="btn btn-sm btn-icon edit-campustype-btn"
-                                                onclick="campusTypeEdit(@item.CampusTypeID)"
-                                                data-campustype-id="@item.CampusTypeID">
-                                            <i class="ri-edit-box-line ri-20px"></i>
-                                        </button>
-                                       
-                                        <!-- Delete Button -->
-                                         <form method="post" id="deleteCampusTypeForm-@item.CampusTypeID" class="d-inline">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@item.CampusTypeID" /> 
-                                            <button type="button"
-                                                    class="btn btn-sm btn-icon"
-                                                    onclick="showDeleteConfirmation('@item.CampusTypeID')">
-                                                <i class="ri-delete-bin-7-line ri-20px"></i>
-                                            </button>
-                                        </form> 
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="3" class="text-center">No Campus Types found.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-       
-        
-    </div>
-</div>
-<!-- Modal container -->
-<div class="modal fade" id="editCampusTypeModal" tabindex="-1" aria-labelledby="editCampusTypeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editCampusTypeModalLabel">Edit Campus Type Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="editCampusTypeFormContainer">
-                <!-- Loaded dynamically via AJAX -->
-            </div>
-        </div>
-    </div>
-</div>
-
-@await Html.PartialAsync("~/Pages/MasterPages/CampusType/_Create.cshtml", Model.NewCampusType)  *@ 
-
 
 <div class="card">
     <div class="card-datatable table-responsive">
@@ -167,16 +89,14 @@
     </div>
 </div>
 
-<div class="modal fade" id="editCampusTypeModal" tabindex="-1" aria-labelledby="editCampusTypeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editCampusTypeModalLabel">Edit Campus Type Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="editCampusTypeFormContainer">
-                <!-- Loaded dynamically via AJAX -->
-            </div>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="editCampusTypeOffcanvas" aria-labelledby="editCampusTypeOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 id="editCampusTypeOffcanvasLabel" class="offcanvas-title">Edit Campus Type</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="editCampusTypeFormContainer">
+            <!-- Loaded dynamically via AJAX -->
         </div>
     </div>
 </div>

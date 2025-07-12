@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -55,28 +55,14 @@ namespace SchoolWebApp.Pages.Course
                     .ThenInclude(c => c.Campus)
                 .Include(cy => cy.Course)
                     .ThenInclude(c => c.Board)
-                .Where(cy => (institutionId == 0 || cy.Course.InstitutionID == institutionId) &&
-                             (campusId == 0 || cy.Course.CampusID == campusId) &&
-                             (boardId == 0 || cy.Course.BoardID == boardId))
-                .ToListAsync();
+                .Where(cy => ( cy.Course.InstitutionID == institutionId) &&
+                             ( cy.Course.CampusID == campusId) &&
+                             ( cy.Course.BoardID == boardId))
+                             .ToListAsync();
 
             return Partial("_CourseTable", courseYears);
         }
 
-        //public async Task<IActionResult> OnGetFilterCoursesAsync(int institutionId, int campusId, int boardId)
-        //{
-        //    var courses = await _context.Courses
-        //        .Include(c => c.Institution)
-        //        .Include(c => c.Campus)
-        //        .Include(c => c.Board)
-        //        .Include(c => c.CourseYears)
-        //        .Where(c => (institutionId == 0 || c.InstitutionID == institutionId) &&
-        //                    (campusId == 0 || c.CampusID == campusId) &&
-        //                    (boardId == 0 || c.BoardID == boardId))
-        //        .ToListAsync();
-
-        //    return Partial("_CourseTable", courses);
-        //}
         // Load Campuses Dropdown by Selecting Institution
         public async Task<IActionResult> OnGetLoadCampusesByInstitutionAsync(int institutionId)
         {
@@ -475,10 +461,10 @@ namespace SchoolWebApp.Pages.Course
         }
 
 
-     
+
 
         // Load Institutions by Campus Type
-        public async Task<IActionResult> OnGetLoadInstitutionsByCampusTypeAsync(int campusTypeId)
+        public async Task<IActionResult> OnGetLoadInstitutionsByCampusTypeAsync(string campusTypeIds)
         {
             try
             {
@@ -496,27 +482,31 @@ namespace SchoolWebApp.Pages.Course
                 ((IViewContextAware)_viewComponentHelper).Contextualize(viewContext);
 
                 string filterIds = "";
-                if (campusTypeId > 0)
+                List<int> selectedInstitutionIds = new();
+                if (!string.IsNullOrEmpty(campusTypeIds))
                 {
-                    // Filter institutions based on Campuses with the selected CampusTypeID
-                    var institutionIds = await _context.Campuses
-                        .Where(c => c.CampusTypeID == campusTypeId) // Filter for Intermediate (CampusTypeID = 1)
+                    var campusTypeIdList = campusTypeIds
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(int.Parse)
+                        .ToList();
+
+                    selectedInstitutionIds = await _context.Campuses
+                        .Where(c => campusTypeIdList.Contains(c.CampusTypeID))
                         .Select(c => c.InstitutionID)
                         .Distinct()
+               
                         .ToListAsync();
 
-                    if (institutionIds == null || !institutionIds.Any())
-                    {
+                    if (!selectedInstitutionIds.Any())
                         return Content("<option value=''>No Institutions Available</option>", "text/html");
-                    }
-                    filterIds = string.Join(",", institutionIds);
+
+                    filterIds = string.Join(",", selectedInstitutionIds);
                 }
 
                 var html = await _viewComponentHelper.InvokeAsync("Master", new { viewname = "Institutions", FilterIds = filterIds });
 
                 using var writer = new StringWriter();
                 html.WriteTo(writer, HtmlEncoder.Default);
-
                 return Content(writer.ToString(), "text/html");
             }
             catch (Exception ex)
@@ -524,7 +514,8 @@ namespace SchoolWebApp.Pages.Course
                 return StatusCode(500, "Failed to load institutions: " + ex.Message);
             }
         }
-       
+
+
 
     }
 }

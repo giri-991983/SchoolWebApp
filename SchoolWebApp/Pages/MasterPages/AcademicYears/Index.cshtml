@@ -90,18 +90,15 @@
     </div>
 </div>
 
-<div class="modal fade" id="editAcademicYearModal" tabindex="-1" aria-labelledby="editAcademicYearModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editAcademicYearModalLabel">Edit Academic Year Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="editAcademicYearFormContainer">
-                <!-- Loaded dynamically via AJAX -->
-            </div>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="editAcademicYearOffcanvas" aria-labelledby="editAcademicYearOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 id="editAcademicYearOffcanvasLabel" class="offcanvas-title">Edit Academic Year</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="editAcademicYearFormContainer">
+            <!-- Loaded dynamically via AJAX -->
         </div>
     </div>
 </div>
-
-@await Html.PartialAsync("~/Pages/MasterPages/AcademicYears/_Create.cshtml", Model.AcademicYear)
+@await Html.PartialAsync("~/Pages/MasterPages/AcademicYears/_Create.cshtml")

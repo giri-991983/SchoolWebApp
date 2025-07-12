@@ -24,7 +24,7 @@
     @* ! Full version menu-items *@
     <ul class="menu-inner py-1">
 
-@* 
+        @* 
         <!-- Institution List -->
         <li class='menu-item@(currentPage == "/Institution/Index" ? " active" : "")'>
             <a asp-page="/Institution/Index" class="menu-link">
@@ -98,7 +98,7 @@
 
                 <li class='menu-item@(currentPage == "/Class/Index" ? " active" : "")'>
                     <a asp-page="/Class/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-book-2-line"></i> 
+                        <i class="menu-icon tf-icons ri-book-2-line"></i>
                         <div data-i18n="Manage Class"> Manage Classes</div>
                     </a>
                 </li>
@@ -139,34 +139,46 @@
             </ul>
         </li>
         <li class='menu-item@(currentPage.StartsWith("/MasterPages/") ? " active open" : "")'>
-      <a href="javascript:void(0);" class="menu-link menu-toggle">
-          <i class="menu-icon tf-icons ri-book-2-line"></i>
-          <div data-i18n="MasterPages"> MasterPages</div>
-        
-      </a>
-      <ul class="menu-sub">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ri-book-2-line"></i>
+                <div data-i18n="MasterPages"> MasterPages</div>
 
-          <li class='menu-item@((currentPage == "/MasterPages/CampusType" || currentPage == "/MasterPages/CampusType/Index") ? " active" : "")'>
-              <a asp-page="/MasterPages/CampusType/Index" class="menu-link">
-                  <i class="menu-icon tf-icons ri-book-2-line"></i>
-                  <div data-i18n="Manage CampusType"> Manage CampusType</div>
-              </a>
-          </li>
-          <li class='menu-item@((currentPage == "/MasterPages/AcademicYears" || currentPage == "/MasterPages/AcademicYears/Index") ? " active" : "")'>
-              <a asp-page="/MasterPages/AcademicYears/Index" class="menu-link">
-                  <i class="menu-icon tf-icons ri-door-open-line"></i>
-                  <div data-i18n="Manage AcademicYears"> Manage AcademicYear</div>
-              </a>
-          </li>
-          <li class='menu-item@((currentPage == "/MasterPages/Boards" || currentPage == "/MasterPages/Boards/Index") ? " active" : "")'>
-              <a asp-page="/MasterPages/Boards/Index" class="menu-link">
-                  <i class="menu-icon tf-icons ri-door-open-line"></i>
-                  <div data-i18n="Manage Boards"> Manage Boards</div>
-              </a>
-          </li>
+            </a>
+            <ul class="menu-sub">
 
+                <li class='menu-item@(currentPage == "/MasterPages/CampusType/Index" ? " active" : "")'>
+                    <a asp-page="/MasterPages/CampusType/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-building-line"></i>
+                        <div data-i18n="Manage CampusType"> Manage CampusType</div>
+                    </a>
+                </li>
+                <li class='menu-item@( currentPage == "/MasterPages/AcademicYears/Index" ? " active" : "")'>
+                    <a asp-page="/MasterPages/AcademicYears/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-calendar-line"></i>
+                        <div data-i18n="Manage AcademicYears"> Manage AcademicYear</div>
+                    </a>
+                </li>
+                <li class='menu-item@( currentPage == "/MasterPages/Boards/Index" ? " active" : "")'>
+                    <a asp-page="/MasterPages/Boards/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-organization-chart"></i>
+                        <div data-i18n="Manage Boards"> Manage Boards</div>
+                    </a>
+                </li>
+                <li class='menu-item@( currentPage == "/MasterPages/Country/Index" ? " active" : "")'>
+                    <a asp-page="/MasterPages/Country/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-global-line"></i>
+                        <div data-i18n="Manage Country"> Manage Country</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/MasterPages/State/Index" ? " active" : "")'>
+                    <a asp-page="/MasterPages/State/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-map-pin-line"></i>
+                        <div data-i18n="Manage State"> Manage State</div>
+                    </a>
+                </li>
 
-    </ul>
+            </ul>
+        </li>
 
 </aside>
 <!-- / Menu -->

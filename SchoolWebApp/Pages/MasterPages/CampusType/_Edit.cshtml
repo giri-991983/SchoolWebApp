@@ -1,33 +1,15 @@
-﻿@* 
- @model SchoolWebApp.Models.CampusType
-<form id="editCampusTypeForm" method="post" enctype="multipart/form-data" data-id="@Model.CampusTypeID">
-    @Html.AntiForgeryToken()
-    <input type="hidden" name="CampusTypeId" id="editCampusTypeId" value="@Model.CampusTypeID" />
-    <div class="modal-body">
-        <div class="mb-3">
-            <label for="editCampusTypeName" class="form-label fw-medium text-primary">Campus Type Name</label>
-            <input type="text" id="editCampusTypeName" name="campusTypeName" class="form-control" value="@Model.CampusTypeName" required maxlength="50" />
-            <div id="editcampusTypeNameValidationMessage" class="invalid-feedback d-block"></div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="submit" class="btn btn-success" id="saveCampusTypeBtn">Save</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-    </div>
-</form> *@ 
-@model SchoolWebApp.Pages.MasterPages.CampusType.IndexModel
-<form id="editCampusTypeForm" method="post" asp-page-handler="EditCampusType" data-id="@Model.CampusType.CampusTypeID">
+﻿@model SchoolWebApp.Pages.MasterPages.CampusType.IndexModel
+<form id="editCampusTypeForm" method="post">
     @Html.AntiForgeryToken()
     <input type="hidden" name="CampusType.CampusTypeID" value="@Model.CampusType.CampusTypeID" />
-    <div class="modal-body">
-        <div class="mb-3">
-            <label for="editCampusTypeName" class="form-label fw-medium text-primary">Campus Type Name</label>
-            <input type="text" id="editCampusTypeName" name="CampusType.CampusTypeName" class="form-control" value="@Model.CampusType.CampusTypeName" required maxlength="50" />
-            <div id="editcampusTypeNameValidationMessage" class="invalid-feedback d-block"></div>
-        </div>
+    <div class="form-floating form-floating-outline mb-5">
+        <input type="text" id="editCampusTypeName" name="CampusType.CampusTypeName" class="form-control"
+               value="@Model.CampusType.CampusTypeName" required maxlength="50" placeholder="Campus Type Name" />
+        <label for="editCampusTypeName">Campus Type Name</label>
+        <span id="editcampusTypeNameValidationMessage" class="text-danger"></span>
     </div>
-    <div class="modal-footer">
-        <button type="submit" class="btn btn-success" id="saveCampusTypeBtn">Save</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary me-2">Save</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
     </div>
 </form>

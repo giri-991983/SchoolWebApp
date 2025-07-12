@@ -14,8 +14,7 @@
 
                 <div class="modal-body">
                     <!-- Hidden Fields -->
-                    <input asp-for="CourseBatch.CreatedDate" type="hidden" id="CreatedDate" />
-                    <input asp-for="CourseBatch.Status" type="hidden" id="Status" />
+                   
                     <!-- Course Dropdown -->
                     <div class="form-floating form-floating-outline mb-5">
                         <select asp-for="CourseBatch.CourseID" class="form-select" id="ModalCourseID"  onchange="fetchCourseYears(this.value)"  required>
@@ -24,14 +23,12 @@
                         </select>
                         <label for="CourseID">Select Course</label>
                     </div>
-
-                    <!-- Course Year Dropdown -->
-                    <div class="form-floating form-floating-outline mb-5">
-                        <select asp-for="CourseBatch.CourseYearID" class="form-select" id="CourseYearID" required>
-                            <option value="">Select Course Year</option>
-                        </select>
-                        <label for="CourseYearID">Select Course Year</label>
+                    <!-- Course Year Display -->
+                    <div class="mb-3">
+                        <label class="form-label fs-6 px-1 py-2 mb-1">Course Duration:</label>
+                        <div id="DisplayYear" class="form-control-plaintext text-dark px-1 py-2"></div>
                     </div>
+
 
                     <!-- Academic Year Dropdown -->
                     <div class="form-floating form-floating-outline mb-5">
@@ -39,7 +36,7 @@
                             @await Component.InvokeAsync("Master", new { viewname = "AcademicYears" })
 
                         </select>
-                        <label for="AcademicYearID">Select Academic Year</label>
+                        <label for="AcademicYearID">Starting Academic Year</label>
                     </div>
 
                     <!-- Batch Name -->

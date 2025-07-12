@@ -142,7 +142,7 @@
                     }
 
                     $('#addCourseBatchForm')[0].reset();
-                 
+                    $('#DisplayYear').text(' ');
                     $('#CourseYearID').html('<option value="">Select Course Year</option>');
                     $('#courseBatchValidationMessage').text('').hide();
 
@@ -240,34 +240,34 @@ function loadCourses(institutionId, campusId, targetDropdownId = 'CourseID') {
         }
     });
 }
-// Fetch Course Years based on CourseID
 function fetchCourseYears(courseId) {
     if (!courseId) {
-        $('#CourseYearID').html('<option value="">Select Course Year</option>');
+        $('#DisplayYear').val('');
+        $('#CourseYearID').val('');
         return;
     }
 
     $.ajax({
-        url: '/CourseBatch/Index?handler=CourseYears',
+        url: '/CourseBatch/Index?handler=CourseNoOfYears',
         type: 'GET',
         data: { courseId: courseId },
-        beforeSend: function () {
-            $('#CourseYearID').html('<option value="">Loading...</option>');
-        },
         success: function (response) {
-            $('#CourseYearID').html(response);
+            if (response.noOfYears > 0 && response.noOfSemesters > 0) {
+                $('#DisplayYear').text(`${response.noOfYears} Year(s) / ${response.noOfSemesters} Semester(s)`);
+            } else {
+                $('#DisplayYear').text('Structure not available');
+            }
+          
         },
         error: function (xhr, status, error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Failed to load course years: ' + (xhr.responseText || error),
-                confirmButtonText: 'OK'
-            });
-            $('#CourseYearID').html('<option value="">Select Course Year</option>');
+            console.error("Error loading NoOfYears:", error);
+            $('#DisplayYear').val('');
+            $('#CourseYearID').val('');
         }
     });
 }
+
+
 $(document).ready(function () {
 
     const courseBatchFilterForm = document.getElementById('CourseBatchFilterForm');
@@ -374,11 +374,7 @@ if (addcourseBatchForm) {
                     notEmpty: { message: 'Please select a course.' }
                 }
             },
-            'CourseBatch.CourseYearID': {
-                validators: {
-                    notEmpty: { message: 'Please select a course year.' }
-                }
-            },
+           
             'CourseBatch.AcademicYearID': {
                 validators: {
                     notEmpty: { message: 'Please select an academic year.' }
@@ -419,7 +415,7 @@ function submitAddCourseBatchForm(form) {
     const formData = new FormData(form);
 
     $.ajax({
-        url: '/CourseBatch/Index?handler=AddCourseBatch',
+        url: '/CourseBatch/Index?handler=CreateCourseBatch',
         type: 'POST',
         data: formData,
         headers: {
@@ -566,6 +562,141 @@ function deleteCourseBatchData(courseBatchId) {
                 icon: 'error',
                 title: 'Deletion Failed',
                 text: 'Failed to delete the Course Batch: ' + (xhr.responseText || error),
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+
+window.courseBatchEdit = function (courseBatchId) {
+    $.ajax({
+        url: '/CourseBatch/Index?handler=EditCourseBatchForm',
+        type: 'GET',
+        data: { courseBatchId: courseBatchId },
+        headers: {
+            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+        },
+        beforeSend: function () {
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Fetching course batch details...',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+        },
+        success: function (response) {
+            Swal.close();
+
+            if (typeof response === 'string') {
+                $('#editCourseBatchFormContainer').html(response);
+                $('#editCourseBatchModal').modal('show');
+             
+                const editForm = document.getElementById('editCourseBatchForm');
+                if (editForm) {
+                    FormValidation.formValidation(editForm, {
+                        fields: {
+                            'BatchName': {
+                                validators: {
+                                    notEmpty: { message: 'Batch name is required' },
+                                    stringLength: { max: 100, message: 'Maximum 100 characters allowed' }
+                                }
+                            }
+                        },
+                        plugins: {
+                            trigger: new FormValidation.plugins.Trigger(),
+                            bootstrap5: new FormValidation.plugins.Bootstrap5({
+                                eleValidClass: 'is-valid',
+                                rowSelector: '.mb-5'
+                            }),
+                            submitButton: new FormValidation.plugins.SubmitButton({
+                                button: '[type="submit"]'
+                            }),
+                            autoFocus: new FormValidation.plugins.AutoFocus()
+                        }
+                    }).on('core.form.valid', function () {
+                        updateCourseBatchData(editForm);
+                    }).on('core.form.invalid', function () {
+                        return;
+                    });
+                }
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message || 'Failed to load the edit form.'
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load the edit form. Please try again.'
+            });
+        }
+    });
+}
+function updateCourseBatchData(form) {
+    var formData = new FormData(form);
+
+    $.ajax({
+        url: '/CourseBatch/Index?handler=EditCourseBatch',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+        },
+        beforeSend: function () {
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Updating course batch...',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+        },
+        success: function (response) {
+            Swal.close();
+
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: response.message || 'Course batch updated successfully!',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    $('#editCourseBatchModal').modal('hide');
+                    filterCourseBatches(document.getElementById('CourseBatchFilterForm'));
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: response.message || 'Failed to add course batch.',
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        confirmButton: 'btn btn-primary waves-effect waves-light me-3',
+                        cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+                    }
+                });
+            }
+        },
+           
+        error: function (xhr, status, error) {
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Submission Failed',
+                text: 'Failed to update the course batch: ' + (xhr.responseText || error),
                 confirmButtonText: 'OK'
             });
         }

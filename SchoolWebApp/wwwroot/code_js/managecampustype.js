@@ -18,7 +18,7 @@ $(document).ready(function () {
                 trigger: new FormValidation.plugins.Trigger(),
                 bootstrap5: new FormValidation.plugins.Bootstrap5({
                     eleValidClass: 'is-valid',
-                    rowSelector: '.mb-3'
+                    rowSelector: '.form-floating'
                 }),
                 submitButton: new FormValidation.plugins.SubmitButton(),
                 autoFocus: new FormValidation.plugins.AutoFocus()
@@ -26,6 +26,8 @@ $(document).ready(function () {
         })
             .on('core.form.valid', function () {
                 CreateNewCampusTypeData(createCampusTypeForm);
+            }).on('core.form.invalid', function () {
+                return;
             });
     }
 });
@@ -57,10 +59,13 @@ function initializeDataTable() {
             {
                 text: '<i class="ri-add-line ri-16px me-0 me-sm-1_5"></i><span class="d-none d-sm-inline-block">Add Campus Type</span>',
                 className: 'add-new btn btn-primary waves-effect waves-light',
+                attr: {
+                    'data-bs-toggle': 'offcanvas',
+                    'data-bs-target': '#createCampusTypeOffcanvas'
+                },
+
                 action: function () {
-                    var modal = document.getElementById('addCampusTypeModal');
-                    var bsModal = new bootstrap.Modal(modal);
-                    bsModal.show();
+                  
                     $('#addCampusTypeForm')[0].reset();
                     $('#campusTypeNameValidationMessage').text('').hide();
                     $('#campusTypeName').removeClass('is-invalid');
@@ -106,8 +111,7 @@ function CreateNewCampusTypeData(form) {
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    $('#addCampusTypeModal').modal('hide');
-                    window.location.reload();
+                window.location.reload();
                 });
             } else {
                 Swal.fire({
@@ -152,7 +156,7 @@ function campusTypeEdit(campusTypeId) {
             Swal.close();
             if (typeof response === 'string') {
                 $('#editCampusTypeFormContainer').html(response);
-                $('#editCampusTypeModal').modal('show');
+              
 
                 const editCampusTypeForm = document.getElementById('editCampusTypeForm');
                 if (editCampusTypeForm) {
@@ -169,7 +173,7 @@ function campusTypeEdit(campusTypeId) {
                             trigger: new FormValidation.plugins.Trigger(),
                             bootstrap5: new FormValidation.plugins.Bootstrap5({
                                 eleValidClass: 'is-valid',
-                                rowSelector: '.mb-3'
+                                rowSelector: '.form-floating'
                             }),
                             submitButton: new FormValidation.plugins.SubmitButton(),
                             autoFocus: new FormValidation.plugins.AutoFocus()
@@ -179,6 +183,7 @@ function campusTypeEdit(campusTypeId) {
                             UpdateCampusTypeData(editCampusTypeForm, campusTypeId);
                         });
                 }
+                $('#editCampusTypeOffcanvas').offcanvas('show');
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -227,7 +232,8 @@ function UpdateCampusTypeData(form, campusTypeId) {
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    $('#editCampusTypeModal').modal('hide');
+                    $('#editCampusTypeOffcanvas').modal('hide');
+
                     window.location.reload();
                 });
             } else {

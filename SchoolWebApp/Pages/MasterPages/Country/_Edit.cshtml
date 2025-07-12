@@ -1,0 +1,26 @@
+﻿@model SchoolWebApp.Models.Country
+
+<form id="editCountryForm" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="Country.CountryID" value="@Model.CountryID" />
+
+    <div class="form-floating form-floating-outline mb-4">
+        <input type="text" class="form-control" id="EditCountryName" name="Country.CountryName" value="@Model.CountryName" placeholder="Country Name" />
+        <label for="EditCountryName">Country Name</label>
+    </div>
+
+    <div class="form-floating form-floating-outline mb-4">
+        <input type="text" class="form-control" id="EditCurrencyCode" name="Country.CurrencyCode" maxlength="3" value="@Model.CurrencyCode" placeholder="Currency Code" />
+        <label for="EditCurrencyCode">Currency Code</label>
+    </div>
+
+    <div class="form-floating form-floating-outline mb-4">
+        <input type="number" class="form-control" id="EditCurrencyDecimal" name="Country.CurrencyDecimal" value="@Model.CurrencyDecimal" min="0" max="4" placeholder="Currency Decimal" />
+        <label for="EditCurrencyDecimal">Currency Decimal</label>
+    </div>
+
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary me-2">Save</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+    </div>
+</form>

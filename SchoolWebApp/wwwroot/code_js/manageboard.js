@@ -45,44 +45,18 @@
                 text: '<i class="ri-add-line ri-16px me-0 me-sm-1_5"></i><span class="d-none d-sm-inline-block">Add Board</span>',
                 className: 'add-new btn btn-primary waves-effect waves-light',
                 attr: {
-                    'data-bs-toggle': 'modal',
-                    'data-bs-target': '#addBoardModal'
-                },
+                    'data-bs-toggle': 'offcanvas',
+                    'data-bs-target': '#createBoardOffcanvas'
+                } ,
+
                 action: function () {
                     $('#addBoardForm')[0].reset();
                     $('#boardNameValidationMessage').text('').hide();
-                    $('#campusTypeValidationMessage').text('').hide();                   
-                    //const campusTypeId = $('#CampusTypeID').val();
-                    //if (campusTypeId && campusTypeId > 0) {
-                    //    $.ajax({
-                    //        url: '/MasterPages/Boards/Index?handler=CampusTypeName',
-                    //        type: 'GET',
-                    //        data: { campusTypeId: campusTypeId },
-                    //        beforeSend: function () {
-                    //            $('#ModalCampusTypeName').text('Loading...');
-                    //        },
-                    //        success: function (response) {
-                    //            if (response.success) {
-                    //                $('#ModalCampusTypeName').text(response.campusTypeName);
-                    //                $('#ModalCampusTypeID').val(campusTypeId);
-                    //            } else {
-                    //                $('#ModalCampusTypeName').text('Unknown Campus Type');
-                    //                $('#ModalCampusTypeID').val('');
-                    //            }
-                    //        },
-                    //        error: function (xhr, status, error) {
-                    //            $('#ModalCampusTypeName').text('Error loading Campus Type');
-                    //            $('#ModalCampusTypeID').val('');
-                    //            console.error('Failed to load Campus Type name: ' + (xhr.responseText || error));
-                    //        }
-                    //    });
-                    //} else {
-                    //    $('#ModalCampusTypeName').text('Please select a Campus Type first');
-                    //    $('#ModalCampusTypeID').val('');
-                    //}
-                    $('#addBoardModal').modal('show');
+                    $('#campusTypeValidationMessage').text('').hide();
+
                 }
-            }
+                }
+            
         ],
         responsive: true
     });
@@ -110,7 +84,7 @@ $(document).ready(function () {
                 trigger: new FormValidation.plugins.Trigger(),
                 bootstrap5: new FormValidation.plugins.Bootstrap5({
                     eleValidClass: 'is-valid',
-                    eleInvalidClass: 'is-invalid',
+                
                     rowSelector: '.form-floating'
                 }),
                 submitButton: new FormValidation.plugins.SubmitButton(),
@@ -176,7 +150,7 @@ if (addBoardForm) {
             trigger: new FormValidation.plugins.Trigger(),
             bootstrap5: new FormValidation.plugins.Bootstrap5({
                 eleValidClass: 'is-valid',
-                rowSelector: '.mb-3'
+                rowSelector: '.form-floating'
             }),
             submitButton: new FormValidation.plugins.SubmitButton(),
             autoFocus: new FormValidation.plugins.AutoFocus()
@@ -211,14 +185,22 @@ function submitAddBoardForm(form) {
         success: function (response) {
             Swal.close();
             if (response.success) {
-                $('#addBoardModal').modal('hide');
-                filterBoards(document.getElementById('filterForm'));
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
                     text: response.message || 'Board added successfully!',
                     timer: 1500,
                     showConfirmButton: false
+                }).then(() => {
+
+                    const offcanvasEl = document.getElementById('createBoardOffcanvas');
+                    const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+                    if (offcanvas) {
+                        offcanvas.hide();
+                    }
+
+                    filterBoards(document.getElementById('filterForm'));
                 });
             } else {
                 Swal.fire({
@@ -261,37 +243,10 @@ function boardEdit(boardId) {
             Swal.close();
             if (typeof response === 'string') {
                 $('#editBoardFormContainer').html(response);
-                $('#editBoardModal').modal('show');
+               
                 const editBoardForm = document.getElementById('editBoardForm');
                 if (editBoardForm) {
-                    const campusTypeId = $('#editCampusTypeID').val() || $('#CampusTypeID').val();
-                    if (campusTypeId && campusTypeId > 0) {
-                        $.ajax({
-                            url: '/MasterPages/Boards/Index?handler=CampusTypeName',
-                            type: 'GET',
-                            data: { campusTypeId: campusTypeId },
-                            beforeSend: function () {
-                                $('#editCampusTypeName').text('Loading...');
-                            },
-                            success: function (res) {
-                                if (res.success) {
-                                    $('#editCampusTypeName').text(res.campusTypeName);
-                                    $('#editCampusTypeID').val(campusTypeId);
-                                } else {
-                                    $('#editCampusTypeName').text('Unknown Campus Type');
-                                    $('#editCampusTypeID').val('');
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                $('#editCampusTypeName').text('Error loading Campus Type');
-                                $('#editCampusTypeID').val('');
-                                console.error('Failed to load Campus Type name: ' + (xhr.responseText || error));
-                            }
-                        });
-                    } else {
-                        $('#editCampusTypeName').text('Please select a Campus Type first');
-                        $('#editCampusTypeID').val('');
-                    }
+                   
                     FormValidation.formValidation(editBoardForm, {
                         fields: {
                             boardName: {
@@ -299,31 +254,27 @@ function boardEdit(boardId) {
                                     notEmpty: { message: 'Board Name is required.' },
                                     stringLength: { max: 200, message: 'Board Name cannot exceed 200 characters.' }
                                 }
-                            },
-                            campusTypeId: {
-                                validators: {
-                                    notEmpty: { message: 'Please select a Campus Type in the filter form.' }
-                                }
                             }
+                          
                         },
                         plugins: {
                             trigger: new FormValidation.plugins.Trigger(),
                             bootstrap5: new FormValidation.plugins.Bootstrap5({
                                 eleValidClass: 'is-valid',
-                                rowSelector: '.mb-3'
+                                rowSelector: '.form-floating'
                             }),
                             submitButton: new FormValidation.plugins.SubmitButton(),
                             autoFocus: new FormValidation.plugins.AutoFocus()
                         }
                     })
                         .on('core.form.valid', function () {
-                            UpdateBoardData(editBoardForm, $('#editBoardId').val());
+                            UpdateBoardData(editBoardForm);
                         })
                         .on('core.form.invalid', function () {
-                            const firstInvalidField = editBoardForm.querySelector('.is-invalid');
-                            if (firstInvalidField) firstInvalidField.focus();
+                            return;
                         });
                 }
+                $('#editBoardOffcanvas').offcanvas('show');
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -344,7 +295,7 @@ function boardEdit(boardId) {
     });
 }
 
-function UpdateBoardData(form, boardId) {
+function UpdateBoardData(form) {
     const formData = new FormData(form);
     $.ajax({
         url: '/MasterPages/Boards/Index?handler=EditBoard',
@@ -372,7 +323,7 @@ function UpdateBoardData(form, boardId) {
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    $('#editBoardModal').modal('hide');
+                    $('#editBoardOffcanvas').modal('hide');
                     filterBoards(document.getElementById('filterForm'));
                 });
             } else {

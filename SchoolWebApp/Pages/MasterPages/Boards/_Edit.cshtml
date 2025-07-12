@@ -1,21 +1,29 @@
 ﻿@model SchoolWebApp.Models.Board
-<form id="editBoardForm" method="post" enctype="multipart/form-data" data-id="@Model.BoardID">
+<form id="editBoardForm" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
-    <div class="modal-body">
+   
         <input type="hidden" name="boardId" id="editBoardId" value="@Model.BoardID" />
-        <div class="mb-3">
-            <label class="form-label fw-medium text-primary">Campus Type</label>
-            <p id="editCampusTypeName" class="form-control-static"></p>
+    <div class="form-floating form-floating-outline mb-4">
+     
+   
             <input type="hidden" id="editCampusTypeID" name="campusTypeId" value="@Model.CampusTypeID" />
-        </div>
-        <div class="mb-3">
-            <label for="editBoardName" class="form-label fw-medium text-primary">Board Name</label>
-            <input type="text" id="editBoardName" name="boardName" class="form-control" value="@Model.BoardName" required />
-            <div id="boardNameValidationMessage" class="invalid-feedback d-block"></div>
-        </div>
+   </div>
+    <div class="form-floating form-floating-outline mb-4">
+        <input type="text"
+               class="form-control"
+               id="editBoardName"
+               name="boardName"
+               value="@Model.BoardName"
+               placeholder="Board Name"
+               required />
+        <label for="editBoardName">Board Name</label>
+        <div id="boardNameValidationMessage" class="invalid-feedback d-block"></div>
     </div>
-    <div class="modal-footer">
-        <button type="submit" class="btn btn-success" id="saveBoardBtn">Save</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary me-2">Save</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
     </div>
 </form>
+
+    

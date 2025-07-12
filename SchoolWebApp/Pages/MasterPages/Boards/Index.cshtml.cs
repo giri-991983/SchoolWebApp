@@ -239,7 +239,17 @@ namespace SchoolWebApp.Pages.MasterPages.Boards
 
             try
             {
-               
+                var boardExists = await _context.Boards
+                    .AnyAsync(b => b.BoardName.ToLower().Trim() == boardName.ToLower().Trim() && b.CampusTypeID == campusTypeId);
+
+                if (boardExists)
+                {
+                    return new JsonResult(new
+                    {
+                        success = false,
+                        message = $"A board with the name '{boardName}' already exists for this Campus Type."
+                    });
+                }
 
                 var newBoard = new Board
                 {
@@ -293,6 +303,21 @@ namespace SchoolWebApp.Pages.MasterPages.Boards
                 if (board == null)
                 {
                     return new JsonResult(new { success = false, message = "Board not found." });
+                }
+
+                // Prevent duplicate BoardName within same CampusTypeID, excluding current record
+                var boardExists = await _context.Boards
+                    .AnyAsync(b => b.BoardID != boardId &&
+                                   b.BoardName.ToLower().Trim() == boardName.ToLower().Trim() &&
+                                   b.CampusTypeID == campusTypeId);
+
+                if (boardExists)
+                {
+                    return new JsonResult(new
+                    {
+                        success = false,
+                        message = $"A board with the name '{boardName}' already exists for this Campus Type."
+                    });
                 }
 
                 board.BoardName = boardName.Trim();

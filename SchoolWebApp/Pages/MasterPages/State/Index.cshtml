@@ -1,0 +1,60 @@
+﻿@page
+@model SchoolWebApp.Pages.MasterPages.State.IndexModel
+@{
+    ViewData["Title"] = "States";
+}
+
+@section VendorStyles
+{
+    <link rel="stylesheet" href="~/vendor/libs/datatables-bs5/datatables.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.dist.css">
+    <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.dist.css" />
+    <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
+}
+
+@section VendorScripts
+{
+    <script src="~/vendor/libs/moment/moment.dist.js"></script>
+    <script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
+    <script src="~/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/popular.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/bootstrap5.dist.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/auto-focus.dist.js"></script>
+    <script src="~/vendor/libs/cleavejs/cleave.dist.js"></script>
+    <script src="~/vendor/libs/cleavejs/cleave-phone.dist.js"></script>
+}
+
+
+@section PageScripts
+{
+    <script src="~/code_js/managestate.js"></script>
+}
+
+<div class="card">
+    <div class="card-datatable table-responsive">
+        <div class="container-fluid">
+            <h3 class="mb-4">Manage States</h3>
+            <form id="filterForm">
+                <div class="row mb-4">
+                    <!-- Country Dropdown -->
+                    <div class="col-md-3">
+                        <div class="form-floating form-floating-outline">
+                            <select name="CountryID" id="CountryID" class="form-select">
+                                @await Component.InvokeAsync("Master", new { viewname = "Countries" })
+                            </select>
+                            <label for="CountryID">Country</label>
+                        </div>
+                    </div>
+                    <!-- Get Button -->
+                    <div class="col-md-2 d-flex align-items-center">
+                        <button type="submit" class="btn btn-primary w-75" >Get</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div id="FilterTable"></div>
+        <!-- Create State Partial Page -->
+        @await Html.PartialAsync("~/Pages/MasterPages/State/_Create.cshtml")
+    </div>
+</div>

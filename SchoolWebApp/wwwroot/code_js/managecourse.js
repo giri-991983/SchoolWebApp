@@ -202,7 +202,9 @@ $(document).ready(function () {
     $('#InstitutionID, #CampusID, #BoardID').on('change', function () {
         $('#CourseFilterTable').hide();
     });
-    loadInstitutionsByCampusType($('#CampusTypeID').val() );
+    // Should be "1,2"
+    loadInstitutionsByCampusType();
+
   
 });
 
@@ -706,20 +708,18 @@ function updateCourseData(form) {
     });
 }
 // DropDown Institutions by Campus Type
-function loadInstitutionsByCampusType(campusTypeId) {
+function loadInstitutionsByCampusType() {
     $('#InstitutionID').html('<option value="">Select Institution</option>').prop('disabled', true);
     $('#CampusID').html('<option value="">Select Campus</option>').prop('disabled', true);
     $('#BoardID').html('<option value="">Select Board</option>').prop('disabled', true);
   
-    if (!campusTypeId || campusTypeId <= 0) {
-        $('#InstitutionID').prop('disabled', false);
-        return;
-    }
+    let campusTypeIds = $('#CampusTypeID').val(); // e.g., "1,2"
+
 
     $.ajax({
-        url: '/Class/Index?handler=LoadInstitutionsByCampusType',
+        url: '/Course/Index?handler=LoadInstitutionsByCampusType',
         type: 'GET',
-        data: { campusTypeId: campusTypeId },
+        data: { campusTypeIds: campusTypeIds },
         success: function (response) {
             $('#InstitutionID').html(response).prop('disabled', false).trigger('change');
         },

@@ -1,0 +1,56 @@
+﻿@model IEnumerable<SchoolWebApp.Models.State>
+
+<table class="table" id="StateTable">
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>State Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            var sno = 0;
+            foreach (var state in Model)
+            {
+                sno++;
+                var stateClass = "state-name-" + state.StateID;
+                <tr data-id="@state.StateID">
+                    <td>@sno</td>
+                    <td class="@stateClass">@state.StateName</td>                  
+                    <td>
+                        <!-- Edit Button -->
+                        <button class="btn btn-sm btn-icon"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#editStateOffcanvas"
+                                onclick="editState(@state.StateID)"
+                                data-id="@state.StateID">
+                            <i class="ri-edit-box-line ri-20px"></i>
+                        </button>
+
+                        <!-- Delete Button -->
+                        <form method="post" id="deleteStateForm-@state.StateID" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@state.StateID" />
+                            <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteStateConfirmation('@state.StateID')">
+                                <i class="ri-delete-bin-7-line ri-20px"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<!-- Edit Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="editStateOffcanvas" aria-labelledby="editStateOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 id="editStateOffcanvasLabel" class="offcanvas-title">Edit State</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="editStateFormContainer"></div>
+    </div>
+</div>

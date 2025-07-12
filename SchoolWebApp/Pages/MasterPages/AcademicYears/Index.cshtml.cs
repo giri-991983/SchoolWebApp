@@ -57,7 +57,15 @@ namespace SchoolWebApp.Pages.MasterPages.AcademicYears
                     return new JsonResult(new { success = false, message = "Academic Year must be a range between 1900 and 2100 with start year less than end year." });
                 }
 
-              
+                // Check for duplicate
+                var duplicateExists = await _context.AcademicYears
+                    .AnyAsync(a => a.AcademicYear.ToLower().Trim() == AcademicYear.AcademicYear.ToLower().Trim());
+
+                if (duplicateExists)
+                {
+                    return new JsonResult(new { success = false, message = $"The academic year '{AcademicYear.AcademicYear}' already exists." });
+                }
+
                 _context.AcademicYears.Add(AcademicYear);
                 await _context.SaveChangesAsync();
 
@@ -125,7 +133,17 @@ namespace SchoolWebApp.Pages.MasterPages.AcademicYears
                     return new JsonResult(new { success = false, message = "Academic Year must be a range between 1900 and 2100 with start year less than end year." });
                 }
 
-                existingAcademicYear.AcademicYear = AcademicYear.AcademicYear;
+                //  Check for duplicate 
+                var duplicateExists = await _context.AcademicYears
+                    .AnyAsync(a => a.AcademicYearID != AcademicYear.AcademicYearID &&
+                                   a.AcademicYear.ToLower().Trim() == AcademicYear.AcademicYear.ToLower().Trim());
+
+                if (duplicateExists)
+                {
+                    return new JsonResult(new { success = false, message = $"Another academic year '{AcademicYear.AcademicYear}' already exists." });
+                }
+
+                existingAcademicYear.AcademicYear = AcademicYear.AcademicYear.Trim();
                 await _context.SaveChangesAsync();
 
                 return new JsonResult(new { success = true, message = "Academic Year updated successfully!" });

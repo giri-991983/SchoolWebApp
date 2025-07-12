@@ -6,6 +6,7 @@
             <th>S.No</th>
             <th>Batch Name</th>
             <th>Course Name</th>
+            <th>Course Year</th>
             <th>Academic Year</th>
             <th>Status</th>
             <th>Actions</th>
@@ -23,11 +24,31 @@
                     <td>@serial</td>
                     <td class="@tcc">@item.BatchName</td>
                     <td>@item.Course?.CourseName</td>
+                    <td>@item.CourseYear?.CourseYearName</td>
                     <td>@item.AcademicYears?.AcademicYear</td>
                     <td>@Html.Raw(PageHelpers.GetStatusBadge(item.Status))</td>
                     <td class="text-nowrap">
                         <div class="col-md-12">
-                         
+                            <!-- Edit Button -->
+                            <button type="button" class="btn btn-sm btn-icon edit-coursebatch-btn"
+                                    onclick="courseBatchEdit(@item.CourseBatchID)">
+                                <i class="ri-edit-box-line ri-20px"></i>
+                            </button>
+
+                            <!-- Modal (Only one shared modal, updated dynamically) -->
+                            <div class="modal fade" id="editCourseBatchModal" tabindex="-1" aria-labelledby="editCourseBatchModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editCourseBatchModalLabel">Edit Course Batch</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="editCourseBatchFormContainer">
+                                            <!-- Form will be loaded here via AJAX -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <!-- Delete Button -->
                             <form method="post" id="deleteCourseBatchForm-@item.CourseBatchID" class="d-inline">
                                 @Html.AntiForgeryToken()

@@ -1,26 +1,27 @@
-﻿@model SchoolWebApp.Models.AcademicYears
+﻿
+@model SchoolWebApp.Pages.MasterPages.AcademicYears.IndexModel
 
-<div class="modal fade" id="addAcademicYearModal" tabindex="-1" aria-labelledby="addAcademicYearModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form id="addAcademicYearForm" method="post" asp-page-handler="CreateAcademicYear">
-                @Html.AntiForgeryToken()
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addAcademicYearModalLabel">Add Academic Year Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="academicYear" class="form-label text-primary">Academic Year</label>
-                        <input type="text" id="academicYear" name="AcademicYear" class="form-control" required placeholder="Enter Academic Year (e.g., 2025-2026)" maxlength="50" asp-for="AcademicYear" />
-                        <div class="invalid-feedback" id="academicYearValidationMessage"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Save</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    
-            </form>
-        </div>
+
+<!-- Offcanvas Form -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="createAcademicYearOffcanvas">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Add Academic Year</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="addAcademicYearForm" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="form-floating form-floating-outline mb-5">
+                <input type="text" id="academicYear" name="AcademicYear.AcademicYear" class="form-control" required
+                       placeholder="Enter Academic Year (e.g., 2025-2026)" maxlength="50" asp-for="AcademicYear.AcademicYear" />
+                <label for="academicYear">Academic Year</label>
+                <span class="text-danger" id="academicYearValidationMessage" asp-validation-for="AcademicYear"></span>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+            </div>
+        </form>
     </div>
 </div>

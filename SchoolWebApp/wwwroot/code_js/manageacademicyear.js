@@ -7,7 +7,7 @@ $(document).ready(function () {
     if (createAcademicYearForm) {
         FormValidation.formValidation(createAcademicYearForm, {
             fields: {
-                AcademicYear: {
+                'AcademicYear.AcademicYear': {
                     validators: {
                         notEmpty: { message: 'Please enter an Academic Year' },
                         stringLength: { max: 50, message: 'The Academic Year must be less than 50 characters' },
@@ -28,7 +28,7 @@ $(document).ready(function () {
                 trigger: new FormValidation.plugins.Trigger(),
                 bootstrap5: new FormValidation.plugins.Bootstrap5({
                     eleValidClass: 'is-valid',
-                    rowSelector: '.mb-3'
+                    rowSelector: '.form-floating'
                 }),
                 submitButton: new FormValidation.plugins.SubmitButton(),
                 autoFocus: new FormValidation.plugins.AutoFocus()
@@ -36,6 +36,8 @@ $(document).ready(function () {
         })
             .on('core.form.valid', function () {
                 CreateNewAcademicYearData(createAcademicYearForm);
+            }).on('core.form.invalid', function () {
+                return;
             });
     }
 });
@@ -67,13 +69,17 @@ function initializeDataTable() {
             {
                 text: '<i class="ri-add-line ri-16px me-0 me-sm-1_5"></i><span class="d-none d-sm-inline-block">Add Academic Year</span>',
                 className: 'add-new btn btn-primary waves-effect waves-light',
+                attr: {
+                    'data-bs-toggle': 'offcanvas',
+                    'data-bs-target': '#createAcademicYearOffcanvas'
+                },
+
                 action: function () {
-                    var modal = document.getElementById('addAcademicYearModal');
-                    var bsModal = new bootstrap.Modal(modal);
-                    bsModal.show();
+                   
                     $('#addAcademicYearForm')[0].reset();
                     $('#academicYearValidationMessage').text('').hide();
                     $('#academicYear').removeClass('is-invalid');
+
                 }
             }
         ],
@@ -89,11 +95,7 @@ function initializeDataTable() {
 
 function CreateNewAcademicYearData(form) {
     var formData = new FormData(form);
-    // Explicitly map the input field to match server-side model binding
-    var academicYearValue = form.querySelector('#academicYear').value;
-    formData.set('AcademicYear.AcademicYear', academicYearValue);
-    formData.delete('AcademicYear'); // Remove the original field to avoid conflicts
-
+    
     $.ajax({
         url: '/MasterPages/AcademicYears/Index?handler=CreateAcademicYear',
         type: 'POST',
@@ -121,26 +123,27 @@ function CreateNewAcademicYearData(form) {
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    $('#addAcademicYearModal').modal('hide');
+                   
                     window.location.reload();
                 });
             } else {
-                var errorMessage = response.message || 'An error occurred while creating the academic year.';
-                if (response.errors && Array.isArray(response.errors)) {
-                    errorMessage = response.errors.join(', ');
-                }
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: errorMessage,
-                    confirmButtonText: 'OK',
-                    customClass: {
-                        confirmButton: 'btn btn-primary waves-effect waves-light'
-                    }
-                });
-                $('#academicYearValidationMessage').text(errorMessage).show();
-                $('#academicYear').addClass('is-invalid');
-            }
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: response.message || 'Failed to create academic year.',
+        confirmButtonText: 'OK',
+        customClass: {
+            confirmButton: 'btn btn-primary waves-effect waves-light'
+        }
+    });
+
+    //$('#academicYearValidationMessage')
+    //    .text(response.message || 'Failed to create academic year.')
+    //    .show();
+
+    //$('#academicYear').addClass('is-invalid');
+}
+
         },
         error: function (xhr, status, error) {
             Swal.fire({
@@ -152,8 +155,7 @@ function CreateNewAcademicYearData(form) {
                     confirmButton: 'btn btn-primary waves-effect waves-light'
                 }
             });
-            $('#academicYearValidationMessage').text('Failed to create the academic year: ' + (xhr.responseText || error)).show();
-            $('#academicYear').addClass('is-invalid');
+         
         }
     });
 }
@@ -179,8 +181,7 @@ function academicYearEdit(academicYearId) {
             Swal.close();
             if (typeof response === 'string') {
                 $('#editAcademicYearFormContainer').html(response);
-                $('#editAcademicYearModal').modal('show');
-
+              
                 const editAcademicYearForm = document.getElementById('editAcademicYearForm');
                 if (editAcademicYearForm) {
                     FormValidation.formValidation(editAcademicYearForm, {
@@ -206,16 +207,18 @@ function academicYearEdit(academicYearId) {
                             trigger: new FormValidation.plugins.Trigger(),
                             bootstrap5: new FormValidation.plugins.Bootstrap5({
                                 eleValidClass: 'is-valid',
-                                rowSelector: '.mb-3'
+                                rowSelector: '.form-floating'
                             }),
                             submitButton: new FormValidation.plugins.SubmitButton(),
                             autoFocus: new FormValidation.plugins.AutoFocus()
                         }
                     })
                         .on('core.form.valid', function () {
-                            UpdateAcademicYearData(editAcademicYearForm, academicYearId);
+                            UpdateAcademicYearData(editAcademicYearForm);
                         });
                 }
+                $('#editAcademicYearOffcanvas').offcanvas('show');
+
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -242,7 +245,7 @@ function academicYearEdit(academicYearId) {
     });
 }
 
-function UpdateAcademicYearData(form, academicYearId) {
+function UpdateAcademicYearData(form) {
     var formData = new FormData(form);
     $.ajax({
         url: '/MasterPages/AcademicYears/Index?handler=EditAcademicYear',
@@ -271,7 +274,7 @@ function UpdateAcademicYearData(form, academicYearId) {
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    $('#editAcademicYearModal').modal('hide');
+                    $('#editAcademicYearOffcanvas').modal('hide');
                     window.location.reload();
                 });
             } else {

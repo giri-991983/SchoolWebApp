@@ -1,0 +1,29 @@
+﻿@model SchoolWebApp.Models.CourseBatch
+
+<form id="editCourseBatchForm" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="modal-header">
+        <h5 class="modal-title" id="editCourseBatchModalLabel">Edit Course Batch Name</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        <!-- Hidden ID -->
+        <input type="hidden" asp-for="CourseBatchID" id="EditCourseBatchID" />
+
+        <!-- Batch Name Input -->
+        <div class="form-floating form-floating-outline mb-5">
+            <input asp-for="BatchName" class="form-control" id="EditBatchName" placeholder="Batch Name" required />
+            <label for="EditBatchName">Batch Name</label>
+        </div>
+
+        <!-- Validation Message Div -->
+        <div class="fv-help-block invalid-feedback" id="editCourseBatchValidationMessage"></div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Update</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form>

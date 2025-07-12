@@ -1,0 +1,41 @@
+﻿@model SchoolWebApp.Pages.MasterPages.Country.IndexModel
+
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="createCountryOffcanvas" aria-labelledby="createCountryOffcanvasLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="createCountryOffcanvasLabel">Add Country Details</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body mx-0 flex-grow-0">
+        <form id="addCountryForm" method="post" enctype="multipart/form-data">
+
+            <input type="hidden" asp-for="Country.CountryID" />
+
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Country.CountryName" autocomplete="off" class="form-control" id="CountryName" placeholder="Country Name" required />
+                <label for="CountryName">Country Name</label>
+                <span asp-validation-for="Country.CountryName" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Country.CurrencyCode" class="form-control" id="CurrencyCode" placeholder="Currency Code (e.g., INR)" maxlength="3" />
+                <label for="CurrencyCode">Currency Code</label>
+                <span asp-validation-for="Country.CurrencyCode" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="Country.CurrencyDecimal" class="form-control" id="CurrencyDecimal" placeholder="Currency Decimal" type="number" min="0" max="5" />
+                <label for="CurrencyDecimal">Currency Decimal</label>
+                <span asp-validation-for="Country.CurrencyDecimal" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-3">Submit</button>
+                    <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
