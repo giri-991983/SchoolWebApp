@@ -164,6 +164,12 @@
                         <div data-i18n="Manage Boards"> Manage Boards</div>
                     </a>
                 </li>
+                <li class='menu-item@(currentPage == "/MasterPages/BoardingTypes/Index" ? " active" : "")'>
+                    <a asp-page="/MasterPages/BoardingTypes/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-home-smile-line"></i>
+                        <div data-i18n="Manage BoardingTypes"> Manage BoardingTypes</div>
+                    </a>
+                </li>
                 <li class='menu-item@( currentPage == "/MasterPages/Country/Index" ? " active" : "")'>
                     <a asp-page="/MasterPages/Country/Index" class="menu-link">
                         <i class="menu-icon tf-icons ri-global-line"></i>
@@ -174,6 +180,12 @@
                     <a asp-page="/MasterPages/State/Index" class="menu-link">
                         <i class="menu-icon tf-icons ri-map-pin-line"></i>
                         <div data-i18n="Manage State"> Manage State</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/MasterPages/City/Index" ? " active" : "")'>
+                    <a asp-page="/MasterPages/City/Index" class="menu-link">
+                        <i class="menu-icon tf-icons ri-map-pin-line"></i>
+                        <div data-i18n="Manage City"> Manage City</div>
                     </a>
                 </li>
 

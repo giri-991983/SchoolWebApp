@@ -1,28 +1,18 @@
-﻿
+﻿'use strict';
 
-'use strict';
+const cityFilterForm = document.getElementById('filterForm');
 
-// create form validation
-const createStateForm = document.getElementById('addStateForm');
-if (createStateForm) {
-    FormValidation.formValidation(createStateForm, {
+if (cityFilterForm) {
+    FormValidation.formValidation(cityFilterForm, {
         fields: {
-            'State.StateName': {
+            CountryID: {
                 validators: {
-                    notEmpty: { message: 'Please enter the State Name' },
-                    stringLength: {
-                        max: 100,
-                        message: 'State Name must be less than 100 characters'
-                    },
-                    regexp: {
-                        regexp: /^[a-zA-Z\s]+$/,
-                        message: 'State name must not contain special characters or numbers'
-                    }
+                    notEmpty: { message: 'Please select a Country.' }
                 }
             },
-            'State.CountryID': {
+            StateID: {
                 validators: {
-                    notEmpty: { message: 'Please select a Country' }
+                    notEmpty: { message: 'Please select a State.' }
                 }
             }
         },
@@ -38,21 +28,54 @@ if (createStateForm) {
         }
     })
         .on('core.form.valid', function () {
-            CreateState(createStateForm);
+            filterCities(cityFilterForm);
         })
         .on('core.form.invalid', function () {
             return;
         });
+} else {
+    console.error('cityFilterForm not found');
 }
 
-function initializeStateDataTable() {
-    if (!$('#StateTable').length) return;
+function loadStates(countryId, targetStateId = 'StateID') {
+    const $stateSelect = $(`#${targetStateId}`);
 
-    if ($.fn.DataTable.isDataTable('#StateTable')) {
-        $('#StateTable').DataTable().destroy();
+    if (!countryId || countryId <= 0) {
+        $stateSelect.html('<option value="">Select State</option>').prop('disabled', true);
+        return;
     }
 
-    $('#StateTable').DataTable({
+    $.ajax({
+        url: '/MasterPages/City/Index?handler=StatesByCountry',
+        type: 'GET',
+        data: { countryId: countryId },
+        headers: {
+            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+        },
+        success: function (response) {
+            $stateSelect.html(response).prop('disabled', false).trigger('change');
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading states:', error);
+            $stateSelect.html('<option value="">Error loading states</option>').prop('disabled', true);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load states: ' + (xhr.responseText || error),
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+function initializeCityDataTable() {
+    if (!$('#CityTable').length) return;
+
+    if ($.fn.DataTable.isDataTable('#CityTable')) {
+        $('#CityTable').DataTable().destroy();
+    }
+
+    $('#CityTable').DataTable({
         order: [[1, 'asc']],
         displayLength: 20,
         dom:
@@ -68,7 +91,7 @@ function initializeStateDataTable() {
         language: {
             sLengthMenu: '_MENU_',
             search: '',
-            searchPlaceholder: 'Search State',
+            searchPlaceholder: 'Search City',
             paginate: {
                 next: '<i class="ri-arrow-right-s-line"></i>',
                 previous: '<i class="ri-arrow-left-s-line"></i>'
@@ -82,35 +105,35 @@ function initializeStateDataTable() {
                 buttons: [
                     {
                         extend: 'print',
-                        title: 'State Data',
+                        title: 'City Data',
                         text: '<i class="ri-printer-line me-1"></i>Print',
                         className: 'dropdown-item',
                         exportOptions: { columns: [0, 1, 2] }
                     },
                     {
                         extend: 'csv',
-                        title: 'State Data',
+                        title: 'City Data',
                         text: '<i class="ri-file-text-line me-1"></i>CSV',
                         className: 'dropdown-item',
                         exportOptions: { columns: [0, 1, 2] }
                     },
                     {
                         extend: 'excel',
-                        title: 'State Data',
+                        title: 'City Data',
                         text: '<i class="ri-file-excel-line me-1"></i>Excel',
                         className: 'dropdown-item',
                         exportOptions: { columns: [0, 1, 2] }
                     },
                     {
                         extend: 'pdf',
-                        title: 'State Data',
+                        title: 'City Data',
                         text: '<i class="ri-file-pdf-line me-1"></i>PDF',
                         className: 'dropdown-item',
                         exportOptions: { columns: [0, 1, 2] }
                     },
                     {
                         extend: 'copy',
-                        title: 'State Data',
+                        title: 'City Data',
                         text: '<i class="ri-file-copy-line me-1"></i>Copy',
                         className: 'dropdown-item',
                         exportOptions: { columns: [0, 1, 2] }
@@ -118,15 +141,17 @@ function initializeStateDataTable() {
                 ]
             },
             {
-                text: '<i class="ri-add-line ri-16px me-0 me-sm-1_5"></i><span class="d-none d-sm-inline-block">Add State</span>',
+                text: '<i class="ri-add-line ri-16px me-0 me-sm-1_5"></i><span class="d-none d-sm-inline-block">Add City</span>',
                 className: 'add-new btn btn-primary waves-effect waves-light',
                 attr: {
                     'data-bs-toggle': 'offcanvas',
-                    'data-bs-target': '#createStateOffcanvas'
+                    'data-bs-target': '#createCityOffcanvas'
                 },
                 action: function () {
-                    $('#addStateForm')[0].reset();
-                   
+                    $('#addCityForm')[0].reset();
+                    $('#CityName').removeClass('is-valid is-invalid').next('.text-danger').text('').hide();
+                    $('#StateID').removeClass('is-valid is-invalid').next('.text-danger').text('').hide();
+                    $('#cityNameValidationMessage').text('').hide();
                 }
             }
         ],
@@ -139,15 +164,33 @@ function initializeStateDataTable() {
         $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
     }, 300);
 }
-$(document).ready(function () {
-    const stateFilterForm = document.getElementById('filterForm');
 
-    if (stateFilterForm) {
-        FormValidation.formValidation(stateFilterForm, {
+$(document).ready(function () {
+    const createCityForm = document.getElementById('addCityForm');
+    if (createCityForm) {
+        FormValidation.formValidation(createCityForm, {
             fields: {
-                CountryID: {
+                'City.CityName': {
                     validators: {
-                        notEmpty: { message: 'Please select a Country.' }
+                        notEmpty: { message: 'Please enter the City Name' },
+                        stringLength: {
+                            max: 100,
+                            message: 'City Name must be less than 100 characters'
+                        },
+                        regexp: {
+                            regexp: /^[a-zA-Z\s]+$/,
+                            message: 'City name must not contain special characters or numbers'
+                        }
+                    }
+                },
+                'City.StateID': {
+                    validators: {
+                        notEmpty: { message: 'Please select a State' }
+                    }
+                },
+                'City.CountryID': {
+                    validators: {
+                        notEmpty: { message: 'Please select a Country' }
                     }
                 }
             },
@@ -155,7 +198,7 @@ $(document).ready(function () {
                 trigger: new FormValidation.plugins.Trigger(),
                 bootstrap5: new FormValidation.plugins.Bootstrap5({
                     eleValidClass: 'is-valid',
-
+                    eleInvalidClass: 'is-invalid',
                     rowSelector: '.form-floating'
                 }),
                 submitButton: new FormValidation.plugins.SubmitButton(),
@@ -163,35 +206,56 @@ $(document).ready(function () {
             }
         })
             .on('core.form.valid', function () {
-                filterStates(stateFilterForm);
+                CreateCity(createCityForm);
             })
             .on('core.form.invalid', function () {
                 return;
             });
     } else {
-        console.error('boardFilterForm not found');
+        console.error('addCityForm not found');
     }
 
-    $('#CountryID').on('change', function () {
-        $('#FilterTable').hide();
+   
+    // Hide table when Country or State is not selected
+    $('#CountryFilterID, #StateID').on('change', function () {
+        
+            $('#FilterTable').hide();
+        
     });
-});
 
-function filterStates(form) {
-    const countryId = form.querySelector('#CountryID').value;
+    // On page load, hide if country or state is not selected
+    const initialCountry = $('#CountryFilterID').val();
+    const initialState = $('#StateID').val();
+    if (!initialCountry || !initialState) {
+        $('#FilterTable').hide();
+    }
+
+});
+function filterCities(form) {
+    const countryId = form.querySelector('#CountryFilterID').value ;
+    const stateId = form.querySelector('#StateID').value;
+
+    if (!countryId || !stateId) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Missing Selection',
+            text: 'Please select both Country and State before filtering.'
+        });
+        return;
+    }
 
     $.ajax({
-        url: '/MasterPages/State/Index?handler=StatesByCountry',
+        url: '/MasterPages/City/Index?handler=CitiesByState',
         type: 'GET',
-        data: { countryId: countryId },
+        data: { countryId: countryId, stateId: stateId },
         headers: {
             'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
         },
         success: function (partialView) {
             Swal.close();
             $('#FilterTable').html(partialView).show();
-            if ($('#StateTable').length) {
-                initializeStateDataTable();
+            if ($('#CityTable').length) {
+                initializeCityDataTable();
             }
         },
         error: function (xhr, status, error) {
@@ -199,17 +263,17 @@ function filterStates(form) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Failed to load states: ' + (xhr.responseText || error || 'Unknown error')
+                text: 'Failed to load cities: ' + (xhr.responseText || error || 'Unknown error')
             });
         }
     });
 }
 
-function CreateState(form) {
+function CreateCity(form) {
     const formData = new FormData(form);
 
     $.ajax({
-        url: '/MasterPages/State/Index?handler=CreateState',
+        url: '/MasterPages/City/Index?handler=CreateCity',
         type: 'POST',
         data: formData,
         processData: false,
@@ -220,7 +284,7 @@ function CreateState(form) {
         beforeSend: function () {
             Swal.fire({
                 title: 'Processing...',
-                text: 'Saving State...',
+                text: 'Saving City...',
                 showConfirmButton: false,
                 allowOutsideClick: false,
                 didOpen: () => Swal.showLoading()
@@ -236,15 +300,16 @@ function CreateState(form) {
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    $('#createStateOffcanvas').offcanvas('hide');
-                    filterStates(document.getElementById('filterForm'));
+                    $('#createCityOffcanvas').offcanvas('hide');
+                    $('#addCityForm')[0].reset();
+                 
+                    filterCities(document.getElementById('filterForm'));
                 });
             } else {
-
                 Swal.fire({
                     icon: 'warning',
                     title: 'Warning',
-                    text: response.message || 'Failed to add State.',
+                    text: response.message ,
                     showConfirmButton: true,
                     confirmButtonText: 'OK',
                     showCancelButton: true,
@@ -254,7 +319,6 @@ function CreateState(form) {
                         cancelButton: 'btn btn-label-secondary waves-effect waves-light'
                     }
                 });
-
             }
         },
         error: function (xhr, status, error) {
@@ -262,24 +326,24 @@ function CreateState(form) {
             Swal.fire({
                 icon: 'error',
                 title: 'Submission Failed',
-                text: 'Failed to create the state: ' + (xhr.responseText || error)
+                text: 'Failed to create the city: ' + (xhr.responseText || error)
             });
         }
     });
 }
 
-function editState(stateId) {
+function editCity(cityId) {
     $.ajax({
-        url: '/MasterPages/State/Index?handler=EditForm',
+        url: '/MasterPages/City/Index?handler=EditForm',
         type: 'GET',
-        data: { id: stateId },
+        data: { id: cityId },
         headers: {
             'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
         },
         beforeSend: function () {
             Swal.fire({
                 title: 'Loading...',
-                text: 'Fetching state details...',
+                text: 'Fetching city details...',
                 showConfirmButton: false,
                 allowOutsideClick: false,
                 didOpen: () => Swal.showLoading()
@@ -288,26 +352,37 @@ function editState(stateId) {
         success: function (response) {
             Swal.close();
             if (typeof response === 'string') {
-                $('#editStateFormContainer').html(response);
-
-                const editForm = document.getElementById('editStateForm');
+                $('#editCityFormContainer').html(response);
+                $('#EditCityName_' + cityId).removeClass('is-valid is-invalid');
+                $('#EditStateID_' + cityId).removeClass('is-valid is-invalid');
+                $('#editCityNameValidationMessage_' + cityId).text('').hide();
+                const editForm = document.getElementById('editCityForm');
                 if (editForm) {
+                    $(`#EditCountryID_${cityId}`).on('change', function () {
+                        const countryId = $(this).val();
+                        loadStates(countryId, cityId);
+                    });
                     FormValidation.formValidation(editForm, {
                         fields: {
-                            'StateName': {
+                            CityName: {
                                 validators: {
-                                    notEmpty: { message: 'State name is required' },
+                                    notEmpty: { message: 'City name is required' },
                                     stringLength: {
                                         max: 100,
-                                        message: 'State name must be less than 100 characters'
+                                        message: 'City name must be less than 100 characters'
                                     },
                                     regexp: {
                                         regexp: /^[a-zA-Z\s]+$/,
-                                        message: 'State name must not contain special characters or numbers'
+                                        message: 'City name must not contain special characters or numbers'
                                     }
                                 }
                             },
-                            'CountryID': {
+                            StateID: {
+                                validators: {
+                                    notEmpty: { message: 'Please select a State' }
+                                }
+                            },
+                            CountryID: {
                                 validators: {
                                     notEmpty: { message: 'Please select a Country' }
                                 }
@@ -324,10 +399,10 @@ function editState(stateId) {
                             autoFocus: new FormValidation.plugins.AutoFocus()
                         }
                     }).on('core.form.valid', function () {
-                        submitEditState(editForm);
+                        submitEditCity(editForm);
                     });
                 }
-                $('#editStateOffcanvas').offcanvas('show');
+                $('#editCityOffcanvas').offcanvas('show');
             } else {
                 Swal.fire('Error', 'Failed to load the form.', 'error');
             }
@@ -339,11 +414,11 @@ function editState(stateId) {
     });
 }
 
-function submitEditState(form) {
+function submitEditCity(form) {
     const formData = new FormData(form);
 
     $.ajax({
-        url: '/MasterPages/State/Index?handler=EditState',
+        url: '/MasterPages/City/Index?handler=EditCity',
         type: 'POST',
         data: formData,
         processData: false,
@@ -363,22 +438,21 @@ function submitEditState(form) {
         success: function (response) {
             Swal.close();
             if (response.success) {
-                $('#editStateOffcanvas').offcanvas('hide');
+                $('#editCityOffcanvas').offcanvas('hide');
                 Swal.fire({
                     icon: 'success',
                     title: 'Updated',
-                    text: response.message || 'State updated successfully!',
+                    text: response.message || 'City updated successfully!',
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    filterStates(document.getElementById('filterForm'));
+                    filterCities(document.getElementById('filterForm'));
                 });
             } else {
-
                 Swal.fire({
                     icon: 'warning',
                     title: 'Warning',
-                    text: response.message || 'Failed to Update State.',
+                    text: response.message || 'Failed to update City',
                     showConfirmButton: true,
                     confirmButtonText: 'OK',
                     showCancelButton: true,
@@ -388,22 +462,21 @@ function submitEditState(form) {
                         cancelButton: 'btn btn-label-secondary waves-effect waves-light'
                     }
                 });
-
             }
         },
         error: function (xhr) {
             Swal.close();
-            Swal.fire('Error', 'Failed to update state: ' + (xhr.responseText || 'Unknown error'), 'error');
+            Swal.fire('Error', 'Failed to update city: ' + (xhr.responseText || 'Unknown error'), 'error');
         }
     });
 }
 
-function showDeleteStateConfirmation(stateId) {
-    const stateName = document.querySelector(`.state-name-${stateId}`)?.innerText || 'this state';
+function showDeleteCityConfirmation(cityId) {
+    const cityName = document.querySelector(`.city-name-${cityId}`)?.innerText || 'this city';
 
     Swal.fire({
-        title: 'Delete State',
-        html: `<p>Are you sure you want to delete this State?<br><br><span class="fw-medium text-danger">${stateName}</span></p>`,
+        title: 'Delete City',
+        html: `<p>Are you sure you want to delete this City?<br><br><span class="fw-medium text-danger">${cityName}</span></p>`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Delete',
@@ -414,16 +487,16 @@ function showDeleteStateConfirmation(stateId) {
         }
     }).then(result => {
         if (result.isConfirmed) {
-            deleteStateData(stateId);
+            deleteCityData(cityId);
         }
     });
 }
 
-function deleteStateData(stateId) {
+function deleteCityData(cityId) {
     $.ajax({
-        url: '/MasterPages/State/Index?handler=DeleteState',
+        url: '/MasterPages/City/Index?handler=DeleteCity',
         type: 'POST',
-        data: { id: stateId },
+        data: { id: cityId },
         headers: {
             'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
         },
@@ -441,23 +514,23 @@ function deleteStateData(stateId) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Deleted Successfully',
-                    text: response.message || 'State deleted successfully!',
+                    text: response.message || 'City deleted successfully!',
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    $(`tr[data-id="${stateId}"]`).fadeOut(500, function () {
+                    $(`tr[data-id="${cityId}"]`).fadeOut(500, function () {
                         $(this).remove();
-                        if ($.fn.DataTable && $('#StateTable').length) {
-                            $('#StateTable').DataTable().draw(false);
+                        if ($.fn.DataTable && $('#CityTable').length) {
+                            $('#CityTable').DataTable().draw(false);
                         }
-                        filterStates(document.getElementById('filterForm'));
+                        filterCities(document.getElementById('filterForm'));
                     });
                 });
             } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: response.message || 'Failed to delete the state.'
+                    text: response.message || 'Failed to delete the city.'
                 });
             }
         },
@@ -466,9 +539,8 @@ function deleteStateData(stateId) {
             Swal.fire({
                 icon: 'error',
                 title: 'Deletion Failed',
-                text: 'Failed to delete the state: ' + (xhr.responseText || error)
+                text: 'Failed to delete the city: ' + (xhr.responseText || error)
             });
         }
     });
 }
-

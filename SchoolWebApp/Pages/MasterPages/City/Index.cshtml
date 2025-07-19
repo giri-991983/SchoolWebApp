@@ -1,14 +1,8 @@
 ﻿@page
-@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
-@model SchoolWebApp.Pages.Campus.IndexModel
+@model SchoolWebApp.Pages.MasterPages.City.IndexModel
 @{
+    ViewData["Title"] = "Cities";
 }
-
-
-@{
-    ViewData["Title"] = "List of Campus";
-}
-
 @section VendorStyles
 {
     <link rel="stylesheet" href="~/vendor/libs/datatables-bs5/datatables.bootstrap5.dist.css">
@@ -16,12 +10,10 @@
     <link rel="stylesheet" href="~/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.dist.css">
     <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.dist.css" />
     <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.dist.css" />
-    <link href="~/vendor/libs/select2/select2.dist.css" rel="stylesheet" />
-
-
 }
 
-@section VendorScripts {
+@section VendorScripts
+{
     <script src="~/vendor/libs/moment/moment.dist.js"></script>
     <script src="~/vendor/libs/datatables-bs5/datatables-bootstrap5.dist.js"></script>
     <script src="~/vendor/libs/sweetalert2/sweetalert2.dist.js"></script>
@@ -30,57 +22,55 @@
     <script src="~/vendor/libs/&#64;form-validation/auto-focus.dist.js"></script>
     <script src="~/vendor/libs/cleavejs/cleave.dist.js"></script>
     <script src="~/vendor/libs/cleavejs/cleave-phone.dist.js"></script>
-    <script src="~/vendor/libs/select2/select2.dist.js"></script>
 }
+
+
 @section PageScripts
 {
-@*  <script src="~/js/forms-selects.dist.js"></script> *@
-    <script src="~/code_js/managecampus.js"></script>
+     <script src="~/code_js/managecity.js"></script> 
 }
 
 <div class="card">
     <div class="card-datatable table-responsive">
-
         <div class="container-fluid">
-            <h3 class="mb-4">Manage Campus</h3>
-            <form id="filterCampusForm">
-
-                <div class="row mb-4">
-                    <!-- Institution Dropdown -->
-                    <div class="col-md-4">
+            <h3 class="mb-4">Manage Cities</h3>
+            <form id="filterForm">
+                <div class="row mb-3">
+                    <!-- Country Dropdown -->
+                    <div class="col-md-3">
                         <div class="form-floating form-floating-outline">
-                            <select name="InstitutionID" id="InstitutionFilterID" onchange="loadZones(this.value, null, 'ZoneFilterID')" class="form-select">
-                                @await Component.InvokeAsync("Master", new { viewname = "Institutions" })
+                            <select name="CountryID" id="CountryFilterID" class="form-select" onchange="loadStates(this.value,'StateID')">
+                                @await Component.InvokeAsync("Master", new { viewname = "Countries" })
                             </select>
-                            <label for="InstitutionID">Institution</label>
+                            <label for="CountryFilterID">Country</label>
                         </div>
                     </div>
 
-                    <!-- Zone Dropdown -->
-                    <div class="col-md-4">
+                    <!-- State Dropdown -->
+                    <div class="col-md-3">
                         <div class="form-floating form-floating-outline">
-                            <select name="ZoneID" id="ZoneFilterID" class="form-select">
+                            <select name="StateID" id="StateID" class="form-select">
+                                <option value="">Select State</option>
                             </select>
-                            <label for="ZoneID">Zone</label>
+                            <label for="StateID">State</label>
                         </div>
                     </div>
 
                     <!-- Get Button -->
-                    <div class="col-md-2 d-flex align-items-center">
-                        <button type="submit" class="btn btn-primary w-75">Get</button>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Get</button>
                     </div>
-
                 </div>
             </form>
-             <div id="FilterCampus">
-                
-            </div>
         </div>
-           
-         </div>
 
+        
+        <div id="FilterTable"></div>
 
-    <!-- Create Campus Partial Page -->
-    @await Html.PartialAsync("~/Pages/Campus/_Create.cshtml")
-
+        <!-- Create City Partial Page -->
+        @await Html.PartialAsync("~/Pages/MasterPages/City/_Create.cshtml")
+    </div>
 </div>
+
+
+

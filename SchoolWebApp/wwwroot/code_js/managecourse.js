@@ -151,6 +151,11 @@ function initializeCourseDataTable() {
         ],
         responsive: true
     });
+    setTimeout(() => {
+        $('.dataTables_filter input').addClass('ms-0');
+        $('div.dataTables_wrapper .dataTables_filter').addClass('mt-0 mt-md-5');
+        $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
+    }, 300);
 }
 
 $(document).ready(function () {

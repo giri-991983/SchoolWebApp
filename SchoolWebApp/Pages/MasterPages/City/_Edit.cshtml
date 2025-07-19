@@ -1,0 +1,37 @@
+﻿@model SchoolWebApp.Models.City
+
+<form id="editCityForm" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="CityID" value="@Model.CityID" />
+    <div class="form-floating form-floating-outline mb-4">
+        <select name="CountryID" class="form-select" id="EditCountryID_@Model.CityID" onchange="loadStates(this.value, @Model.CityID)" required>
+            @await Component.InvokeAsync("Master", new { viewname = "Countries", SelectedIDs = Model.State?.CountryID })
+        </select>
+        <label for="EditCountryID_@Model.CityID">Country</label>
+        <span asp-validation-for="CountryID" class="text-danger"></span>
+    </div>
+    <div class="form-floating form-floating-outline mb-4">
+        <select name="StateID" class="form-select" id="EditStateID_@Model.CityID" required>
+            @if (Model.StateID != 0)
+            {
+                @await Component.InvokeAsync("Master", new { viewname = "States", FilterIds = Model.State?.CountryID.ToString(), SelectedIDs = Model.StateID })
+            }
+            else
+            {
+                <option value="">Select State</option>
+            }
+        </select>
+        <label for="EditStateID_@Model.CityID">State</label>
+        <span asp-validation-for="StateID" class="text-danger"></span>
+    </div>
+    <div class="form-floating form-floating-outline mb-4">
+        <input type="text" class="form-control" id="EditCityName_@Model.CityID" name="CityName" value="@Model.CityName" placeholder="City Name" required />
+        <label for="EditCityName_@Model.CityID">City Name</label>
+        <span asp-validation-for="CityName" class="text-danger"></span>
+        <span id="editCityNameValidationMessage_@Model.CityID" class="text-danger" style="display: none;"></span>
+    </div>
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary me-2">Save</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+    </div>
+</form>

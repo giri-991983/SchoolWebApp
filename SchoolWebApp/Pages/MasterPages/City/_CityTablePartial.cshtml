@@ -1,0 +1,60 @@
+﻿@model IEnumerable<SchoolWebApp.Models.City>
+
+<table class="table" id="CityTable">
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>City Name</th>
+            <th>State Name</th>
+            <th>Country Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            var sno = 0;
+            foreach (var city in Model)
+            {
+                sno++;
+                var cityClass = "city-name-" + city.CityID;
+                <tr data-id="@city.CityID">
+                    <td>@sno</td>
+                    <td class="@cityClass">@city.CityName</td>
+                    <td>@city.State?.StateName</td>
+                    <td>@city.State?.Country?.CountryName</td>
+                    <td>
+                        <!-- Edit Button -->
+                        <button class="btn btn-sm btn-icon"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#editCityOffcanvas"
+                                onclick="editCity(@city.CityID)"
+                                data-id="@city.CityID">
+                            <i class="ri-edit-box-line ri-20px"></i>
+                        </button>
+
+                        <!-- Delete Button -->
+                        <form method="post" id="deleteCityForm-@city.CityID" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@city.CityID" />
+                            <button type="button" class="btn btn-sm btn-icon" onclick="showDeleteCityConfirmation('@city.CityID')">
+                                <i class="ri-delete-bin-7-line ri-20px"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<!-- Edit Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="editCityOffcanvas" aria-labelledby="editCityOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 id="editCityOffcanvasLabel" class="offcanvas-title">Edit City</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="editCityFormContainer"></div>
+    </div>
+</div>

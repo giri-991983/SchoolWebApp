@@ -28,11 +28,11 @@ namespace SchoolWebApp.Pages.MasterPages.Country
             try
             {
 
-                var countryName = Country.CountryName?.Trim().ToLower();
+                var countryName = Country.CountryName?.Trim().ToLower().Replace(" ", "");
 
                 // Check for duplicate Country Name
                 var duplicate = await _context.Countries
-                    .AnyAsync(c => c.CountryName.ToLower() == countryName);
+                    .AnyAsync(c => c.CountryName.ToLower().Replace(" ", "") == countryName);
 
                 if (duplicate)
                 {
@@ -71,8 +71,8 @@ namespace SchoolWebApp.Pages.MasterPages.Country
             var country = await _context.Countries.FindAsync(id);
             if (country == null)
                 return Content("Country not found");
-
-            return Partial("_Edit", country);
+            Country = country;
+            return Partial("_Edit", this);
         }
 
         public async Task<IActionResult> OnPostEditCountryAsync()

@@ -1,0 +1,19 @@
+﻿@model SchoolWebApp.Pages.MasterPages.BoardingTypes.IndexModel
+
+<form id="editBoardingTypeForm" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="BoardingType.BoardingTypeID" />
+
+    <div class="form-floating form-floating-outline mb-5">
+        <input asp-for="BoardingType.BoardingType" class="form-control" id="EditBoardingType" placeholder="Boarding Type" autocomplete="off" required />
+        <label for="EditBoardingType">Boarding Type</label>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary me-3">Update</button>
+            <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+        </div>
+    </div>
+</form>

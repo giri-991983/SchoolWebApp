@@ -1,0 +1,27 @@
+﻿@model SchoolWebApp.Pages.MasterPages.BoardingTypes.IndexModel
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="createBoardingTypeOffcanvas" aria-labelledby="createBoardingTypeOffcanvasLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="createBoardingTypeOffcanvasLabel">Add Boarding Type</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body mx-0 flex-grow-0">
+        <form id="addBoardingTypeForm" method="post" enctype="multipart/form-data">
+
+            <input type="hidden" asp-for="BoardingType.BoardingTypeID" />
+
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="BoardingType.BoardingType" autocomplete="off" class="form-control" id="BoardingType" placeholder="Boarding Type Name" required />
+                <label for="BoardingType">Boarding Type</label>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-3">Submit</button>
+                    <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
