@@ -1,0 +1,44 @@
+﻿@model SchoolWebApp.Pages.MasterPages.City.IndexModel
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="createCityOffcanvas" aria-labelledby="createCityOffcanvasLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="createCityOffcanvasLabel">Add City Details</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body mx-0 flex-grow-0">
+        <form id="addCityForm" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="City.CityID" />
+            <!-- CountryID Dropdown -->
+            <div class="form-floating form-floating-outline mb-5">
+                <select asp-for="City.CountryID" class="form-select" id="CreateCountryID" onchange="loadStates(this.value, 'CreateStateID')" required>
+                    @await Component.InvokeAsync("Master", new { viewname = "Countries" })
+                </select>
+                <label for="CreateCountryID">Country</label>
+                <span asp-validation-for="City.CountryID" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-5">
+                <select asp-for="City.StateID" class="form-select" id="CreateStateID" name="City.StateID" required>
+                    <option value="">Select State</option>
+                </select>
+                <label for="CreateStateID">State</label>
+                <span asp-validation-for="City.StateID" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-4">
+                <input asp-for="City.CityName" class="form-control" id="City.CityName" placeholder="City Name" required />
+                <label for="City.CityName">City Name</label>
+                <span asp-validation-for="City.CityName" class="text-danger"></span>
+                <span id="editCityNameValidationMessage" class="text-danger" style="display: none;"></span>
+            </div>
+           
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-3">Submit</button>
+                    <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

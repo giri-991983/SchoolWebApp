@@ -423,54 +423,132 @@ function loadCities(stateId, campusId = null) {
 }
 
 
-    const campusfv = FormValidation.formValidation(filterCampusForm, {
-    fields: {
-        InstitutionID: {
-            validators: {
-                notEmpty: {
-                    message: 'Please select an Institution.'
+//    const campusfv = FormValidation.formValidation(filterCampusForm, {
+//    fields: {
+//        InstitutionID: {
+//            validators: {
+//                notEmpty: {
+//                    message: 'Please select an Institution.'
+//                }
+//            }
+//        },
+//        ZoneID: {
+//            validators: {
+//                notEmpty: {
+//                    message: 'Please select a Zone.'
+//                }
+//            }
+//        }
+//    },
+//    plugins: {
+//        trigger: new FormValidation.plugins.Trigger(),
+//        bootstrap5: new FormValidation.plugins.Bootstrap5({
+//            eleValidClass: 'is-valid',
+//            eleInvalidClass: 'is-invalid',
+//            rowSelector: '.form-floating'
+//        }),
+//        submitButton: new FormValidation.plugins.SubmitButton(),
+//        autoFocus: new FormValidation.plugins.AutoFocus()
+//    }
+//}).on('core.form.valid', function () {
+//    filterCampuses();
+//}).on('core.form.invalid', function () {
+//    return;
+//});
+//function filterCampuses() {
+//    var institutionId = $('#InstitutionFilterID').val() || 0;
+//    var zoneId = $('#ZoneFilterID').val() || 0;
+
+//    $.ajax({
+//        url: '/Campus/Index?handler=CampusesByInstitutionAndZone',
+//        type: 'GET',
+//        data: { institutionId: institutionId, zoneId: zoneId },
+
+//        success: function (partialView) {
+//            $('#FilterCampus').html(partialView);
+//            if ($('#CampusTable').length) {
+//                initializeDataTable(); // Reinitialize DataTable on the new table
+//            }
+
+//        },
+//        error: function (xhr, status, error) {
+//            Swal.fire({
+//                icon: 'error',
+//                title: 'Error',
+//                text: 'Failed to load campus data: ' + (xhr.responseText || error),
+//                confirmButtonText: 'OK'
+//            });
+//        }
+//    });
+//}
+$(document).ready(function () {
+
+    const campusFilterForm = document.getElementById('filterCampusForm');
+
+    if (campusFilterForm) {
+
+        FormValidation.formValidation(campusFilterForm, {
+            fields: {
+                InstitutionID: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Please select an Institution.'
+                        }
+                    }
+                },
+                ZoneID: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Please select a Zone.'
+                        }
+                    }
                 }
+            },
+            plugins: {
+                trigger: new FormValidation.plugins.Trigger(),
+                bootstrap5: new FormValidation.plugins.Bootstrap5({
+                    eleValidClass: 'is-valid',
+                    eleInvalidClass: 'is-invalid',
+                    rowSelector: '.form-floating'
+                }),
+                submitButton: new FormValidation.plugins.SubmitButton(),
+                autoFocus: new FormValidation.plugins.AutoFocus()
             }
-        },
-        ZoneID: {
-            validators: {
-                notEmpty: {
-                    message: 'Please select a Zone.'
-                }
-            }
-        }
-    },
-    plugins: {
-        trigger: new FormValidation.plugins.Trigger(),
-        bootstrap5: new FormValidation.plugins.Bootstrap5({
-            eleValidClass: 'is-valid',
-            eleInvalidClass: 'is-invalid',
-            rowSelector: '.form-floating'
-        }),
-        submitButton: new FormValidation.plugins.SubmitButton(),
-        autoFocus: new FormValidation.plugins.AutoFocus()
+        })
+            .on('core.form.valid', function () {
+                filterCampuses(campusFilterForm);
+            })
+            .on('core.form.invalid', function () {
+                return;
+            });
+
+    } else {
+        console.error('Campus filter form not found');
     }
-}).on('core.form.valid', function () {
-    filterCampuses();
-}).on('core.form.invalid', function () {
-    return;
+
+    // Hide campus table when filters are changed
+    $('#InstitutionFilterID, #ZoneFilterID').on('change', function () {
+        $('#FilterCampus').hide();
+    });
+
 });
-function filterCampuses() {
-    var institutionId = $('#InstitutionFilterID').val() || 0;
-    var zoneId = $('#ZoneFilterID').val() || 0;
-   
+
+// Filtering function
+function filterCampuses(form) {
+    const institutionId = form.querySelector('#InstitutionFilterID').value;
+    const zoneId = form.querySelector('#ZoneFilterID').value;
+
     $.ajax({
         url: '/Campus/Index?handler=CampusesByInstitutionAndZone',
         type: 'GET',
         data: { institutionId: institutionId, zoneId: zoneId },
-       
         success: function (partialView) {
-            $('#FilterCampus').html(partialView);
+            $('#FilterCampus').html(partialView).show();
             if ($('#CampusTable').length) {
-                initializeDataTable(); // Reinitialize DataTable on the new table
+                initializeDataTable(); // your DataTable initializer function
             }
-          
-        }, 
+
+        },
         error: function (xhr, status, error) {
             Swal.fire({
                 icon: 'error',
@@ -481,6 +559,7 @@ function filterCampuses() {
         }
     });
 }
+
 function initializeDataTable() {
     if (!$('#CampusTable').length) {
         console.error('Error: #Campus Table element not found in the DOM');
@@ -757,10 +836,12 @@ function CreateNewCampusData(form) {
                     }).then(() => {
 
                         $('#createCampusOffcanvas').offcanvas('hide');
-                        window.location.reload();
+                        filterCampuses(document.getElementById('filterCampusForm'));
                     });
                 }
-                else { window.location.reload(); }
+                else {
+                    filterCampuses(document.getElementById('filterCampusForm'));
+ }
             }
             else {
                 if (typeof Swal !== 'undefined') {
@@ -859,6 +940,8 @@ function DeleteCampusData(campusId) {
                             $('#CampusTable').DataTable().draw(false);
                         }
                     });
+                    filterCampuses(document.getElementById('filterCampusForm'));
+
                 });
             } else {
                 Swal.fire({
@@ -1057,10 +1140,12 @@ function UpdateNewCampusData(form, campusId) {
                         showConfirmButton: false
                     }).then(() => {
                         $('#editCampusOffcanvas').offcanvas('hide');
-                        window.location.reload();
+                        filterCampuses(document.getElementById('filterCampusForm'));
+
                     });
                 } else {
-                    window.location.reload();
+                    filterCampuses(document.getElementById('filterCampusForm'));
+
                 }
             } else {
                 if (typeof Swal !== 'undefined') {

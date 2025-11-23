@@ -39,7 +39,7 @@ $(document).ready(function () {
                             message: 'Currency Decimal should be 0–4'
                         }
                     }
-                  }
+                }
             },
             plugins: {
                 trigger: new FormValidation.plugins.Trigger(),
@@ -54,9 +54,9 @@ $(document).ready(function () {
             .on('core.form.valid', function () {
                 CreateCountry(createCountryForm);
             })
-             .on('core.form.invalid', function () {
-                 return;
-             });
+            .on('core.form.invalid', function () {
+                return;
+            });
     }
 });
 
@@ -245,7 +245,7 @@ function editCountry(countryId) {
             if (typeof response === 'string') {
                 $('#editCountryFormContainer').html(response);
                 const editForm = document.getElementById('editCountryForm');
-              
+
 
                 if (editForm) {
                     FormValidation.formValidation(editForm, {
@@ -355,7 +355,7 @@ function submitEditCountry(form) {
                         }
                     });
 
-                  
+
                 } else {
                     // Generic error fallback
                     Swal.fire({

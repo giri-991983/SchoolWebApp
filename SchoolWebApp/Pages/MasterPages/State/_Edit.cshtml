@@ -4,22 +4,21 @@
 <form id="editStateForm" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
     <input type="hidden" name="StateID" value="@Model.StateID" />
-
-    <div class="form-floating form-floating-outline mb-4">
-        <input type="text" class="form-control" id="EditStateName" name="StateName" value="@Model.StateName" placeholder="State Name" required />
-        <label for="EditStateName">State Name</label>
-        <span asp-validation-for="StateName" class="text-danger"></span>
-        <span id="editStateNameValidationMessage" class="text-danger" style="display: none;"></span>
-    </div>
-
     <div class="form-floating form-floating-outline mb-4">
         <select name="CountryID" class="form-select" id="EditCountryID" required>
-           
+
             @await Component.InvokeAsync("Master", new { viewname = "Countries", SelectedIDs = Model.CountryID })
         </select>
         <label for="EditCountryID">Country</label>
-        <span asp-validation-for="CountryID" class="text-danger"></span>
+        
     </div>
+    <div class="form-floating form-floating-outline mb-4">
+        <input type="text" class="form-control" id="EditStateName" name="StateName" value="@Model.StateName" placeholder="State Name" required />
+        <label for="EditStateName">State Name</label>
+      
+    </div>
+
+   
 
     <div class="text-end">
         <button type="submit" class="btn btn-primary me-2">Save</button>

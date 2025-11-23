@@ -41,20 +41,28 @@ $(document).ready(function () {
             });
     }
 });
-
 function initializeDataTable() {
     if (!$('#AcademicYearTable').length) {
         console.error('Error: #AcademicYearTable element not found in the DOM');
         return;
     }
+
     if ($.fn.DataTable.isDataTable('#AcademicYearTable')) {
         $('#AcademicYearTable').DataTable().destroy();
     }
+
     $('#AcademicYearTable').DataTable({
         order: [[0, 'asc']],
         displayLength: 20,
-        dom: '<"row pb-2 pb-md-0"<"col-md-2"<l>><"col-md-10"<"dt-action-buttons d-flex align-items-center justify-content-end flex-md-row flex-column gap-md-3 mb-3 mb-md-0"fB>>>' +
-            't<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+        dom:
+            '<"row pb-2 pb-md-0"' +
+            '<"col-md-2"<l>>' +
+            '<"col-md-10"<"dt-action-buttons d-flex align-items-center justify-content-end flex-md-row flex-column gap-md-3 mb-3 mb-md-0"fB>>' +
+            '>t' +
+            '<"row"' +
+            '<"col-sm-12 col-md-6"i>' +
+            '<"col-sm-12 col-md-6"p>' +
+            '>',
         lengthMenu: [20, 25, 30, 35],
         language: {
             sLengthMenu: '_MENU_',
@@ -67,19 +75,78 @@ function initializeDataTable() {
         },
         buttons: [
             {
+                extend: 'collection',
+                className: 'btn btn-outline-secondary dropdown-toggle me-4 waves-effect waves-light',
+                text: '<i class="ri-download-line ri-16px me-1"></i> <span class="d-none d-sm-inline-block">Export</span>',
+                buttons: [
+                    {
+                        extend: 'print',
+                        title: 'Academic Year Data',
+                        text: '<i class="ri-printer-line me-1"></i>Print',
+                        className: 'dropdown-item',
+                        customize: function (win) {
+                            $(win.document.body)
+                                .css('color', config.colors.headingColor)
+                                .css('border-color', config.colors.borderColor)
+                                .css('background-color', config.colors.body);
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('color', 'inherit')
+                                .css('border-color', 'inherit')
+                                .css('background-color', 'inherit');
+                            $(win.document.body).find('h1').css('text-align', 'center');
+                        },
+                        exportOptions: {
+                            columns: [1, 2, 3, 4],
+                        }
+                    },
+                    {
+                        extend: 'csv',
+                        title: 'Academic Year Data',
+                        text: '<i class="ri-file-text-line me-1"></i>CSV',
+                        className: 'dropdown-item',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4],
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        title: 'Academic Year Data',
+                        text: '<i class="ri-file-excel-line me-1"></i>Excel',
+                        className: 'dropdown-item',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4],
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        title: 'Academic Year Data',
+                        text: '<i class="ri-file-pdf-line me-1"></i>PDF',
+                        className: 'dropdown-item',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4],
+                        }
+                    },
+                    {
+                        extend: 'copy',
+                        title: 'Academic Year Data',
+                        text: '<i class="ri-file-copy-line me-1"></i>Copy',
+                        className: 'dropdown-item',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4],
+                        }
+                    }
+                ]
+            },
+            {
                 text: '<i class="ri-add-line ri-16px me-0 me-sm-1_5"></i><span class="d-none d-sm-inline-block">Add Academic Year</span>',
                 className: 'add-new btn btn-primary waves-effect waves-light',
                 attr: {
                     'data-bs-toggle': 'offcanvas',
                     'data-bs-target': '#createAcademicYearOffcanvas'
                 },
-
                 action: function () {
-                   
                     $('#addAcademicYearForm')[0].reset();
-                    $('#academicYearValidationMessage').text('').hide();
-                    $('#academicYear').removeClass('is-invalid');
-
                 }
             }
         ],
@@ -92,6 +159,7 @@ function initializeDataTable() {
         $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
     }, 300);
 }
+
 
 function CreateNewAcademicYearData(form) {
     var formData = new FormData(form);
@@ -127,21 +195,21 @@ function CreateNewAcademicYearData(form) {
                     window.location.reload();
                 });
             } else {
-    Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: response.message || 'Failed to create academic year.',
-        confirmButtonText: 'OK',
-        customClass: {
-            confirmButton: 'btn btn-primary waves-effect waves-light'
-        }
-    });
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: response.message || 'Failed to add AcademicYear.',
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        confirmButton: 'btn btn-primary waves-effect waves-light me-3',
+                        cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+                    }
+                });
 
-    //$('#academicYearValidationMessage')
-    //    .text(response.message || 'Failed to create academic year.')
-    //    .show();
-
-    //$('#academicYear').addClass('is-invalid');
+  
 }
 
         },
@@ -221,12 +289,16 @@ function academicYearEdit(academicYearId) {
 
             } else {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: response.message || 'Failed to load the edit form.',
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: response.message,
+                    showConfirmButton: true,
                     confirmButtonText: 'OK',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
                     customClass: {
-                        confirmButton: 'btn btn-primary waves-effect waves-light'
+                        confirmButton: 'btn btn-primary waves-effect waves-light me-3',
+                        cancelButton: 'btn btn-label-secondary waves-effect waves-light'
                     }
                 });
             }
@@ -287,8 +359,7 @@ function UpdateAcademicYearData(form) {
                         confirmButton: 'btn btn-primary waves-effect waves-light'
                     }
                 });
-                $('#editacademicYearValidationMessage').text(response.message || 'An error occurred while updating the academic year.').show();
-                $('#editAcademicYear').addClass('is-invalid');
+              
             }
         },
         error: function (xhr, status, error) {

@@ -37,19 +37,28 @@ function initializeDataTable() {
         console.error('Error: #CampusTypeTable element not found in the DOM');
         return;
     }
+
     if ($.fn.DataTable.isDataTable('#CampusTypeTable')) {
         $('#CampusTypeTable').DataTable().destroy();
     }
+
     $('#CampusTypeTable').DataTable({
         order: [[0, 'asc']],
         displayLength: 20,
-        dom: '<"row pb-2 pb-md-0"<"col-md-2"<l>><"col-md-10"<"dt-action-buttons d-flex align-items-center justify-content-end flex-md-row flex-column gap-md-3 mb-3 mb-md-0"fB>>>' +
-            't<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+        dom:
+            '<"row pb-2 pb-md-0"' +
+            '<"col-md-2"<l>>' +
+            '<"col-md-10"<"dt-action-buttons d-flex align-items-center justify-content-end flex-md-row flex-column gap-md-3 mb-3 mb-md-0"fB>>' +
+            '>t' +
+            '<"row"' +
+            '<"col-sm-12 col-md-6"i>' +
+            '<"col-sm-12 col-md-6"p>' +
+            '>',
         lengthMenu: [20, 25, 30, 35],
         language: {
             sLengthMenu: '_MENU_',
             search: '',
-            searchPlaceholder: 'Search Campus Type',
+            searchPlaceholder: 'Search Campus Types',
             paginate: {
                 next: '<i class="ri-arrow-right-s-line"></i>',
                 previous: '<i class="ri-arrow-left-s-line"></i>'
@@ -57,18 +66,26 @@ function initializeDataTable() {
         },
         buttons: [
             {
+                extend: 'collection',
+                className: 'btn btn-outline-secondary dropdown-toggle me-4 waves-effect waves-light',
+                text: '<i class="ri-download-line ri-16px me-1"></i> <span class="d-none d-sm-inline-block">Export</span>',
+                buttons: [
+                    { extend: 'print', title: 'Campus Type Data', text: '<i class="ri-printer-line me-1"></i>Print', className: 'dropdown-item' },
+                    { extend: 'csv', title: 'Campus Type Data', text: '<i class="ri-file-text-line me-1"></i>Csv', className: 'dropdown-item' },
+                    { extend: 'excel', title: 'Campus Type Data', text: '<i class="ri-file-excel-line me-1"></i>Excel', className: 'dropdown-item' },
+                    { extend: 'pdf', title: 'Campus Type Data', text: '<i class="ri-file-pdf-line me-1"></i>Pdf', className: 'dropdown-item' },
+                    { extend: 'copy', title: 'Campus Type Data', text: '<i class="ri-file-copy-line me-1"></i>Copy', className: 'dropdown-item' }
+                ]
+            },
+            {
                 text: '<i class="ri-add-line ri-16px me-0 me-sm-1_5"></i><span class="d-none d-sm-inline-block">Add Campus Type</span>',
                 className: 'add-new btn btn-primary waves-effect waves-light',
                 attr: {
                     'data-bs-toggle': 'offcanvas',
                     'data-bs-target': '#createCampusTypeOffcanvas'
                 },
-
                 action: function () {
-                  
                     $('#addCampusTypeForm')[0].reset();
-                    $('#campusTypeNameValidationMessage').text('').hide();
-                    $('#campusTypeName').removeClass('is-invalid');
                 }
             }
         ],
@@ -115,13 +132,19 @@ function CreateNewCampusTypeData(form) {
                 });
             } else {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: response.message || 'An error occurred while creating the campus type.',
-                    confirmButtonText: 'OK'
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: response.message || 'Failed to add CampusType.',
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        confirmButton: 'btn btn-primary waves-effect waves-light me-3',
+                        cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+                    }
                 });
-                $('#campusTypeNameValidationMessage').text(response.message).show();
-                $('#campusTypeName').addClass('is-invalid');
+               
             }
         },
         error: function (xhr, status, error) {
@@ -186,9 +209,17 @@ function campusTypeEdit(campusTypeId) {
                 $('#editCampusTypeOffcanvas').offcanvas('show');
             } else {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: response.message || 'Failed to load the edit form.'
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: response.message || 'Failed to Update CampusType.',
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        confirmButton: 'btn btn-primary waves-effect waves-light me-3',
+                        cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+                    }
                 });
             }
         },
@@ -243,8 +274,7 @@ function UpdateCampusTypeData(form, campusTypeId) {
                     text: response.message || 'An error occurred while updating the campus type.',
                     confirmButtonText: 'OK'
                 });
-                $('#editcampusTypeNameValidationMessage').text(response.message).show();
-                $('#editCampusTypeName').addClass('is-invalid');
+              
             }
         },
         error: function (xhr, status, error) {

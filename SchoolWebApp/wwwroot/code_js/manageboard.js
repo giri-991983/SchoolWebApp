@@ -51,8 +51,7 @@
 
                 action: function () {
                     $('#addBoardForm')[0].reset();
-                    $('#boardNameValidationMessage').text('').hide();
-                    $('#campusTypeValidationMessage').text('').hide();
+                 
 
                 }
                 }
@@ -206,9 +205,15 @@ function submitAddBoardForm(form) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Warning',
-                    text: response.message || 'Failed to add board.',
+                    text: response.message || 'Failed to add Board.',
                     showConfirmButton: true,
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'OK',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        confirmButton: 'btn btn-primary waves-effect waves-light me-3',
+                        cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+                    }
                 });
             }
         },
@@ -277,9 +282,17 @@ function boardEdit(boardId) {
                 $('#editBoardOffcanvas').offcanvas('show');
             } else {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: response.message || 'Failed to load the edit form.'
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: response.message || 'Failed to Update Board.',
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        confirmButton: 'btn btn-primary waves-effect waves-light me-3',
+                        cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+                    }
                 });
             }
         },

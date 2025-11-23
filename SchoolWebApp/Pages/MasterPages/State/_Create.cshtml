@@ -12,12 +12,7 @@
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="State.StateID" />
 
-            <div class="form-floating form-floating-outline mb-5">
-                <input asp-for="State.StateName" autocomplete="off" class="form-control" id="StateName" placeholder="State Name" required />
-                <label for="StateName">State Name</label>
-                <span asp-validation-for="State.StateName" class="text-danger"></span>
-                <span id="stateNameValidationMessage" class="text-danger" style="display: none;"></span>
-            </div>
+         
 
             <div class="form-floating form-floating-outline mb-5">
                 <select asp-for="State.CountryID" class="form-select" id="ModelCountryID" required>
@@ -25,9 +20,13 @@
                     @await Component.InvokeAsync("Master", new { viewname = "Countries" })
                 </select>
                 <label for="CountryID">Country</label>
-                <span asp-validation-for="State.CountryID" class="text-danger"></span>
+               
             </div>
-
+            <div class="form-floating form-floating-outline mb-5">
+                <input asp-for="State.StateName" autocomplete="off" class="form-control" id="StateName" placeholder="State Name" required />
+                <label for="StateName">State Name</label>
+               
+            </div>
             <div class="row">
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary me-3">Submit</button>

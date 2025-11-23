@@ -1,22 +1,23 @@
-﻿@model SchoolWebApp.Models.Country
+﻿@model SchoolWebApp.Pages.MasterPages.Country.IndexModel
 
 <form id="editCountryForm" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
-    <input type="hidden" name="Country.CountryID" value="@Model.CountryID" />
+
+    <input type="hidden" asp-for="Country.CountryID" />
 
     <div class="form-floating form-floating-outline mb-4">
-        <input type="text" class="form-control" id="EditCountryName" name="Country.CountryName" value="@Model.CountryName" placeholder="Country Name" />
-        <label for="EditCountryName">Country Name</label>
+        <input asp-for="Country.CountryName" class="form-control" id="EditCountryName" placeholder="Country Name" />
+        <label asp-for="Country.CountryName">Country Name</label>
     </div>
 
     <div class="form-floating form-floating-outline mb-4">
-        <input type="text" class="form-control" id="EditCurrencyCode" name="Country.CurrencyCode" maxlength="3" value="@Model.CurrencyCode" placeholder="Currency Code" />
-        <label for="EditCurrencyCode">Currency Code</label>
+        <input asp-for="Country.CurrencyCode" class="form-control" id="EditCurrencyCode" maxlength="3" placeholder="Currency Code" />
+        <label asp-for="Country.CurrencyCode">Currency Code</label>
     </div>
 
     <div class="form-floating form-floating-outline mb-4">
-        <input type="number" class="form-control" id="EditCurrencyDecimal" name="Country.CurrencyDecimal" value="@Model.CurrencyDecimal" min="0" max="4" placeholder="Currency Decimal" />
-        <label for="EditCurrencyDecimal">Currency Decimal</label>
+        <input asp-for="Country.CurrencyDecimal" class="form-control" id="EditCurrencyDecimal" type="number" min="0" max="4" placeholder="Currency Decimal" />
+        <label asp-for="Country.CurrencyDecimal">Currency Decimal</label>
     </div>
 
     <div class="text-end">

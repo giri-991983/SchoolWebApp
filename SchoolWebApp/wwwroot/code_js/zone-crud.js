@@ -121,47 +121,100 @@ function initializeZoneDataTable() {
         ],
         responsive: true
     });
+
+
+
+
+    // Filter Form styles to default size after DataTable initialization
+    setTimeout(() => {
+        $('.dataTables_filter input').addClass('ms-0');
+        $('div.dataTables_wrapper .dataTables_filter').addClass('mt-0 mt-md-5');
+        $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
+    }, 300);
+}
+//$(document).ready(function () {
+//const zoneFv = FormValidation.formValidation(document.getElementById('filterZoneForm'), {
+//    fields: {
+//        InstitutionID: {
+//            validators: {
+//                notEmpty: {
+//                    message: 'Please select an Institution.'
+//                }
+//            }
+//        }
+//    },
+//    plugins: {
+//        trigger: new FormValidation.plugins.Trigger(),
+//        bootstrap5: new FormValidation.plugins.Bootstrap5({
+//            eleValidClass: 'is-valid',
+//            eleInvalidClass: 'is-invalid',
+//            rowSelector: '.form-floating'
+//        }),
+//        submitButton: new FormValidation.plugins.SubmitButton(),
+//        autoFocus: new FormValidation.plugins.AutoFocus()
+//    }
+//}).on('core.form.valid', function () {
+   
+//    FilterZones();
+//}).on('core.form.invalid', function () {
+//    return;
+//});
+//$('#InstitutionID').on('change', function () {
+//    $('#FilterZoneTable').hide();
+//});
+//});
+$(document).ready(function () {
+
+    const zoneFilterForm = document.getElementById('filterZoneForm');
+
+    if (zoneFilterForm) {
+
+        // Filter table and validation for Zone
+        FormValidation.formValidation(zoneFilterForm, {
+            fields: {
+                InstitutionID: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Please select an Institution.'
+                        }
+                    }
+                }
+            },
+            plugins: {
+                trigger: new FormValidation.plugins.Trigger(),
+                bootstrap5: new FormValidation.plugins.Bootstrap5({
+                    eleValidClass: 'is-valid',
+                    eleInvalidClass: 'is-invalid',
+                    rowSelector: '.form-floating'
+                }),
+                submitButton: new FormValidation.plugins.SubmitButton(),
+                autoFocus: new FormValidation.plugins.AutoFocus()
+            }
+        })
+            .on('core.form.valid', function () {
+                filterZones(zoneFilterForm);
+            })
+            .on('core.form.invalid', function () {
+                return;
+            });
+
+    } else {
+        console.error('filterZoneForm not found');
+    }
+
+    // Hide zone table on InstitutionID change
+    $('#InstitutionID').on('change', function () {
+        $('#FilterZoneTable').hide();
+    });
+
    
 
-
-
-// Filter Form styles to default size after DataTable initialization
-setTimeout(() => {
-    $('.dataTables_filter input').addClass('ms-0');
-    $('div.dataTables_wrapper .dataTables_filter').addClass('mt-0 mt-md-5');
-    $('div.dataTables_wrapper div.dataTables_info').addClass('text-start text-sm-center text-md-start');
-}, 300);
-}
-
-const zoneFv = FormValidation.formValidation(document.getElementById('filterZoneForm'), {
-    fields: {
-        InstitutionID: {
-            validators: {
-                notEmpty: {
-                    message: 'Please select an Institution.'
-                }
-            }
-        }
-    },
-    plugins: {
-        trigger: new FormValidation.plugins.Trigger(),
-        bootstrap5: new FormValidation.plugins.Bootstrap5({
-            eleValidClass: 'is-valid',
-            eleInvalidClass: 'is-invalid',
-            rowSelector: '.form-floating'
-        }),
-        submitButton: new FormValidation.plugins.SubmitButton(),
-        autoFocus: new FormValidation.plugins.AutoFocus()
-    }
-}).on('core.form.valid', function () {
-    FilterZones();
-}).on('core.form.invalid', function () {
-    return;
 });
-function FilterZones() {
+function filterZones(form) {
 
-    /*   $('#filterButton').on('click', function () {*/
-    var institutionId = $('#InstitutionID').val();
+    const institutionId = form.querySelector('#InstitutionID').value;
+
+   
 
    
     $.ajax({
@@ -174,9 +227,15 @@ function FilterZones() {
             if ($('#ZoneTable').length) {
                 initializeZoneDataTable(); // Reinitialize DataTable on the new table
             }
+            $('#FilterZoneTable').show();
         },
-        error: function () {
-            alert('Failed to load zone data.');
+        error: function (xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load class data: ' + (xhr.responseText || error),
+                confirmButtonText: 'OK'
+            });
         }
     });
 }
@@ -264,10 +323,11 @@ function CreateNewZoneData(form) {
                         showConfirmButton: false
                     }).then(() => {
                         $('#createZoneOffcanvas').offcanvas('hide');
-                        window.location.reload();
+                        filterZones(document.getElementById('filterZoneForm'));
                     });
                 } else {
-                    window.location.reload();
+                    filterZones(document.getElementById('filterZoneForm'));
+
                 }
             } else {
                 if (typeof Swal !== 'undefined') {
@@ -358,6 +418,9 @@ function DeleteZoneData(zoneId) {
                         if (typeof $.fn.DataTable === 'function') {
                             $('#ZoneTable').DataTable().draw(false);
                         }
+                        filterZones(document.getElementById('filterZoneForm'));
+
+
                     });
                 });
             } else {
@@ -488,10 +551,13 @@ function UpdateZoneData(form) {
                         showConfirmButton: false
                     }).then(() => {
                         $('#editZoneOffcanvas').offcanvas('hide');
-                        window.location.reload();
+                        filterZones(document.getElementById('filterZoneForm'));
+
                     });
                 } else {
-                    window.location.reload();
+                    filterZones(document.getElementById('filterZoneForm'));
+
+
                 }
             } else {
                 if (typeof Swal !== 'undefined') {
