@@ -25,6 +25,8 @@ namespace SchoolWebApp.Data
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseYear> CourseYears { get; set; }
         public DbSet<MasterCourse> MasterCourses { get; set; }
+        public DbSet<FeePaymentModes> FeePaymentModes { get; set; }
+
 
     }
 }

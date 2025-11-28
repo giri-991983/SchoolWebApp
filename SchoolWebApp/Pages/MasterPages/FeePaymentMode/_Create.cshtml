@@ -1,0 +1,34 @@
+﻿@model SchoolWebApp.Pages.MasterPages.FeePaymentMode.IndexModel
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="createFeePaymentOffcanvas" aria-labelledby="createFeePaymentOffcanvasLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="createFeePaymentOffcanvasLabel">Add Fee Payment Mode</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body mx-0 flex-grow-0">
+        <form id="addFeePaymentForm" method="post">
+            <div class="form-floating form-floating-outline mb-5">
+                <input type="text"
+                       class="form-control"
+                       id="FeePaymentModeInput"
+                       name="feePaymentMode"
+                       placeholder="Fee Payment Mode"
+                       autocomplete="off"
+                       maxlength="50"
+                       required />
+
+                <label for="FeePaymentModeInput">Fee Payment Mode</label>
+                <span class="text-danger" id="feePaymentModeValidationMessage"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-12 text-end">        
+                    <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                    <button type="submit" class="btn btn-primary me-3">Submit</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+﻿@model SchoolWebApp.Models.FeePaymentModes
+
+<form id="editFeePaymentForm" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="FeePayment.FeePaymentModeID" value="@Model.FeePaymentModeID" />
+
+    <div class="form-floating form-floating-outline mb-4">
+        <input type="text"
+               class="form-control"
+               id="EditFeePaymentMode"
+               name="FeePayment.FeePaymentMode"
+               value="@Model.FeePaymentMode"
+               maxlength="50"
+               required
+               placeholder="Fee Payment Mode" />
+
+        <label for="EditFeePaymentMode">Fee Payment Mode</label>
+        <span id="editFeePaymentValidationMessage" class="text-danger"></span>
+    </div>
+
+    <div class="text-end">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+        <button type="submit" class="btn btn-primary me-2">Save</button>
+    </div>
+</form>
