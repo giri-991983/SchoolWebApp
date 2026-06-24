@@ -235,8 +235,7 @@ namespace SchoolWebApp.Pages.ClassRoom
                                                      cr.InstitutionID == ClassRoom.InstitutionID &&
                                                      cr.CampusID == ClassRoom.CampusID &&
                                                      cr.AcademicYearID == ClassRoom.AcademicYearID &&
-
-                                                     cr.ClassRoomID != ClassRoom.ClassRoomID);
+                                                     cr.GradeID == ClassRoom.GradeID );
                 if (existingClassRoom != null)
                 {
                     return new JsonResult(new { success = false, message = "A class room with this name already exists for the selected institution and campus." });
