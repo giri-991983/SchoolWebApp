@@ -443,7 +443,7 @@ function CreateNewInstituionDtaa(form) {
 
 function showDeleteConfirmation(institutionId) {
     //  event.preventDefault(); // prevent form submit
-    debugger;
+    //debugger;
     const InstitutionName = document.querySelector(`.inst-name-full-${institutionId}`).innerText;
     Swal.fire({
         title: 'Delete Institution Name',
@@ -475,7 +475,7 @@ function showDeleteConfirmation(institutionId) {
     });
 }
 function DeleteInstitutionData(institutionId) {
-    debugger;
+    //debugger;
     $.ajax({
         url: '/Institution/Index?handler=DeleteInstitution',
         type: 'POST',
@@ -608,7 +608,7 @@ function DeleteInstitutionData(institutionId) {
 //    });
 
 //function UpdateNewInstituionDtaa(form) {
-//    debugger;
+//    //debugger;
 //    console.log('Create form validated');
 //    var formData = new FormData(form);
 //    console.log('Create form data:', Array.from(formData.entries()));

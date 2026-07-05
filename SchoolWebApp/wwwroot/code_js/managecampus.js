@@ -873,7 +873,7 @@ function CreateNewCampusData(form) {
 
 function showDeleteConfirmation(campusId) {
     //  event.preventDefault(); // prevent form submit
-    debugger;
+    //debugger;
     const CampusName = document.querySelector(`.camp-name-full-${campusId}`).innerText;
 
     Swal.fire({
@@ -906,7 +906,7 @@ function showDeleteConfirmation(campusId) {
     });
 }
 function DeleteCampusData(campusId) {
-    debugger;
+    //debugger;
     $.ajax({
         url: '/Campus/Index?handler=DeleteCampus',
         type: 'POST',
