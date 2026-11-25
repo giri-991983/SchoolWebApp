@@ -1,0 +1,45 @@
+@page
+@model SchoolWebApp.Pages.Account.LoginModel
+@{
+    Layout = "Shared/_ContentNavbarLayout";
+    ViewData["title"] = "Login";
+}
+
+@section PageStyles {
+    <link rel="stylesheet" href="~/vendor/css/pages/page-auth.dist.css" />
+}
+
+<div class="position-relative">
+    <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner py-6 mx-auto" style="max-width:420px">
+            <div class="card p-md-7 p-1">
+                <div class="card-body mt-1 text-center">
+                    <h4 class="mb-1">Welcome</h4>
+                    <p class="mb-5">Sign in to the school admin portal with your Google account.</p>
+
+                    @if (!string.IsNullOrEmpty(Model.Error))
+                    {
+                        <div class="alert alert-danger" role="alert">Google sign-in did not complete. Please try again.</div>
+                    }
+
+                    @if (Model.GoogleConfigured)
+                    {
+                        <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
+                            <button type="submit" class="btn btn-outline-primary d-flex align-items-center justify-content-center w-100">
+                                <i class="ri-google-fill ri-20px me-2"></i>
+                                <span>Sign in with Google</span>
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning" role="alert">
+                            Google sign-in is not configured. Set Authentication:Google:ClientId and
+                            Authentication:Google:ClientSecret on the server.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

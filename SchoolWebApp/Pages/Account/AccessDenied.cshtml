@@ -1,0 +1,12 @@
+@page
+@model SchoolWebApp.Pages.Account.AccessDeniedModel
+@{
+    Layout = "Shared/_ContentNavbarLayout";
+    ViewData["title"] = "Access denied";
+}
+
+<div class="container-xxl container-p-y text-center">
+    <h4 class="mb-2">Access denied</h4>
+    <p class="mb-5">This Google account is not allowed to use the admin portal.</p>
+    <a class="btn btn-outline-primary" asp-page="/Account/Login">Sign in with a different account</a>
+</div>
