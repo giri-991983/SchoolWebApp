@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SchoolWebApp
 {
+    [Authorize(Policy = "AdminOnly")]
     [Route("MasterData/[action]")]
     public class MasterDataController : Controller
     {
