@@ -1,10 +1,119 @@
-﻿@page
+@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Dashboard";
+    ViewData["hidePageHeader"] = true;
+    string firstName = (User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value
+        ?? User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value?.Split(' ').FirstOrDefault()
+        ?? "there");
+    int hour = DateTime.Now.Hour;
+    string greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+
+    var quickLinks = new (string Label, string Hint, string Icon, string Page)[]
+    {
+        ("Institutions", "Add or edit institutions", "ri-government-line", "/Institution/Index"),
+        ("Campuses", "Manage campuses by zone", "ri-school-line", "/Campus/Index"),
+        ("Classes", "Set up classes per campus", "ri-book-2-line", "/Class/Index"),
+        ("Course batches", "Organise batches", "ri-group-line", "/CourseBatch/Index"),
+        ("Academic years", "Define the school year", "ri-calendar-2-line", "/MasterPages/AcademicYears/Index"),
+        ("Fee payment modes", "Cash, UPI, card and more", "ri-money-rupee-circle-line", "/MasterPages/FeePaymentMode/Index"),
+    };
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="sc-dashboard">
+
+    <!-- Welcome -->
+    <div class="card sc-hero mb-6">
+        <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
+            <div>
+                <p class="sc-hero-eyebrow mb-1"><i class="ri-calendar-line me-1"></i>@DateTime.Now.ToString("dddd, dd MMMM yyyy")</p>
+                <h3 class="sc-hero-title mb-1">@greeting, @firstName</h3>
+                <p class="sc-hero-text mb-0">Here's a snapshot of your school setup. Pick up where you left off below.</p>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-page="/Institution/Index" class="btn sc-hero-btn"><i class="ri-add-line me-1"></i>Add institution</a>
+                <a asp-page="/Campus/Index" class="btn sc-hero-btn-ghost"><i class="ri-school-line me-1"></i>View campuses</a>
+            </div>
+        </div>
+        <i class="ri-graduation-cap-line sc-hero-art" aria-hidden="true"></i>
+    </div>
+
+    @if (Model.StatsUnavailable)
+    {
+        <div class="alert alert-warning d-flex align-items-center mb-6" role="alert">
+            <i class="ri-error-warning-line ri-20px me-2"></i>
+            <span>The database could not be reached, so the counts below are not available right now.</span>
+        </div>
+    }
+
+    <!-- Stats -->
+    <div class="row g-4 mb-6">
+        @foreach (var stat in Model.Stats)
+        {
+            <div class="col-6 col-md-4 col-xl-3">
+                <a asp-page="@stat.Page" class="card sc-stat h-100 text-decoration-none">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <span class="sc-stat-icon bg-label-@stat.Color"><i class="@stat.Icon"></i></span>
+                        <div class="min-w-0">
+                            <div class="sc-stat-value">@(stat.Count?.ToString("N0") ?? "–")</div>
+                            <div class="sc-stat-label text-truncate">@stat.Label</div>
+                        </div>
+                        <i class="ri-arrow-right-up-line sc-stat-arrow ms-auto"></i>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+
+    <div class="row g-4">
+        <!-- Quick actions -->
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <div>
+                        <h5 class="card-title mb-0">Quick actions</h5>
+                        <small class="text-muted">Jump straight into the most used screens</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        @foreach (var link in quickLinks)
+                        {
+                            <div class="col-sm-6">
+                                <a asp-page="@link.Page" class="sc-quick">
+                                    <span class="sc-quick-icon"><i class="@link.Icon"></i></span>
+                                    <span class="flex-grow-1">
+                                        <span class="sc-quick-label">@link.Label</span>
+                                        <span class="sc-quick-hint">@link.Hint</span>
+                                    </span>
+                                    <i class="ri-arrow-right-s-line sc-quick-arrow"></i>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Setup guide -->
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Setup order</h5>
+                    <small class="text-muted">Records depend on the ones above them</small>
+                </div>
+                <div class="card-body">
+                    <ol class="sc-steps">
+                        <li><a asp-page="/MasterPages/Country/Index">Countries, states and cities</a></li>
+                        <li><a asp-page="/MasterPages/AcademicYears/Index">Academic years and boards</a></li>
+                        <li><a asp-page="/Institution/Index">Institutions</a></li>
+                        <li><a asp-page="/Zone/Index">Zones</a></li>
+                        <li><a asp-page="/Campus/Index">Campuses</a></li>
+                        <li><a asp-page="/Class/Index">Classes and class rooms</a></li>
+                        <li><a asp-page="/Course/Index">Courses and batches</a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -4,7 +4,9 @@
 }
 
 @{
-    ViewData["Title"] = "List of CourseBatchs";
+    ViewData["Title"] = "Course batches";
+    ViewData["Subtitle"] = "Batches running for each course";
+    ViewData["Icon"] = "ri-group-line";
 }
 
 @section VendorStyles
@@ -40,11 +42,10 @@
 
 <div class="card">
     <div class="card-datatable table-responsive">
-        <div class="container-fluid">
-            <h3 class="mb-4">Manage Course Batch</h3>
+        <div class="container-fluid sc-filter-bar">
             <form id="CourseBatchFilterForm">
                 <!-- Filter Section -->
-                <div class="row mb-4">
+                <div class="row g-3 align-items-center">
 
                     <!-- Institution Dropdown -->
                     <div class="col-md-3">
@@ -84,7 +85,7 @@
 
                     <!-- Get Button -->
                     <div class="col-md-2 d-flex align-items-center">
-                        <button type="submit" class="btn btn-primary w-75">Get</button>
+                        <button type="submit" class="btn btn-primary w-100 sc-filter-btn"><i class="ri-search-line me-1"></i>Show</button>
                     </div>
                 </div>
             </form>

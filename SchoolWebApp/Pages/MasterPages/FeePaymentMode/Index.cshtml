@@ -2,7 +2,9 @@
 @model SchoolWebApp.Pages.MasterPages.FeePaymentMode.IndexModel
 
 @{
-    ViewData["Title"] = "Fee Payment Modes";
+    ViewData["Title"] = "Fee payment modes";
+    ViewData["Subtitle"] = "Ways parents can pay fees";
+    ViewData["Icon"] = "ri-money-rupee-circle-line";
 }
 
 @section VendorStyles
@@ -39,9 +41,6 @@
 
 
 <div class="card">
-    <div class="card-header pb-0">
-        <h5 class="card-title mb-0">Manage Fee Payment Modes</h5>
-    </div>
 
     <div class="card-datatable table-responsive">
         <table id="FeePaymentTable" class="table">

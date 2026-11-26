@@ -1,202 +1,110 @@
 @{
     TempData.Keep();
-    string? currentPage = Convert.ToString(ViewContext.RouteData.Values["Page"])!;
+    string currentPage = Convert.ToString(ViewContext.RouteData.Values["page"]) ?? "";
+
+    // (page, label, icon)
+    var organisation = new (string Page, string Label, string Icon)[]
+    {
+        ("/Institution/Index", "Institutions", "ri-government-line"),
+        ("/Zone/Index", "Zones", "ri-map-2-line"),
+        ("/Campus/Index", "Campuses", "ri-school-line"),
+    };
+    var academics = new (string Page, string Label, string Icon)[]
+    {
+        ("/Class/Index", "Classes", "ri-book-2-line"),
+        ("/ClassRoom/Index", "Class rooms", "ri-door-open-line"),
+        ("/Course/Index", "Courses", "ri-book-open-line"),
+        ("/CourseBatch/Index", "Course batches", "ri-group-line"),
+    };
+    var masters = new (string Page, string Label, string Icon)[]
+    {
+        ("/MasterPages/AcademicYears/Index", "Academic years", "ri-calendar-2-line"),
+        ("/MasterPages/Boards/Index", "Boards", "ri-organization-chart"),
+        ("/MasterPages/BoardingTypes/Index", "Boarding types", "ri-home-smile-line"),
+        ("/MasterPages/CampusType/Index", "Campus types", "ri-building-line"),
+        ("/MasterPages/Country/Index", "Countries", "ri-global-line"),
+        ("/MasterPages/State/Index", "States", "ri-map-pin-2-line"),
+        ("/MasterPages/City/Index", "Cities", "ri-map-pin-line"),
+        ("/MasterPages/FeePaymentMode/Index", "Fee payment modes", "ri-money-rupee-circle-line"),
+    };
+    bool mastersOpen = currentPage.StartsWith("/MasterPages/", StringComparison.OrdinalIgnoreCase);
 }
 
 <!-- Menu -->
-@* ! Do this simple *@
-<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme sc-menu">
 
-    @* ! Hide app brand if navbar-full *@
-    <div class='app-brand demo @((@ViewData["navbarFull"] != null && Convert.ToBoolean(@ViewData["navbarFull"])) ? "d-xl-none" : "")'>
+    <div class="app-brand demo sc-brand">
         <a asp-page="/Index" class="app-brand-link">
-            @*  <span class="app-brand-logo demo me-1">@await Html.PartialAsync("../_Partials/_Macros")</span> *@
-            <span class="app-brand-text demo menu-text fw-semibold ms-2">@TempData.Peek("appName")</span>
+            <span class="sc-brand-mark" aria-hidden="true"><i class="ri-graduation-cap-fill"></i></span>
+            <span class="sc-brand-text">
+                <span class="app-brand-text demo menu-text">@TempData.Peek("appName")</span>
+                <small class="sc-brand-tagline">@TempData.Peek("appTagline")</small>
+            </span>
         </a>
 
-        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto" aria-label="Toggle menu">
             <i class="menu-toggle-icon d-xl-block align-middle"></i>
         </a>
     </div>
 
     <div class="menu-inner-shadow"></div>
 
-    @* ! Full version menu-items *@
     <ul class="menu-inner py-1">
 
-        @* 
-        <!-- Institution List -->
-        <li class='menu-item@(currentPage == "/Institution/Index" ? " active" : "")'>
-            <a asp-page="/Institution/Index" class="menu-link">
-                <i class="menu-icon tf-icons ri-database-2-line"></i>
-                <div data-i18n="Manage Institution"> Manage Institution </div>
+        <li class='menu-item@(currentPage == "/Index" ? " active" : "")'>
+            <a asp-page="/Index" class="menu-link">
+                <i class="menu-icon tf-icons ri-dashboard-3-line"></i>
+                <div>Dashboard</div>
             </a>
         </li>
-        <li class='menu-item@(currentPage == "/Zone/Index" ? " active" : "")'>
-            <a asp-page="/Zone/Index" class="menu-link">
-                <i class="menu-icon tf-icons ri-map-pin-line"></i>
-                <div data-i18n="Manage Zones"> Manage Zones </div>
-            </a>
-        </li>
-        <li class='menu-item@(currentPage == "/Campus/Index" ? " active" : "")'>
-            <a asp-page="/Campus/Index" class="menu-link">
-                <i class="menu-icon tf-icons ri-school-line"></i>
-                <div data-i18n="Manage Campus"> Manage Campus </div>
-            </a>
-        </li>
-      
-        <li class='menu-item@(currentPage == "/Class/Index" ? " active" : "")'>
-            <a asp-page="/Class/Index" class="menu-link">
-                <i class="menu-icon tf-icons ri-school-line"></i>
-                <div data-i18n="Manage Class"> Manage Classes</div>
-            </a>
-        </li>
-        <li class='menu-item@(currentPage == "/ClassRoom/Index" ? " active" : "")'>
-            <a asp-page="/ClassRoom/Index" class="menu-link">
-                <i class="menu-icon tf-icons ri-school-line"></i>
-                <div data-i18n="Manage ClassRoom"> Manage Class Room</div>
-            </a>
-        </li> *@
-        <!-- Organisation -->
-        <li class='menu-item@(currentPage.StartsWith("/Pages/") ? " active open" : "")'>
+
+        <li class="menu-header"><span class="menu-header-text">Organisation</span></li>
+        @foreach (var item in organisation)
+        {
+            <li class='menu-item@(currentPage == item.Page ? " active" : "")'>
+                <a asp-page="@item.Page" class="menu-link">
+                    <i class="menu-icon tf-icons @item.Icon"></i>
+                    <div>@item.Label</div>
+                </a>
+            </li>
+        }
+
+        <li class="menu-header"><span class="menu-header-text">Academics</span></li>
+        @foreach (var item in academics)
+        {
+            <li class='menu-item@(currentPage == item.Page ? " active" : "")'>
+                <a asp-page="@item.Page" class="menu-link">
+                    <i class="menu-icon tf-icons @item.Icon"></i>
+                    <div>@item.Label</div>
+                </a>
+            </li>
+        }
+
+        <li class="menu-header"><span class="menu-header-text">Settings</span></li>
+        <li class='menu-item@(mastersOpen ? " active open" : "")'>
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ri-building-4-line"></i>
-                <div data-i18n="Organisation">Organisation</div>
-                <div class="badge bg-danger rounded-pill ms-auto">3</div>
+                <i class="menu-icon tf-icons ri-settings-4-line"></i>
+                <div>Master data</div>
             </a>
             <ul class="menu-sub">
-
-                <!-- Institution List -->
-                <li class='menu-item@(currentPage == "/Institution/Index" ? " active" : "")'>
-                    <a asp-page="/Institution/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-database-2-line"></i>
-                        <div data-i18n="Manage Institution"> Manage Institution </div>
-                    </a>
-                </li>
-                <li class='menu-item@(currentPage == "/Zone/Index" ? " active" : "")'>
-                    <a asp-page="/Zone/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-map-pin-line"></i>
-                        <div data-i18n="Manage Zones"> Manage Zones </div>
-                    </a>
-                </li>
-                <li class='menu-item@(currentPage == "/Campus/Index" ? " active" : "")'>
-                    <a asp-page="/Campus/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-school-line"></i>
-                        <div data-i18n="Manage Campus"> Manage Campus </div>
-                    </a>
-                </li>
+                @foreach (var item in masters)
+                {
+                    <li class='menu-item@(currentPage == item.Page ? " active" : "")'>
+                        <a asp-page="@item.Page" class="menu-link">
+                            <div>@item.Label</div>
+                        </a>
+                    </li>
+                }
             </ul>
         </li>
-        <!-- Classes -->
-        <li class='menu-item@(currentPage.StartsWith("/Pages/") ? " active open" : "")'>
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ri-book-2-line"></i>
-                <div data-i18n="Class"> Class</div>
-                <div class="badge bg-danger rounded-pill ms-auto">2</div>
-            </a>
-            <ul class="menu-sub">
+    </ul>
 
-                <li class='menu-item@(currentPage == "/Class/Index" ? " active" : "")'>
-                    <a asp-page="/Class/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-book-2-line"></i>
-                        <div data-i18n="Manage Class"> Manage Classes</div>
-                    </a>
-                </li>
-                <li class='menu-item@(currentPage == "/ClassRoom/Index" ? " active" : "")'>
-                    <a asp-page="/ClassRoom/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-door-open-line"></i>
-                        <div data-i18n="Manage ClassRoom"> Manage Class Room</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-        <!-- Courses -->
-        <li class='menu-item@(currentPage.StartsWith("/Pages/") ? " active open" : "")'>
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ri-book-open-line"></i>
-                <div data-i18n="Courses">Courses</div>
-                <div class="badge bg-danger rounded-pill ms-auto">2</div>
-            </a>
-            <ul class="menu-sub">
-
-                <!-- Manage Course -->
-                <li class='menu-item@(currentPage == "/Course/Index" ? " active" : "")'>
-                    <a asp-page="/Course/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-book-open-line"></i>
-                        <div data-i18n="Manage Course"> Manage Course</div>
-                    </a>
-                </li>
-
-                <!-- Manage Course Batch -->
-                <li class='menu-item@(currentPage == "/CourseBatch/Index" ? " active" : "")'>
-                    <a asp-page="/CourseBatch/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-group-line"></i>
-                        <div data-i18n="Manage Course Batch"> Manage Course Batch</div>
-                    </a>
-                </li>
-
-            </ul>
-        </li>
-        <li class='menu-item@(currentPage.StartsWith("/MasterPages/") ? " active open" : "")'>
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ri-book-2-line"></i>
-                <div data-i18n="MasterPages"> MasterPages</div>
-
-            </a>
-            <ul class="menu-sub">
-
-                <li class='menu-item@(currentPage == "/MasterPages/CampusType/Index" ? " active" : "")'>
-                    <a asp-page="/MasterPages/CampusType/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-building-line"></i>
-                        <div data-i18n="Manage CampusType"> Manage CampusType</div>
-                    </a>
-                </li>
-                <li class='menu-item@( currentPage == "/MasterPages/AcademicYears/Index" ? " active" : "")'>
-                    <a asp-page="/MasterPages/AcademicYears/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-calendar-line"></i>
-                        <div data-i18n="Manage AcademicYears"> Manage AcademicYear</div>
-                    </a>
-                </li>
-                <li class='menu-item@( currentPage == "/MasterPages/Boards/Index" ? " active" : "")'>
-                    <a asp-page="/MasterPages/Boards/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-organization-chart"></i>
-                        <div data-i18n="Manage Boards"> Manage Boards</div>
-                    </a>
-                </li>
-                <li class='menu-item@(currentPage == "/MasterPages/BoardingTypes/Index" ? " active" : "")'>
-                    <a asp-page="/MasterPages/BoardingTypes/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-home-smile-line"></i>
-                        <div data-i18n="Manage BoardingTypes"> Manage BoardingTypes</div>
-                    </a>
-                </li>
-                <li class='menu-item@( currentPage == "/MasterPages/Country/Index" ? " active" : "")'>
-                    <a asp-page="/MasterPages/Country/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-global-line"></i>
-                        <div data-i18n="Manage Country"> Manage Country</div>
-                    </a>
-                </li>
-                <li class='menu-item@(currentPage == "/MasterPages/State/Index" ? " active" : "")'>
-                    <a asp-page="/MasterPages/State/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-map-pin-line"></i>
-                        <div data-i18n="Manage State"> Manage State</div>
-                    </a>
-                </li>
-                <li class='menu-item@(currentPage == "/MasterPages/City/Index" ? " active" : "")'>
-                    <a asp-page="/MasterPages/City/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-map-pin-line"></i>
-                        <div data-i18n="Manage City"> Manage City</div>
-                    </a>
-                </li>
-                <li class='menu-item@(currentPage == "/MasterPages/FeePaymentMode/Index" ? " active" : "")'>
-                    <a asp-page="/MasterPages/FeePaymentMode/Index" class="menu-link">
-                        <i class="menu-icon tf-icons ri-money-rupee-circle-line"></i>
-                        <div data-i18n="FeePaymentMode"> FeePaymentMode</div>
-                    </a>
-                </li>
-
-            </ul>
-        </li>
-
+    <div class="sc-menu-footer">
+        <form method="post" asp-page="/Account/Logout">
+            <button type="submit" class="btn sc-signout w-100">
+                <i class="ri-logout-box-r-line me-2"></i><span>Sign out</span>
+            </button>
+        </form>
+    </div>
 </aside>
 <!-- / Menu -->

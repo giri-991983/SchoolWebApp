@@ -2,7 +2,9 @@
 @using SchoolWebApp
 @model SchoolWebApp.Pages.Institution.IndexModel
 @{
-    ViewData["Title"] = "List of Institutions";
+    ViewData["Title"] = "Institutions";
+    ViewData["Subtitle"] = "Schools and groups managed in this portal";
+    ViewData["Icon"] = "ri-government-line";
 
 
 }
@@ -29,16 +31,13 @@
 }
 @section PageScripts
 {
-    <script src="~/code_js/manageinstitution.js"></script>
+    <script src="~/code_js/manageInstitution.js"></script>
 }
 
 @if (Model?.Institutions != null && Model.Institutions.Any())
 {
     var kk = 0;
     <div class="card">
-        <div class="card-header pb-0">
-            <h5 class="card-title mb-0">Manage Institution</h5>
-        </div>
         <div class="card-datatable table-responsive">
             <table id="InstitutionTable" class="table">
                 <thead>
@@ -121,9 +120,6 @@
 else
 {
     <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">Manage Institution</h5>
-        </div>
         <div class="card-datatable table-responsive">
             <table id="InstitutionTable" class="table">
                 <thead>

@@ -2,6 +2,8 @@
 @model SchoolWebApp.Pages.MasterPages.State.IndexModel
 @{
     ViewData["Title"] = "States";
+    ViewData["Subtitle"] = "States by country";
+    ViewData["Icon"] = "ri-map-pin-2-line";
 }
 
 @section VendorStyles
@@ -33,10 +35,9 @@
 
 <div class="card">
     <div class="card-datatable table-responsive">
-        <div class="container-fluid">
-            <h3 class="mb-4">Manage States</h3>
+        <div class="container-fluid sc-filter-bar">
             <form id="filterForm">
-                <div class="row mb-4">
+                <div class="row g-3 align-items-center">
                     <!-- Country Dropdown -->
                     <div class="col-md-3">
                         <div class="form-floating form-floating-outline">

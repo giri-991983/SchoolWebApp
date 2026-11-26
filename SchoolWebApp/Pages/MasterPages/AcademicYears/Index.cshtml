@@ -1,7 +1,9 @@
 ﻿@page
 @model SchoolWebApp.Pages.MasterPages.AcademicYears.IndexModel
 @{
-    ViewData["Title"] = "Manage Academic Years";
+    ViewData["Title"] = "Academic years";
+    ViewData["Subtitle"] = "The school years used across the portal";
+    ViewData["Icon"] = "ri-calendar-2-line";
 }  
 @section VendorStyles
 {
@@ -40,7 +42,6 @@
 <div class="card">
     <div class="card-datatable table-responsive">
         <div class="container-fluid">
-            <h3 class="mb-4">Manage Academic Years</h3>
             <table id="AcademicYearTable" class="table">
                 <thead>
                     <tr>

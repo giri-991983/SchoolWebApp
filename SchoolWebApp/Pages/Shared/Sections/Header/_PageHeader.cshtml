@@ -1,0 +1,42 @@
+@{
+    string page = Convert.ToString(ViewContext.RouteData.Values["page"]) ?? "";
+    string title = ViewData["Title"] as string ?? "";
+    string? subtitle = ViewData["Subtitle"] as string;
+    string? icon = ViewData["Icon"] as string;
+
+    string? sectionName = page switch
+    {
+        var p when p.StartsWith("/MasterPages/") => "Master data",
+        "/Institution/Index" or "/Zone/Index" or "/Campus/Index" or "/CampusBoardingType/Index" => "Organisation",
+        "/Class/Index" or "/ClassRoom/Index" or "/Course/Index" or "/CourseBatch/Index" => "Academics",
+        _ => null
+    };
+}
+@if (!string.IsNullOrEmpty(title))
+{
+    <div class="sc-page-header">
+        <div class="d-flex align-items-center gap-3">
+            @if (!string.IsNullOrEmpty(icon))
+            {
+                <span class="sc-page-icon"><i class="@icon"></i></span>
+            }
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb sc-breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a asp-page="/Index"><i class="ri-home-5-line"></i></a></li>
+                        @if (sectionName != null)
+                        {
+                            <li class="breadcrumb-item">@sectionName</li>
+                        }
+                        <li class="breadcrumb-item active" aria-current="page">@title</li>
+                    </ol>
+                </nav>
+                <h4 class="sc-page-title mb-0">@title</h4>
+                @if (!string.IsNullOrEmpty(subtitle))
+                {
+                    <p class="sc-page-subtitle mb-0">@subtitle</p>
+                }
+            </div>
+        </div>
+    </div>
+}
