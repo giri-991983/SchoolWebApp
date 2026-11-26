@@ -1,7 +1,9 @@
 ﻿@page
 @model SchoolWebApp.Pages.MasterPages.CampusType.IndexModel
 @{
-    ViewData["Title"] = "Manage Campus Types";
+    ViewData["Title"] = "Campus types";
+    ViewData["Subtitle"] = "Categories used to classify campuses";
+    ViewData["Icon"] = "ri-building-line";
 }
 
 
@@ -39,7 +41,6 @@
 <div class="card">
     <div class="card-datatable table-responsive">
         <div class="container-fluid">
-            <h3 class="mb-4">Manage Campus Types</h3>
             <table id="CampusTypeTable" class="table">
                 <thead>
                     <tr>

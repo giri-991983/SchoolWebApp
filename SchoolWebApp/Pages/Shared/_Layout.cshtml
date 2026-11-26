@@ -10,7 +10,7 @@
     ViewData["isNavbar"] = (ViewData["isNavbar"] ??= true);
     ViewData["isMenu"] = (ViewData["isMenu"] ??= true);
     ViewData["isFlex"] = (ViewData["isFlex"] ??= false);
-    ViewData["isFooter"] = (ViewData["isFooter"] ??= false);
+    ViewData["isFooter"] = (ViewData["isFooter"] ??= true);
     @* ViewData["customizerHidden"] = (ViewData["customizerHidden"] ??= "customizer-hide"); *@
 
 
@@ -66,7 +66,11 @@
             <!-- Content wrapper -->
             <div class="content-wrapper">
                 <!-- Content -->
-                <div class='@ViewData["container"] @(Convert.ToBoolean(@ViewData["isFlex"]) ? "d-flex align-items-stretch flex-grow-1 p-0" : "flex-grow-1 container-p-y")'>
+                <div class='@ViewData["container"] sc-content @(Convert.ToBoolean(@ViewData["isFlex"]) ? "d-flex align-items-stretch flex-grow-1 p-0" : "flex-grow-1 container-p-y")'>
+                    @if (!Convert.ToBoolean(ViewData["hidePageHeader"] ?? false))
+                    {
+                        @await Html.PartialAsync("Shared/Sections/Header/_PageHeader")
+                    }
                     @RenderBody()
                 </div>
                 <!-- / Content -->
